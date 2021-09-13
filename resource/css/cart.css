@@ -1,0 +1,253 @@
+@charset "utf-8";
+
+/* 총개수 */
+.cart_wrap .total_bx{display:inline-block;margin-left:4px}
+.cart_wrap .total_bx.is_none{margin:0}
+.cart_wrap .total_bx.is_none .total_num{color:transparent;} 
+
+/* 검색유틸 */
+.board_util_wrap .cart_info{margin-top:-36px;text-align:right}
+.board_util_wrap .cart_info .input_check_wrap{margin-right:120px;vertical-align:middle;}
+.board_util_wrap .cart_info .btn_wrap{display:inline-block;margin:0;font-size:0}
+.board_util_wrap .cart_info .btn{min-width:63px;margin-left:10px;padding:0 10px;line-height:33px}
+.board_util_wrap .cart_info .btn_email:before{width:14px;height:14px;margin:-5px 8px 0 0;background-position:-174px -299px;vertical-align:middle;content:''}
+.board_util_wrap .cart_info .btn_print:before{width:13px;height:13px;margin:-5px 8px 0 0;background-position:-174px -315px;vertical-align:middle;content:''}
+.board_util_wrap .cart_info .btn_scrap:before{width:14px;height:14px;margin:-5px 8px 0 0;background-position:-190px -315px;vertical-align:middle;content:''}
+.board_util_wrap .cart_info .btn_delete{background-color:#d6562e}
+.board_util_wrap .cart_info .btn_delete:before{display:none}
+
+/* 카테고리 탭 */
+.category_info_wrap{margin-top:30px}
+.category_info_wrap .tab_list{font-size:0}
+.category_info_wrap .tab_item{display:inline-block;width:245px}
+.category_info_wrap .tab_item a{display:block;position:relative;width:100%;height:45px;border-top:1px solid #dcdcdc;border-bottom:1px solid #dcdcdc;background:#ddd;line-height:45px;text-align:center;box-sizing:border-box;-webkit-box-sizing:border-box}
+.category_info_wrap .tab_item a:after{position:absolute;left:0;bottom:-2px;width:100%;height:100%;content:''}
+.category_info_wrap .tab_item[data-selected="true"] a:after{border-bottom:1px solid #fff}
+.category_info_wrap .tab_item .txt{font-size:16px;font-weight:700;color:#969595;text-align:center}
+.category_info_wrap .tab_item[data-selected="true"] a{z-index:1;border-right:1px solid #dcdcdc;border-left:1px solid #dcdcdc;border-bottom-color:#fff;background:#fff}
+.category_info_wrap .tab_item[data-selected="true"] .txt{color:#494949}
+.apply_tacategory_info_wrapb_wrap .tabpanel_wrap{min-height:188px;padding-top:33px;box-sizing:border-box;-webkit-box-sizing:border-box}
+.category_info_wrap .tabpanel{display:none}
+.category_info_wrap .tabpanel[data-selected="true"]{display:block}
+
+/* 바구니 자료 신청 및 다로드 */
+.basket_info_wrap{padding:27px 34px 21px;border:1px solid #dcdcdc;box-sizing:border-box;-webkit-box-sizing:border-box}
+.basket_info_list{}
+.basket_info_item{position:relative;margin-top:13px;padding-left:9px;font-size:17px;font-weight:400;color:#474747;line-height:22px}
+.basket_info_item:first-child{margin:0}
+.basket_info_item:before{position:absolute;top:10px;left:0;width:3px;height:2px;background:#000;content:''}
+.basket_info_item .point{display:inline-block;color:#3f8fc8}
+.basket_info_wrap .btn_srch_view{display:inline-block;width:180px;margin:18px 0 0 10px;background:#3b4954;font-size:15px;color:#fff;text-align:center;line-height:33px}
+
+/* 신청서비스 안내 */
+.apply_service_wrap{padding:27px 34px 21px;border:1px solid #dcdcdc;}
+.apply_service_wrap table{width:100%;font-size:16px;color:#232323;border-top:1px solid #282828;text-align:center}
+.apply_service_wrap .col1{width:28.9230769%}
+.apply_service_wrap th{padding:17px 0;border-bottom:1px solid #dfdfdf;border-left:1px solid #dfdfdf;background:#f5f5f5}
+.apply_service_wrap td{padding:18px 20px;border-bottom:1px solid #dfdfdf;border-left:1px solid #dfdfdf}
+.apply_service_wrap th:first-child,.apply_service_wrap td:first-child{border-left:none}
+.apply_service_wrap .title{font-weight:700;color:#232323}
+.apply_service_wrap .text{display:block;font-weight:500;color:#626262}
+.apply_service_wrap .cont{position:relative}
+.apply_service_wrap .apply_list{text-align:left}
+.apply_service_wrap .apply_item{position:relative;margin-top:3px;padding-left:6px;font-size:16px;font-weight:400;color:#626262}
+.apply_service_wrap .apply_item:first-child{margin:0;color:#232323}
+.apply_service_wrap .apply_item:before{position:absolute;top:10px;left:0;width:2px;height:2px;background:#7f7f7f;content:''}
+.apply_service_wrap .btn_wrap{position:absolute;top:50%;right:0;margin:0;transform:translate(0,-50%);-webkit-transform:translate(0,-50%)}
+.apply_service_wrap .btn_detail_view{min-width:133px;padding:8px 0;background-color:#4a5258}
+
+/* 바구니 */
+.tbl_ucmy11{width:100%;border-top:2px solid #426f8f;border-bottom:1px solid #dfdfdf;font-size:16px;table-layout:fixed}
+.tbl_ucmy11 .col1{width:4.1025641%}
+.tbl_ucmy11 .col2{width:6.7692307%}
+.tbl_ucmy11 th{padding:16px 8px;border-bottom:1px solid #dfdfdf;background-color:#f5f5f5;color:#000;text-align:left}
+.tbl_ucmy11 td{position:relative;padding:12px 8px;border-top:1px solid #dadada;background-color:#fff;font-weight:400;color:#3f3f3f;text-align:left;vertical-align:top;word-break:keep-all;}
+.tbl_ucmy11 tbody tr:first-child td{border-top:none}
+.tbl_ucmy11 td:last-child{padding:0 0 12px 0}
+.tbl_ucmy11 .no_cont td{padding:20px 0;text-align:center}
+.tbl_ucmy11 .input_check_wrap{vertical-align:top}
+.tbl_ucmy11 a{display:inline-block;position:relative;padding-right:115px}
+.tbl_ucmy11 .avail{display:inline-block;font-weight:700;color:#3f8fc8;}
+.tbl_ucmy11 .cover_title{display:inline-block;padding:12px 0 6px 0;text-align:left;word-break:keep-all;}
+.tbl_ucmy11 .use_place{display:block;color:#3f8fc8;line-height:30px}
+
+/* 바구니 상세보기 */
+.my11_detail_wrap .btn_wrap{position:absolute;top:21px;right:0;margin:0}
+.my11_detail_wrap .btn_detail_view{min-width:100px;}
+.my11_detail_wrap{width:100%}
+.my11_detail_wrap .my11_detail_bx{display:none;}
+.my11_detail_wrap.is_detail_opened .my11_detail_bx{display:block}
+/* .my11_detail_list{border-bottom:1px solid #dfdfdf;}
+.my11_detail_item{position:relative;width:100%;padding-left:180px;border:1px solid #dfdfdf;border-bottom:0;font-size:16px;text-align:left;box-sizing:border-box;-webkit-box-sizing:border-box}
+.my11_detail_item .title{position:absolute;top:0;right:0;left:0;bottom:0;width:170px;background:#f8f8f8;text-align:center;line-height:30px}
+.my11_detail_item .cont{padding:5px 0;} */
+
+.tbl_ucmy11_detail{width:100%;border-top:1px solid #dfdfdf;border-bottom:1px solid #dfdfdf;font-size:16px;text-align:center;table-layout:fixed}
+.tbl_ucmy11_detail .col1{width:15%}
+.tbl_ucmy11_detail .col2{width:38%}
+.tbl_ucmy11_detail th{padding:10px 8px;border-bottom:1px solid #dfdfdf;background-color:#f5f5f5;color:#000;text-align:left;word-break:keep-all;}
+.tbl_ucmy11_detail td{position:relative;padding:10px 8px;border-top:0;border-bottom:1px solid #dadada;background-color:#fff;font-weight:400;color:#3f3f3f;text-align:left;word-break:keep-all;}
+.tbl_ucmy11_detail tr:last-child th,
+.tbl_ucmy11_detail tbody tr:last-child td{border-bottom:none}
+.tbl_ucmy11_detail td:last-child{padding:10px 8px}
+
+
+/* 신청/다운로드 */
+.apply_tab_wrap{margin-top:30px}
+.apply_tab_wrap .tab_list{font-size:0}
+.apply_tab_wrap .tab_item{display:inline-block;width:245px}
+.apply_tab_wrap .tab_item a{display:block;position:relative;width:100%;height:45px;border-top:1px solid #dcdcdc;border-bottom:1px solid #dcdcdc;background:#ddd;line-height:45px;text-align:center;box-sizing:border-box;-webkit-box-sizing:border-box}
+.apply_tab_wrap .tab_item a:after{position:absolute;left:0;bottom:-2px;width:100%;height:100%;content:''}
+.apply_tab_wrap .tab_item[data-selected="true"] a:after{border-bottom:1px solid #fff}
+.apply_tab_wrap .tab_item .txt{font-size:16px;font-weight:700;color:#969595;text-align:center}
+.apply_tab_wrap .tab_item[data-selected="true"] a{z-index:1;border-right:1px solid #dcdcdc;border-left:1px solid #dcdcdc;border-bottom-color:#fff;background:#fff}
+.apply_tab_wrap .tab_item[data-selected="true"] .txt{color:#494949}
+.apply_tab_wrap .tabpanel_wrap{min-height:188px;box-sizing:border-box;-webkit-box-sizing:border-box}
+.apply_tab_wrap .tabpanel{display:none}
+.apply_tab_wrap .tabpanel[data-selected="true"]{display:block}
+
+
+/* 신청 */
+.apply_info_wrap{padding:40px 32px;border:1px solid #dcdcdc;box-sizing:border-box;-webkit-box-sizing:border-box}
+.apply_info_wrap .btn_apply_list{margin:0 -7px;font-size:0}
+.apply_info_wrap .btn_apply_item{display:inline-block;width:20%;padding:0 7px;word-break:keep-all;box-sizing:border-box;-webkit-box-sizing:border-box}
+.apply_info_wrap .btn{display:block;width:100%;height:70px;font-size:16px;color:#fff}
+.apply_info_wrap .btn_apply_item .txt{display:block;font-size:14px;color:#cceaff}
+.apply_info_wrap .btn.use_apply{background-color:#3980b2}
+.apply_info_wrap .btn.night_apply{background-color:#3980b2}
+.apply_info_wrap .btn.preserve_apply{background-color:#5692bc}
+.apply_info_wrap .btn.classic_apply{background-color:#5692bc}
+.apply_info_wrap .btn.post_apply{background-color:#426f8f}
+
+/* 다운로드 */
+.download_info_wrap{padding:40px 32px;border:1px solid #dcdcdc;box-sizing:border-box;-webkit-box-sizing:border-box}
+.download_info_wrap .btn_download_list{margin:0 -7px;font-size:0}
+.download_info_wrap .btn_download_item{display:inline-block;width:33.333334%;padding:0 7px;word-break:keep-all;box-sizing:border-box;-webkit-box-sizing:border-box}
+.download_info_wrap .btn_download_item:nth-child(1) .download_bx{padding:0 25%}
+.download_info_wrap .btn_download_item:nth-child(2) .download_bx{padding:0 10%}
+.download_info_wrap .btn_download_item:nth-child(3) .download_bx{padding:0 25%}
+.download_info_wrap .title{display:block;padding-bottom:15px;font-size:16px;font-weight:700;color:#484848;border-bottom:1px solid #416f90;text-align:center}
+.download_info_wrap .download_bx{margin-top:15px}
+.download_info_wrap .btn{display:block;width:100%;padding:5px 0;text-align:left}
+.download_info_wrap .txt{position:relative;padding-left:35px;font-size:16px;color:#3f3f3f}
+.download_info_wrap .txt:before{position:absolute;top:4px;left:0;width:19px;height:19px;margin-right:16px;background:rgba(255,0,0,.5);vertical-align:top;content:''}
+
+/* 디지털도서관 */
+.reserve_wrap{margin-top:70px;padding:40px 32px;border:1px solid #dcdcdc;box-sizing:border-box;-webkit-box-sizing:border-box}
+.reserve_wrap .btn_reserve_list{margin:0 -7px;font-size:0}
+.reserve_wrap .btn_reserve_item{display:inline-block;width:33.333334%;padding:0 7px;word-break:keep-all;box-sizing:border-box;-webkit-box-sizing:border-box}
+.reserve_wrap .btn{display:block;width:100%;padding:25px 0;font-size:16px;color:#fff;text-align:center}
+.reserve_wrap .btn.btn_reserve{background-color:#3980b2}
+.reserve_wrap .btn.reserve_download1{background-color:#426f8f}
+.reserve_wrap .btn.reserve_download2{background-color:#426f8f}
+
+/* 기타 */
+.cart_etc_wrap .basket_info_wrap{margin-top:30px}
+.etc_download_wrap{margin-top:70px;padding:40px 32px;border:1px solid #dcdcdc;box-sizing:border-box;-webkit-box-sizing:border-box}
+.etc_download_wrap .btn_reserve_list{margin:0 -7px;font-size:0}
+.etc_download_wrap .btn_reserve_item{display:inline-block;width:50%;padding:0 7px;word-break:keep-all;box-sizing:border-box;-webkit-box-sizing:border-box}
+.etc_download_wrap .btn{display:block;width:100%;padding:25px 0;font-size:16px;color:#fff;text-align:center}
+.etc_download_wrap .btn.etc_excel_download{background-color:#3980b2}
+.etc_download_wrap .btn.etc_text_download{background-color:#426f8f}
+
+
+@media screen and (max-width:767px){
+    .board_util_wrap .cart_info{margin:0}
+    .board_util_wrap .cart_info .btn{min-width:50px;margin-left:10px}
+    .board_util_wrap .cart_info .btn.all_detail_view{margin:0}
+    .board_util_wrap .cart_info .btn_print{display:none}
+    .board_util_wrap .cart_info .btn_email{margin:0}
+    .board_util_wrap .cart_info .btn_email:before{display:none}
+    .board_util_wrap .cart_info .btn_scrap:before{display:none}
+    .category_info_wrap .tab_item{width:50%}
+    .category_info_wrap .tab_item .txt{display:block;height:100%;padding:0 5px;font-size:1.5rem;word-break:keep-all}
+    .category_info_wrap .tab_item a{height:40px;line-height:40px}
+    .basket_info_wrap{padding:15px}
+    .basket_info_item{margin-top:6px;font-size:1.5rem;line-height:1.3;word-break:keep-all;}
+    .basket_info_item:before{top:8px;width:1px;height:1px;}
+    .basket_info_wrap .btn_srch_view{width:100%;margin:9px 0 0 0}
+    .apply_service_wrap{padding:15px}
+    .apply_service_wrap table{font-size:1.5rem;}
+    .apply_service_wrap th{padding:8px 0}
+    .apply_service_wrap td{padding:9px 5px}
+    .apply_service_wrap .title{font-size:1.4rem;font-weight:500;word-break:keep-all;}
+    .apply_service_wrap .apply_item{font-size:1.5rem}
+    .apply_service_wrap .btn_wrap{position:static;top:auto;right:auto;transform:initial;-webkit-transform:initial;}
+    .apply_service_wrap .btn_detail_view{min-width:auto;width:100%;margin-top:10px;padding:0;line-height:26px}
+    .apply_service_wrap .text{font-size:1.3rem;}
+    .tbl_ucmy11{font-size:1.4rem}
+    .tbl_ucmy11 .col1{width:28px}
+    .tbl_ucmy11 .col2{width:55px}
+    .tbl_ucmy11 td{padding:6px 0}
+    .tbl_ucmy11 th{padding:8px 0}
+    .tbl_ucmy11 .my11_detail_wrap .btn_wrap{display:block;position:static;top:auto;right:auto}
+    .tbl_ucmy11 .cover_title{padding:6px 0 3px 0}
+    .tbl_ucmy11 a{padding:0}
+
+    .my11_detail_wrap .btn_detail_view{min-width:auto;width:100%}
+    .my11_detail_list{margin-top:10px}
+    .my11_detail_item{min-height:40px;padding-left:75px;font-size:1.4rem}
+    .my11_detail_item .title{width:70px;font-weight:500;line-height:initial}
+
+    .tbl_ucmy11_detail{margin-top:10px;font-size:1.4rem}
+    .tbl_ucmy11_detail .col1{width:30%}
+    .tbl_ucmy11_detail .col2{width:auto}
+    .tbl_ucmy11_detail td{padding:10px 8px}
+
+    .apply_tab_wrap .tab_item{width:50%}
+    .apply_info_wrap{padding:20px 16px 0}
+    .apply_info_wrap .btn{height:8.8rem;padding:5px;font-size:1.5rem}
+    .apply_info_wrap .btn_apply_list{margin:0 -1%}
+    .apply_info_wrap .btn_apply_item{width:33.3333%;margin-bottom:15px;padding:0 1%}
+    
+    .download_info_wrap{padding:20px 16px;}
+    .download_info_wrap .title{font-size:1.5rem}
+    .download_info_wrap .btn_download_item:nth-child(1) .download_bx{padding:0}
+    .download_info_wrap .btn_download_item:nth-child(2) .download_bx{padding:0}
+    .download_info_wrap .btn_download_item:nth-child(3) .download_bx{padding:0}
+    .download_info_wrap .download_bx{margin-top:15px}
+    .download_info_wrap .txt{padding-left:15px;font-size:1.5rem}
+    .download_info_wrap .txt:before{top:6px;width:10px;height:10px;background:rgba(255,0,0,.5)}
+
+    .reserve_wrap{margin-top:35px;padding:20px 16px}
+    .reserve_wrap .btn{min-height:5.6rem;padding:25px 0;font-size:1.5rem}
+
+    .cart_etc_wrap .basket_info_wrap{margin-top:15px}
+    .etc_download_wrap{margin-top:35px;padding:20px 16px}
+    
+}
+@media screen and (max-width:460px){
+    .category_info_wrap .tab_item:first-child .txt{line-height:1.3}
+}
+
+/* 내가 이용한 자료 */
+.mydata_search_wrap{position:relative;margin-top:45px;padding:25px 0;background:#f6f6f6;border-top:2px solid #5692bc;font-size:0;text-align:center}
+.mydata_search_wrap .inner{width:100%;margin:0 auto}
+.mydata_search_wrap .btn_search{display:inline-block;width:48px;height:48px;background:#5692bc;}
+.mydata_search_wrap .search{width:22px;height:22px;background-position:-205px -219px}
+.mydata_search_wrap .input_date_wrap{display:inline-block}
+.mydata_search_wrap .input_date{background:#fff}
+.mydata_search_wrap .input_select_wrap{display:inline-block;min-width:112px;margin-left:20px;}
+
+.my12_wrap{margin-top:42px}
+.my12_wrap table{width:100%;border-top:2px solid #426f8f;border-bottom:1px solid #dfdfdf;font-size:16px;text-align:center;table-layout:fixed}
+.my12_wrap .col1{width:6.7692307%}
+.my12_wrap .col2{width:13.7692307%}
+
+.my12_wrap th{padding:16px 0;border-bottom:1px solid #dfdfdf;background-color:#f5f5f5;font-size:16px;color:#000}
+.my12_wrap td{position:relative;padding:12px 2px;border-top:1px solid #dadada;background-color:#fff;font-weight:400;color:#3f3f3f}
+.my12_wrap tbody tr:first-child td{border-top:none}
+.my12_wrap a{display:inline-block;padding:5px;height:100%}
+.my12_wrap .sp_download{width:20px;height:19px;background-position:-96px -39px}
+@media screen and (max-width:767px){
+    .mydata_search_wrap{margin-top:23px;padding:12px;text-align:left}
+    .mydata_search_wrap .inner{position:relative}
+    .mydata_search_wrap .input_select_wrap{min-width:auto;width:100%;height:33px;margin:10px 0 0 0;padding-right:33px;box-sizing:border-box;-webkit-box-sizing:border-box;}
+    .mydata_search_wrap .btn_search{position:absolute;right:0;bottom:0;width:33px;height:33px}
+    .mydata_search_wrap .search{width:15px;height:15px;background-position:-139px -117px}
+    .my12_wrap{margin-top:21px;word-break:break-all;}
+    .my12_wrap th{padding:8px 0}
+    .my12_wrap td{padding:8px 2px}
+    .my12_wrap .num{display:none}
+    .my12_wrap .sp_download{width:14px;height:12px;background-position:-80px -34px}
+}

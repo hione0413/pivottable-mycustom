@@ -1,0 +1,41 @@
+@charset "utf-8";
+/* CSS Document */
+
+/* [reset css] */
+html,body {margin:0; padding:0; width:100%; height:100%; background:#fff; font-size:12px; color:#666; line-height:18px;}
+div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,textarea,p,blockquote,th,td,legend,em,span, select, option {margin:0; padding:0; font-family: "새굴림","돋움", "굴림",Helvetica,sans-serif;} 
+table {border-spacing:0; border-collapse:collapse;}
+th, td {word-break:break-all;}
+form,fieldset {display:block;}
+form,fieldset,img {border:none;} 
+address,caption,cite,code,dfn,em,th,var {font-style:normal; font-weight:normal;} 
+ol,ul,li {list-style:none;} 
+h1,h2,h3,h4,h5,h6 {font-size:100%; font-weight:normal;}
+abbr,acronym {border:none;} 
+hr {display:none;}
+a {text-decoration:none; color:#000; cursor:pointer; }
+a:link,a:visited {text-decoration:none;}
+a:hover,a:active,a:focus { color:#333;}
+textarea {overflow:auto;} 
+html:first-child select {padding-right:6px; /* 20171128 수정height:20px;*/} /* opera 9 & below fix */ 
+
+option {padding-right:6px;} /* firefox fix */
+legend {position:absolute; top:0; left:0; width:0; height:0; overflow:hidden; visibility:hidden; font-size:0; line-height:0;} /* for screen reader */ 
+pre {word-wrap:break-word;}
+h1,h2,h3,h4,h5,h6 {/*font-family:"맑은 고딕","돋움",Dotum,"굴림",Gulim,Helvetica,sans-serif;*/}
+br { background:none !important;}
+/*
+clear:both; display, position(top,left), float, overflow
+(min-width, width), (min-height, height) (margin,padding)
+font(text-indent, text-align, font-weight, font-size, line-height, font-family, color)
+border, background
+cursor, z-index, zoom
+*/
+
+/* 브라우저업데이트 */
+#browseUpdate {background: #445785; width: 100%;}
+#browseUpdate .alertMsg { position: relative; width: 1190px; padding: 30px 0 30px 90px; margin: 0 auto; background: url('/nl/_res/img/ico_broswer_alert.png') no-repeat left center;}
+#browseUpdate .alertMsg .headText { font-size: 18px; color:#dce5ff;font-family:"맑은 고딕","돋움"; line-height: 160%;}
+#browseUpdate .alertMsg .subText { font-size: 13px; color:#ffa800;font-family:"맑은 고딕","돋움"; padding-top:5px;}
+#browseUpdate .close { position: absolute; right: 0; top:10px; padding: 0 20px; height: 40px;font-family:"맑은 고딕","돋움"; font-size: 13px;line-height: 40px; background: url('/nl/_res/img/btn/btn_detailSearchBox_close.png') no-repeat center center;  overflow:hidden; text-indent:-100px; }
+#browseUpdate .btnUpdate { position: absolute; right: 0; bottom:20px; padding: 0 20px; height: 40px; line-height: 40px;color:#dce5ff; border:#7286b8 2px solid;  }

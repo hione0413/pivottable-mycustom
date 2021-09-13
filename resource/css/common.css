@@ -1,0 +1,157 @@
+@charset "utf-8";
+@import "reset.css";
+@import "layout.css";
+
+@font-face {
+	font-family: 'Noto Sans KR';
+	src: url(../font/NotoSansKR-Light.woff2) format('woff2'),
+		 url(../font/NotoSansKR-Light.woff) format('woff'),
+		 url(../font/NotoSansKR-Light.otf) format('opentype');
+	font-weight: 300;
+    font-style: normal;
+}
+@font-face {
+	font-family: 'Noto Sans KR';
+	src: url(../font/NotoSansKR-Regular.woff2) format('woff2'),
+		 url(../font/NotoSansKR-Regular.woff) format('woff'),
+		 url(../font/NotoSansKR-Regular.otf) format('opentype');
+	font-weight: 400;
+    font-style: normal;
+}
+@font-face {
+	font-family: 'Noto Sans KR';
+	src: url(../font/NotoSansKR-Medium.woff2) format('woff2'),
+		 url(../font/NotoSansKR-Medium.woff) format('woff'),
+		 url(../font/NotoSansKR-Medium.otf) format('opentype');
+	font-weight: 500;
+    font-style: normal;
+}
+@font-face {
+	font-family: 'Noto Sans KR';
+	src: url(../font/NotoSansKR-Bold.woff2) format('woff2'),
+		 url(../font/NotoSansKR-Bold.woff) format('woff'),
+		 url(../font/NotoSansKR-Bold.otf) format('opentype');
+	font-weight: 700;
+    font-style: normal;
+}
+
+body, p, div, span, a, ol, ul, li, table, tr, th, td, h1, h2, h3, h4, h5, h6, strong, b, em, address,  label, section, article, figure, form, fieldset, button, legend, input, textarea, selection, select{
+	line-height:1.6em;
+	letter-spacing:-0.04em;
+	font-family:"Noto Sans KR", "Open Sans", HelveticaNeue, "Helvetica Neue", Helvetica, Arial, sans-serif !important;
+}
+
+a{text-decoration:none;color:#333;}
+.ir_text, legend, .blind {overflow: hidden;position: absolute;border: 0;width: 1px;height: 1px;clip: rect(1px,1px,1px,1px);}
+.sp{display:inline-block;overflow:hidden;font-size:5px;color:transparent;vertical-align:top;}
+
+select{width:223px;height:36px;padding:0 18px 0 14px;background:#fff url(../img/common/arrow_down.png) 100% 50% no-repeat;font-size:15px;color:#000;vertical-align:middle;box-sizing:border-box;-webkit-box-sizing:border-box}
+
+.txt_red{color:#993300;}
+
+.logo{display:inline-block;width:360px;position: relative;}
+.logo a{display:inline-block;}
+.logo .sp{background-image:url(../img/common/nl_logo.png);background-position:0 0;background-repeat:no-repeat;background-size: 100%;width: 165px;height: 43px;position: absolute;top: 0;left: 0;}
+.logo .logo_txt{display: block;color:#6c5037;font-size:18px;font-weight: 500;padding-left: 195px;line-height:1;}
+.logo .logo_txt span{display:block;font-size:14px;}
+.logo .logo_txt:before{content:'';display:inline-block;width:1px;background-color:#ccc;height: 34px;margin: 0 7px -2px 10px;position:absolute;top:5px;left:170px;}
+
+@media screen and (max-width:1024px){
+	.logo{margin:0 auto;display: block;}
+}
+@media screen and (max-width:768px){
+	.logo{width:220px;}
+	.logo .sp{width: 127px;height: 34px;}
+	.logo .logo_txt{font-size:12px;padding-left:132px;text-align:left;}
+	.logo .logo_txt:before{margin-bottom:-3px;left:122px;height:26px;}
+}
+
+ul.tabs{
+	margin: 0px;
+	padding: 0px;
+	list-style: none;
+	font-size:0;
+	border-bottom:solid 1px #3c3f48;
+}
+ul.tabs li{
+	display: inline-block;
+	font-size:15px;
+}
+ul.tabs li a{
+	display: block;
+	background: none;
+	color: #222;
+	padding: 10px 20px;
+	border:solid 1px #3c3f48;
+	border-bottom:none;
+	border-left:none;
+	font-weight:500;
+	min-width:170px;
+	text-align:center;
+	box-sizing:border-box;
+}
+ul.tabs li:first-of-type a{
+	border-left:solid 1px #3c3f48;
+}
+ul.tabs li a.active{
+	background: #3c3f48;
+	color: #fff;
+}
+ul.tabs li a:hover, ul.tabs li a:focus{text-decoration:underline;}
+.tab_content{
+	display: none;
+	padding: 20px 0;
+}
+.tab_content.active{
+	display: inherit;
+}
+
+@media screen and (max-width:767px){
+	ul.tabs li a{
+		padding: 5px;
+		min-width:auto;
+		font-size:14px;
+	}
+}
+
+.all_menu{
+	display: none;
+    overflow: hidden;
+    background: url(../img/common/layout_m.png) 0 0 no-repeat;
+    background-size: 200px auto;
+    font-size: 5px;
+    color: transparent;
+    vertical-align: top;
+	width: 25px;
+    height: 16px;
+    background-position: -148px 0;    
+	position: absolute;
+    top: 50%;
+    left: 10px;
+	-ms-transform:translateY(-50%);
+	-webkit-transform:translateY(-50%);
+	transform:translateY(-50%);
+}
+.web_sch_btn{
+    width: 36px;
+    height: 36px;
+    display: block;
+    position: absolute;
+    top: 50%;
+    right: 0;
+	-ms-transform:translateY(-50%);
+	-webkit-transform:translateY(-50%);
+	transform:translateY(-50%);
+    background-image: url(../img/main/sch_icon.png);
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: 25px;
+}
+@media screen and (max-width:1024px){
+	.all_menu{
+		display: inline-block;
+	}
+	.web_sch_btn{
+		right:10px;
+	}
+}
