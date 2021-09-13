@@ -18,7 +18,7 @@
     <script src="./plugin/jQueryUI/jquery-ui.min.js"></script>
     <script src="./plugin/bootstrap/js/bootstrap.min.js"></script>
     <script src="./plugin/datepicker/bootstrap-datepicker.min.js"></script>
-    <script src="./plugin/slimScroll-1.3.8/jquery.slimscroll.min.js"></script>
+    <!-- <script src="./plugin/slimScroll-1.3.8/jquery.slimscroll.min.js"></script> -->
 
     <script src="./plugin/table-to-excel/tableToExcel.js"></script>
 
@@ -82,15 +82,15 @@
     // Datapicker setting End
 
     // Create Pivot Table Start
-    $.getJSON("./data/sample.json", function (data) {
+    $.getJSON("./data/sample2.json", function (data) {
         console.log(data);
 
         $("#test").pivotUI(
             data.data,
             {
-                rows: ["ACCESSION_DATE"],
-                cols: ["JOB", "SEX", "USER_TYPE", "AGE"],
-                vals: ["CNT"],
+                rows: ["기준일자"],
+                cols: ["도서관별", "성별"],
+                vals: ["가입자수"],
                 aggregatorName: "Integer Sum",
                 rendererName: "Heatmap",
                 onRefresh: function () {
@@ -99,7 +99,10 @@
                     // $(".pvtTableWrapper").slimScroll({ height: "500px;" });
 
                     // TODO 1 : 가로스크롤 기능이 있는 라이브러리로 변경
+
+
                     // TODO 2 : 고정된 Header 외곽선 출력되도록 수정
+                    // https://www.it-gundan.com/ko/css/%EB%B0%B0%EA%B2%BD%EC%83%89%EC%9D%B4-%EC%A1%B4%EC%9E%AC%ED%95%A0-%EB%95%8C-%EC%99%9C-position-sticky%EB%A1%9C-%ED%85%8C%EB%91%90%EB%A6%AC%EA%B0%80-%EB%B3%B4%EC%9D%B4%EC%A7%80-%EC%95%8A%EC%8A%B5%EB%8B%88%EA%B9%8C/830134004/
                 }
             }
         );

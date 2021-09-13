@@ -18,9 +18,9 @@
 
 /* Header 고정 시 테두리 투명화 이슈 해결 */
 .pvtTableWrapper thead th{ 
-    /* outline: 1px solid #c8d4e3;                
+    outline: 1px solid #c8d4e3;                
     border:none; 
-    outline-offset: -1px; */
+    outline-offset: -1px;
 
 }
 
