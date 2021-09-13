@@ -56,7 +56,7 @@
 
         <!-- Pivot Table 영역 Start -->
         <div class="minwon">
-            <div style="text-align: right; width: 95%; margin-bottom: 15px;">
+            <div style="text-align: right; width: 80vw; margin: auto; margin-bottom: 15px;">
                 <input type="button" class="btn btn-primary" id="btnExcelDownload" value="엑셀 다운로드" />
             </div>
             <!-- <div id="test" style="height: 800px; overflow: auto; width: 100%;"></div> -->
@@ -83,13 +83,11 @@
 
     // Create Pivot Table Start
     $.getJSON("./data/sample2.json", function (data) {
-        console.log(data);
-
         $("#test").pivotUI(
             data.data,
             {
-                rows: ["기준일자"],
-                cols: ["도서관별", "성별"],
+                rows: ["기준일자", "가입위치별"],
+                cols: ["도서관별", "성별", "연령별"],
                 vals: ["가입자수"],
                 aggregatorName: "Integer Sum",
                 rendererName: "Heatmap",
@@ -103,7 +101,13 @@
 
                     // TODO 2 : 고정된 Header 외곽선 출력되도록 수정
                     // https://www.it-gundan.com/ko/css/%EB%B0%B0%EA%B2%BD%EC%83%89%EC%9D%B4-%EC%A1%B4%EC%9E%AC%ED%95%A0-%EB%95%8C-%EC%99%9C-position-sticky%EB%A1%9C-%ED%85%8C%EB%91%90%EB%A6%AC%EA%B0%80-%EB%B3%B4%EC%9D%B4%EC%A7%80-%EC%95%8A%EC%8A%B5%EB%8B%88%EA%B9%8C/830134004/
+
+                },
+                sorters: {  // 정렬
+                    "성별": $.pivotUtilities.sortAs(["남성", "여성"]),
+                    "연령별": $.pivotUtilities.sortAs(["10대이하"]),
                 }
+
             }
         );
     });
@@ -119,7 +123,7 @@
         document.getElementsByClassName("pvtTable")[0].setAttribute("id", "pvtTable");
 
         TableToExcel.convert(document.getElementById("pvtTable"), {
-            name: "table1.xlsx",
+            name: "국립중앙박물관 통계 시스템 Excel.xlsx",
             sheet: {
                 name: "Sheet 1"
             }
