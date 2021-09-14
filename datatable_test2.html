@@ -87,57 +87,63 @@
 </body>
 
 <script>
-    console.log("Call me?");
-    var CONST = {
-        insertTableColumnName: [
-            "연도",
-            "개관일수",
-            "이용인원 이용자수",
-            "이용인원 일평균",
-            "이용자료수 자료수",
-            "이용자료수 일평균"
-        ]
-    }
 
-
-
-    $.getJSON("./data/dt_sample2.json", function (data) {
-        // 좌측 Header 가 연도인 일반 Table 생성
-        var data = data.data;
-        var insertTableColumnName = CONST.insertTableColumnName;
+    function createTableTypeTwo(data, tbodyId, tableColumnInfo) {
         var temp = [];
 
-        // 데이터의 length 만큼 temp arr 에 table의 td 정보를 담을 Arr 를 생성해준다
+        // 1. 데이터의 length 만큼 temp arr 에 table의 td 정보를 담을 Arr 를 생성해준다
         for (var i = 0; i < data.length; i++) {
             temp[i] = [];
         }
 
-        // <td> String 을 생성한 뒤 
+        // 2. <td> String 을 생성한 뒤 
         //  -> insertTableColumnName를 참조하여 객체별로 분류 
         //  -> temp 배열에 쌓아준다
-        for (var i = 0; i < data.length; i++) {
-            for (var j = 0; j < insertTableColumnName.length; j++) {
-                var cellValue = data[i][insertTableColumnName[j]];
 
-                if (j == 0) {
-                    var cellHtml = "<td>" + cellValue + "</td>";
-                } else {
+        for (var i = 0; i < data.length; i++) {
+            for (var j = 0; j < tableColumnInfo.length; j++) {
+                var cellObj = tableColumnInfo[j];
+                var cellName = cellObj.name;
+                // TODO : 여기 고치던 중
+                var cellInsertFlag = cellObj.insertFlag;
+                var cellValue = data[i][cellName];
+
+                if (cellInsertFlag) {
                     var cellInput = '<input type="text" class="form-control" value="' + cellValue + '" />';
                     var cellHtml = "<td>" + cellInput + "</td>";
+                } else {
+                    var cellHtml = "<td>" + cellValue + "</td>";
                 }
 
                 temp[i].push(cellHtml);
             }
         }
 
-        // 쌓아둔 temp 를 Table tbody에 담을 html로 변환한다
+        // 3. 쌓아둔 temp 를 Table tbody에 담을 html로 변환한다
         var tempHtml = "";
         for (var i = 0; i < temp.length; i++) {
             tempHtml += "<tr>" + temp[i].join("") + "</tr>"
         }
 
-        // 테이블 생성
-        $("#testTbody").html(tempHtml);
+        // 4. 테이블 생성
+        $("#" + tbodyId).html(tempHtml);
+    }
+
+
+    $.getJSON("./data/dt_sample2.json", function (data) {
+        // 좌측 Header 가 연도인 일반 Table 생성
+        var data = data.data;
+        var tableColumnInfo = [
+            { name: "연도", insertFlag: false },
+            { name: "개관일수", insertFlag: true },
+            { name: "이용인원 이용자수", insertFlag: true },
+            { name: "이용인원 일평균", insertFlag: true },
+            { name: "이용자료수 자료수", insertFlag: true },
+            { name: "이용자료수 일평균", insertFlag: true }
+        ];
+
+
+        createTableTypeTwo(data, "testTbody", tableColumnInfo);
     });
 
 </script>
