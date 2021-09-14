@@ -12,7 +12,7 @@
 /* MEMO : Header 고정 only css | Internet Exproler 에서 동작 안함 */
 .pvtTableWrapper thead { 
     position: sticky;  
-    top: -1px; 
+    top: 0px; 
     z-index: 1;
 }
 
@@ -21,7 +21,7 @@
     outline: 1px solid #c8d4e3;                
     border:none; 
     outline-offset: -1px;
-
+    min-width: 80px;
 }
 
 /* .pvtTableWrapper thead th:after{

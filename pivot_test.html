@@ -9,6 +9,7 @@
 
     <link rel="stylesheet" href="./plugin/bootstrap/css/bootstrap.min.css" />
     <link rel="stylesheet" href="./plugin/datepicker/datepicker3.min.css" />
+    <link rel="stylesheet" href="./plugin/iCheck/all.css" />
 
     <!-- 20210903: zPivottable -->
     <link rel="stylesheet" href="./plugin/zPivottable/pivot.css" />
@@ -18,7 +19,8 @@
     <script src="./plugin/jQueryUI/jquery-ui.min.js"></script>
     <script src="./plugin/bootstrap/js/bootstrap.min.js"></script>
     <script src="./plugin/datepicker/bootstrap-datepicker.min.js"></script>
-    <!-- <script src="./plugin/slimScroll-1.3.8/jquery.slimscroll.min.js"></script> -->
+    <script src="./plugin/iCheck/icheck.min.js"></script>
+    
 
     <script src="./plugin/table-to-excel/tableToExcel.js"></script>
 
@@ -30,7 +32,7 @@
 </head>
 
 <body class="main">
-    <div>
+    <div >
         <!-- 필터 영역 Start -->
         <div class="search"
             style="margin-top:40px; margin-bottom: 40px; padding-bottom:20px; border-bottom: 1px solid #ccc;">
@@ -39,16 +41,19 @@
                     <h3>국립중앙박물관 통계 시스템 </h3>
                 </div>
             </div>
-            <div class="row text-center">
+            <div class="" style="margin: auto; text-align: center;">
                 <form class="form-inline">
+                    <div class="form-group">
+                        
+                    </div>
                     <div class="form-group">
                         <label>기간조회</label>
                         <span style="margin-left: 10px; margin-right: 10px;">|</span>
-                        <input type="text" class="form-control" id="startDt" placeholder="2021-08-13">
+                        <input type="text" class="form-control" id="startDt" style="width: 100px; display: inline;" placeholder="2021-08-13">
                         <span style="margin-left: 10px; margin-right: 10px;">~</span>
-                        <input type="text" class="form-control" id="endDt" placeholder="2021-09-13">
+                        <input type="text" class="form-control" id="endDt" style="width: 100px; display: inline;" placeholder="2021-09-13">
                     </div>
-                    <button type="submit" class="btn btn-default" style="margin-left: 20px;">조회</button>
+                    <button type="button" class="btn btn-default" style="margin-left: 20px;">조회</button>
                 </form>
             </div>
         </div>
@@ -89,11 +94,11 @@
                 rows: ["기준일자", "가입위치별"],
                 cols: ["도서관별", "성별", "연령별"],
                 vals: ["가입자수"],
+                hiddenFromDragDrop: ["가입자수"],
                 aggregatorName: "Integer Sum",
                 rendererName: "Heatmap",
                 onRefresh: function () {
                     // 차트 생성될 때 호출되는 익명함수
-                    console.log("ee?");
                     // $(".pvtTableWrapper").slimScroll({ height: "500px;" });
 
                     // TODO 1 : 가로스크롤 기능이 있는 라이브러리로 변경
