@@ -2,17 +2,24 @@
     box-sizing: border-box
 }
 
+/* 좌상단 Cell 등등 */
+.pvtUiCell {
+    border: 1px solid #a2b1c6;
+}
+
 /* MEMO : pvtTable 을 감싸는 Wrapper : 테이블 스크롤 */
 .pvtTableWrapper {
     width: 80vw;
-    height: 600px;
+    height: 550px;
     overflow: auto;
+    
 }
 
 /* MEMO : Header 고정 only css | Internet Exproler 에서 동작 안함 */
+/* Header 고정 */
 .pvtTableWrapper thead { 
     position: sticky;  
-    top: 0px; 
+    top: 0; 
     z-index: 1;
 }
 
@@ -23,6 +30,40 @@
     outline-offset: -1px;
     min-width: 80px;
 }
+
+/* 왼쪽 Header 고정 */
+/* MEMO: 만약 모든 칼럼을 고정하고 싶으면 left 값을 유동적으로 변동해주면 된다. */
+/* .pvtRowLabel {
+    position: sticky;  
+    left: 0px; 
+    z-index: 0;
+} */
+
+/* 왼쪽 Header 고정 */
+/* .pvtTotalLabel.pvtColTotalLabel {
+    position: sticky;  
+    left: 0px; 
+    z-index: 0;
+} */
+
+/* Header 고정 시 테두리 투명화 이슈 해결 */
+/* .pvtRowLabel thead th{ 
+    outline: 1px solid #c8d4e3;                
+    border:none; 
+    outline-offset: -1px;
+    min-width: 80px;
+} */
+
+/* Header 고정 시 테두리 투명화 이슈 해결 */
+/* .pvtTotalLabel.pvtColTotalLabel thead th{ 
+    outline: 1px solid #c8d4e3;                
+    border:none; 
+    outline-offset: -1px;
+    min-width: 80px;
+} */
+
+
+
 
 /* .pvtTableWrapper thead th:after{
     content:'';
@@ -57,6 +98,9 @@
 /* MEMO : Table 상단(사용, 미사용 모두) 선택영역 */
 .pvtRendererArea {
     /* width: 85%; */
+    padding: 5px;
+    border: 1px solid #a2b1c6;
+
 }
 
 .pvtUi {
@@ -66,6 +110,7 @@
     font-family: Verdana;
     border-collapse: collapse;
     margin: auto;   /* MEMO : table 가운데 정렬 */
+    /* border: 1px solid #a2b1c6; */
 } 
 .pvtUi select {
     user-select: none;
@@ -195,7 +240,7 @@ table.pvtTable tbody tr td {
 }
 
 .pvtRows {
-    height: 35px;
+    /* height: 35px; */
 }
 
 .pvtAxisContainer li {
@@ -214,10 +259,11 @@ table.pvtTable tbody tr td {
     display: none;
 }
 
+/* MEMO : 선택값 css */
 .pvtAxisContainer li span.pvtAttr {
     -webkit-text-size-adjust: 100%;
     background: #f3f6fa;
-    border: 2px dashed #c8d4e3;
+    /* border: 2px dashed #c8d4e3; */
     padding: 4px 7px;
     white-space: nowrap;
     -webkit-border-radius: 5px;
@@ -229,6 +275,26 @@ table.pvtTable tbody tr td {
     -khtml-user-select: none;
     -ms-user-select: none;
 }
+
+/* 선택 x 인 선택값 */
+.pvtUnused li span.pvtAttr {
+    border: 2px dashed #c8d4e3;
+    opacity: 0.75;
+}
+
+/* 상단 선택값 */
+.pvtCols li span.pvtAttr {
+    border: 2px solid #c8d4e3;
+    font-weight: bold;
+}
+
+/* 좌측 선택값 */
+.pvtRows li span.pvtAttr {
+    border: 2px solid #c8d4e3;
+    font-weight: bold;
+}
+
+
 .pvtAxisContainer li span.pvtAttr.sortonly {
     border: 1px solid #c8d4e3;
 }
@@ -384,8 +450,4 @@ table.pvtTable tbody tr td {
 }
 .pvtCheckContainer p:hover .pvtOnlySpacer {
     display: none;
-}
-
-.pvtRendererArea {
-    padding: 5px;
 }
