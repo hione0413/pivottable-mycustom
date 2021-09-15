@@ -91,9 +91,11 @@
     function createTableTypeTwo(data, tbodyId, tableInfo) {
         var tableColumnInfo = tableInfo.tableColumnInfo;
         var nonInsertRow = tableInfo.nonInsertRow;
+        var totalRowFlag = tableInfo.totalRowFlag;
         var temp = [];
+        var totalTemp = []; // 합계를 구하기 위해 데이터를 보관
 
-        // 1. 데이터의 length 만큼 temp arr 에 table의 td 정보를 담을 Arr 를 생성해준다
+        // 1. 데이터의 length 만큼 temp arr 에 table의 td 정보를 담을 Arr 를 준비해준다.
         for (var i = 0; i < data.length; i++) {
             temp[i] = [];
         }
@@ -122,15 +124,33 @@
                     var cellHtml = "<td>" + cellValue + "</td>";
                 }
 
+                // column 별로 합계값을 저장해둔다
+                if (totalRowFlag) {
+                    var cellTotla = totalTemp[j] ? totalTemp[j] + cellValue : cellValue;
+                    totalTemp[j] = cellTotla;
+                }
+
                 temp[i].push(cellHtml);
             }
         }
+
+        console.log("totalTemp", totalTemp);
 
         // 3. 쌓아둔 temp 를 Table tbody에 담을 html로 변환한다
         var tempHtml = "";
         for (var i = 0; i < temp.length; i++) {
             tempHtml += "<tr>" + temp[i].join("") + "</tr>"
         }
+
+        // 합계 Row 생성
+        if (totalRowFlag) {
+            tempHtml += "<tr><td>계</td>";
+            for (var i = 1; i < totalTemp.length; i++) {
+                tempHtml += "<td>" + totalTemp[i] + "</td>";
+            }
+            tempHtml += "</tr>";
+        }
+
 
         // 4. 테이블 생성
         $("#" + tbodyId).html(tempHtml);
@@ -140,11 +160,7 @@
     $.getJSON("./data/dt_tp2.json", function (data) {
         // 좌측 Header 가 연도인 일반 Table 생성
         var data = data.data;
-        console.log("data", data);
 
-        // TODO : 1. 입력하지 않는 row가 존재
-        // TODO : 2. 입력하지 않는 col, cell 존재
-        // TODO : 3. 입력하지 않는 col, cell 중 계산식으로 들어가야 하는 부분 존재
         var tableInfo = {
             tableColumnInfo: [
                 { name: "연도", insertFlag: false, calcFunc: false },
@@ -152,20 +168,20 @@
                 { name: "이용인원 이용자수", insertFlag: true, calcFunc: false },
                 {
                     name: "이용인원 일평균", insertFlag: true, calcFunc: function (pData) {
-                        return pData["이용인원 이용자수"] / pData["개관일수"];
+                        return Math.round(pData["이용인원 이용자수"] / pData["개관일수"]);
                     }
                 },
                 { name: "이용자료수 자료수", insertFlag: true, calcFunc: false },
                 {
                     name: "이용자료수 일평균", insertFlag: true, calcFunc: function (pData) {
-                        return pData["이용자료수 자료수"] / pData["개관일수"];
+                        return Math.round(pData["이용자료수 자료수"] / pData["개관일수"]);
                     }
                 }
             ],
             // 입력기능이 존재하지 않는 row
             nonInsertRow: [0, 1],
             // Table 에 합계 row가 존재하는 경우 true
-            totalRow: true
+            totalRowFlag: true
         };
 
 
