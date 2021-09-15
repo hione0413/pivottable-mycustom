@@ -88,6 +88,7 @@
 
 <script>
 
+    // 좌측 Header 가 차원인 일반 Table 생성
     function createTableTypeTwo(data, tbodyId, tableInfo) {
         var tableColumnInfo = tableInfo.tableColumnInfo;
         var nonInsertRow = tableInfo.nonInsertRow;
@@ -109,6 +110,7 @@
                 var cellName = cellObj.name;
                 var cellInsertFlag = cellObj.insertFlag;
                 var cellValue = data[i][cellName];
+                var cellHtml = "";
 
                 // 계산이 필요한 cell
                 if (cellObj.calcFunc) {
@@ -118,10 +120,10 @@
                 if (cellInsertFlag && nonInsertRow.indexOf(i) === -1) {
                     // (1) 입력셀
                     var cellInput = '<input type="text" class="form-control" value="' + cellValue + '" />';
-                    var cellHtml = "<td>" + cellInput + "</td>";
+                    cellHtml = "<td>" + cellInput + "</td>";
                 } else {
                     // (2) 일반셀
-                    var cellHtml = "<td>" + cellValue + "</td>";
+                    cellHtml = "<td>" + cellValue + "</td>";
                 }
 
                 // column 별로 합계값을 저장해둔다
@@ -133,8 +135,6 @@
                 temp[i].push(cellHtml);
             }
         }
-
-        console.log("totalTemp", totalTemp);
 
         // 3. 쌓아둔 temp 를 Table tbody에 담을 html로 변환한다
         var tempHtml = "";
@@ -158,7 +158,6 @@
 
 
     $.getJSON("./data/dt_tp2.json", function (data) {
-        // 좌측 Header 가 연도인 일반 Table 생성
         var data = data.data;
 
         var tableInfo = {
