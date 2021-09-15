@@ -101,19 +101,24 @@
         // 2. <td> String 을 생성한 뒤 
         //  -> insertTableColumnName를 참조하여 객체별로 분류 
         //  -> temp 배열에 쌓아준다
-
         for (var i = 0; i < data.length; i++) {
             for (var j = 0; j < tableColumnInfo.length; j++) {
                 var cellObj = tableColumnInfo[j];
                 var cellName = cellObj.name;
-                // TODO : 여기 고치던 중
                 var cellInsertFlag = cellObj.insertFlag;
                 var cellValue = data[i][cellName];
 
+                // 계산이 필요한 cell
+                if (cellObj.calcFunc) {
+                    cellValue = cellObj.calcFunc(data[i]);
+                }
+
                 if (cellInsertFlag && nonInsertRow.indexOf(i) === -1) {
+                    // (1) 입력셀
                     var cellInput = '<input type="text" class="form-control" value="' + cellValue + '" />';
                     var cellHtml = "<td>" + cellInput + "</td>";
                 } else {
+                    // (2) 일반셀
                     var cellHtml = "<td>" + cellValue + "</td>";
                 }
 
@@ -142,12 +147,20 @@
         // TODO : 3. 입력하지 않는 col, cell 중 계산식으로 들어가야 하는 부분 존재
         var tableInfo = {
             tableColumnInfo: [
-                { name: "연도", insertFlag: false },
-                { name: "개관일수", insertFlag: true },
-                { name: "이용인원 이용자수", insertFlag: true },
-                { name: "이용인원 일평균", insertFlag: true },
-                { name: "이용자료수 자료수", insertFlag: true },
-                { name: "이용자료수 일평균", insertFlag: true }
+                { name: "연도", insertFlag: false, calcFunc: false },
+                { name: "개관일수", insertFlag: true, calcFunc: false },
+                { name: "이용인원 이용자수", insertFlag: true, calcFunc: false },
+                {
+                    name: "이용인원 일평균", insertFlag: true, calcFunc: function (pData) {
+                        return pData["이용인원 이용자수"] / pData["개관일수"];
+                    }
+                },
+                { name: "이용자료수 자료수", insertFlag: true, calcFunc: false },
+                {
+                    name: "이용자료수 일평균", insertFlag: true, calcFunc: function (pData) {
+                        return pData["이용자료수 자료수"] / pData["개관일수"];
+                    }
+                }
             ],
             // 입력기능이 존재하지 않는 row
             nonInsertRow: [0, 1],
