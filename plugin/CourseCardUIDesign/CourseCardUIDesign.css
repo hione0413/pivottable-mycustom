@@ -43,6 +43,16 @@
 	position: relative;
 	width: 100%;
 }
+
+/*
+.course-footer {
+	background-color: #033075;
+	color: #fff;
+	padding: 5px;
+	max-width: 100%;
+}
+*/
+
 th{
 	border: 1px solid #FFFFFF;
 	border-radius: 6px;
@@ -53,7 +63,7 @@ th{
 
 thead * {
 	padding: 1%;
-	min-width: 50px;
+	min-width: 60px;
 }
 
 table * {
@@ -63,9 +73,11 @@ table * {
 	text-align: right;
 }
 
-.btn-container {
-	margin-right: 20px;
+.course-footer{
 	float: right;
+	padding-right: 30px;
+	margin-top: -20px;
+	margin-bottom: 20px;
 }
 
 
