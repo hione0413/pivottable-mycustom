@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <link rel="stylesheet" href="./plugin/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="./plugin/datepicker/datepicker3.min.css" />
+    <link rel="stylesheet" href="./plugin/iCheck/square/blue.css" />
+
+    <link rel="stylesheet" href="./plugin/datatables/jquery.dataTables.min.css" />
+
+    <style>
+        table {
+            width: 100%;
+            border: 1px solid #444444;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            border: 1px solid #444444;
+        }
+    </style>
+
+    <script src="./plugin/jQuery/jQuery-2.1.4.min.js"></script>
+    <script src="./plugin/jQueryUI/jquery-ui.min.js"></script>
+    <script src="./plugin/bootstrap/js/bootstrap.min.js"></script>
+    <script src="./plugin/datepicker/bootstrap-datepicker.min.js"></script>
+    <script src="./plugin/iCheck/icheck.min.js"></script>
+
+    <script src="./plugin/datatables/jquery.dataTables.min.js"></script>
+</head>
+
+<body class="main">
+    <div class="container-fluid">
+        <!-- 필터 영역 Start -->
+        <div class="search"
+            style="margin-top:40px; margin-bottom: 40px; padding-bottom:20px; border-bottom: 1px solid #ccc;">
+            <div>
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <h2>국립중앙박물관 통계 시스템 </h2>
+                </div>
+            </div>
+            <div class="" style="margin: auto; text-align: center;">
+                <form class="form-inline">
+                    <div class="form-group" style="padding-right: 20px;">
+                        <input type="radio" name="check" id="check1" checked />
+                        <label for="check1" style="margin-right: 8px;">연별</label>
+                        <input type="radio" name="check" id="check2" />
+                        <label for="check2" style="margin-right: 8px;">월별</label>
+                        <input type="radio" name="check" id="check3" />
+                        <label for="check3" style="margin-right: 8px;">일별</label>
+                    </div>
+                    <div class="form-group">
+                        <label>기간조회</label>
+                        <span style="margin-left: 10px; margin-right: 10px;">|</span>
+                        <input type="text" class="form-control" id="startDt" style="width: 100px; display: inline;"
+                            placeholder="2021-08-13">
+                        <span style="margin-left: 10px; margin-right: 10px;">~</span>
+                        <input type="text" class="form-control" id="endDt" style="width: 100px; display: inline;"
+                            placeholder="2021-09-13">
+                    </div>
+                    <button type="button" class="btn btn-default" style="margin-left: 20px;">조회</button>
+                </form>
+            </div>
+        </div>
+        <!-- 필터 영역 End -->
+
+
+        <!-- DataTable 영역 Start -->
+        <div class="minwon">
+            <div id="test" style="margin: auto; display: table;">
+                <table id="testTable">
+                    <thead id="testThead"></thead>
+                    <tbody id="testTbody"></tbody>
+                </table>
+            </div>
+        </div>
+        <!-- DataTable Table 영역 End -->
+    </div>
+</body>
+
+<script>
+
+    // TODO : 계획 -> input 에 "dimension:::measure" 정보 저장 -> Event 부착
+    var _tableDataInfo = {
+        dimension: {
+            measure_1: {
+                column1: 12,
+                column1_origin: 12,
+                column2: 12,
+                column2_origin: 12,
+                changeFlag: false,
+            },
+            measure_2: {
+                originValue: 12,
+                value: 12,
+                changeFlag: false,
+            }
+        }
+    };
+
+    // 상단 Header 가 차원인 일반 Table 생성
+    function createTableTopDimension(data, tableParam) {
+        var theadHtmlArr = tableParam.theadHtmlArr;
+        var theadInfo = tableParam.theadInfo;
+
+        var tbodyHtmlArr = tableParam.tbodyHtmlArr;
+        var tbodyInfo = tableParam.tbodyInfo;
+
+        var nonInsertRow = tableParam.nonInsertRow;
+
+        for (var i = 0; i < data.length; i++) {
+            var dataObj = data[i];
+
+            for (var j = 0; j < theadInfo.length; j++) {
+                var thInfoName = theadInfo[j].name;
+                var thCellValue = dataObj[thInfoName];
+                var thCellHtml = '<th>' + thCellValue + '</th>';
+                theadHtmlArr[j].push(thCellHtml);
+            }
+
+            for (var j = 0; j < tbodyInfo.length; j++) {
+                var tdInfoName = tbodyInfo[j].name;
+                var cellInsertFlag = tbodyInfo[j].insertFlag;
+                var tdCellValue = dataObj[tdInfoName];
+                var tdCellHtml = "";
+
+                // 계산이 필요한 cell
+                if (tbodyInfo[j].calcFunc) {
+                    tdCellValue = tbodyInfo[j].calcFunc(dataObj);
+                }
+
+                if (cellInsertFlag && nonInsertRow.indexOf(j) === -1) {
+                    // (1) 입력셀
+                    var tdCellInput = '<input type="text" class="form-control" value="' + tdCellValue + '" />';
+                    tdCellHtml = "<td>" + tdCellInput + "</td>";
+                } else {
+                    // (2) 일반셀
+                    tdCellHtml = '<td>' + tdCellValue + '</td>';
+                }
+
+                tbodyHtmlArr[j].push(tdCellHtml);
+            }
+
+
+        } // for end
+
+        console.log("theadHtmlArr", theadHtmlArr);
+        console.log("tbodyHtmlArr", tbodyHtmlArr);
+        theadHtmlArr.push("</tr>");
+        tbodyHtmlArr.push("</tr>");
+
+        $("#" + tableParam.theadId).html(theadHtmlArr.join());
+        $("#" + tableParam.tbodyId).html(tbodyHtmlArr.join());
+    }
+
+
+    /**
+     * 순서가 보존되어야 하므로 Arr 값 반환
+     * dimFirst : key - 차원1
+     * dimSecond : 차원2
+     * measureArr : 측정값 str 배열
+    */
+    function realignDataByDoubleDimension(data, dimFirst, dimSecond, measureArr) {
+        console.log("data", data);
+        var result = [];
+        var tempObj = {};
+
+        for (var i = 0; i < data.length; i++) {
+            var rowData = data[i];
+
+            // 0. dimension First 값이 기존과 다를 경우 obj -> arr에 저장 후 초기화
+            if (tempObj[dimFirst] && tempObj[dimFirst] !== rowData[dimFirst]) {
+                result.push(tempObj);
+                tempObj = {};
+            }
+
+            // 1. dimension First 값 세팅
+            if (!tempObj[dimFirst]) {
+                tempObj[dimFirst] = rowData[dimFirst];
+            }
+
+            // 2. dimension Second 값을 세팅할 obj 생성
+            if (!tempObj[dimSecond]) {
+                tempObj[dimSecond] = {};
+            }
+
+            // 3. dimension Second 내용 중 key값이 없으면 세팅
+
+
+            for (var j = 0; j < measureArr.length; j++) {
+                tempObj[dimSecond][measureArr]
+            }
+
+
+            console.log("tempObj", tempObj);
+
+            // TODO : 고민 중
+            // result = [
+            //     {
+            //         "연도": 2018,
+            //         "도서관구분" : {
+            //             "본관": {
+            //                 "방문자수": 1,
+            //                 "개관일수": 1
+            //             },
+            //             "디지털도서관": {
+
+            //             },
+            //             "어린이청소년도서관": {
+
+            //             }
+            //         }
+
+            //     }
+            // ]
+
+            // 2 안이 유력
+            // result = [
+            //     {
+            //         "연도": 2018,
+            //         "본관": {
+            //             "방문자수": 1,
+            //             "개관일수": 1
+            //         },
+            //         "디지털도서관": {
+
+            //         },
+            //         "어린이청소년도서관": {
+
+            //         }
+            //     }
+            // ]
+
+
+            // 3. 마지막 obj -> arr 저장
+            if (i === data.length - 1) {
+                result.push(tempObj);
+            }
+        }
+
+        console.log("result", result);
+    }
+
+
+    $.getJSON("./data/도서관이용방문.json", function (data) {
+        var data = data.data;
+
+        // 1. 데이터를 테이블로 만들기 좋게 변환
+        realignDataByDoubleDimension(data, "연도", "도서관구분", ["방문자수", "개관일수"]);
+
+        return;
+        var tableCreateParam = {
+            tableId: "",
+            theadId: "testThead",
+            tbodyId: "testTbody",
+            dimension: ["기준년도"],
+            measure: ["본관", "디지털도서관", "어린이청소년도서관", "세종도서관"],
+            theadHtmlArr: [
+                ['<th colspan="2">구분</th>']
+            ],
+            theadInfo: [
+                { name: "기준년도" }
+            ],
+            tbodyHtmlArr: [
+                ['<tr>', '<th rowspan="6">국립중앙도서관</th>', '<th>본 관</th>'],  //0
+                ['<tr>', '<th>(일평균)</th>'],                                      //1
+                ['<tr>', '<th>디지털도서관</th>'],                                  //2
+                ['<tr>', '<th>(일평균)</th>'],                                      //3
+                ['<tr>', '<th>소계</th>'],                                          //4
+                ['<tr>', '<th>(일평균)</th>'],                                      //5
+                ['<tr>', '<th colspan="2">어린이청소년도서관</th>'],                //6
+                ['<tr>', '<th colspan="2">(일평균)</th>'],                          //7
+                ['<tr>', '<th colspan="2">세종도서관</th>'],                        //8
+                ['<tr>', '<th colspan="2">(일평균)</th>'],                          //9
+                ['<tr>', '<th colspan="2">계</th>'],                                 //10
+                ['<tr>', '<th colspan="2">(일평균)</th>']                           //11
+            ],
+            tbodyInfo: [
+                { name: "본관", insertFlag: true, calcFunc: false }, //0
+                { name: "본관 일평균", insertFlag: true, calcFunc: false },//1
+                { name: "디지털도서관", insertFlag: true, calcFunc: false }, //2
+                { name: "디지털도서관 일평균", insertFlag: true, calcFunc: false }, //3
+                {
+                    name: "소계", insertFlag: true, calcFunc: function (pData) {    //4
+                        return pData["본관"] + pData["디지털도서관"];
+                    }
+                },
+                {
+                    name: "소계 일평균", insertFlag: true, calcFunc: function (pData) {//5
+                        return "";
+                    }
+                },
+                { name: "어린이청소년도서관", insertFlag: true, calcFunc: false },  //6
+                { name: "어린이청소년도서관 일평균", insertFlag: true, calcFunc: false },   // 7
+                { name: "세종도서관", insertFlag: true, calcFunc: false }, //8
+                { name: "세종도서관 일평균", insertFlag: true, calcFunc: false }, //9
+                {
+                    name: "계", insertFlag: true, calcFunc: function (pData) {      //10
+                        return pData["본관"] + pData["디지털도서관"] + pData["어린이청소년도서관"] + pData["세종도서관"];
+                    }
+                },
+                {
+                    name: "계 일평균", insertFlag: true, calcFunc: function (pData) {   //11
+                        return "";
+                    }
+                }
+            ],
+
+            // 입력기능이 존재하지 않는 row
+            nonInsertRow: [1, 3, 4, 5, 7, 9, 10, 11]
+        };
+
+
+        createTableTopDimension(data, tableCreateParam);
+    });
+
+</script>
+
+</html>

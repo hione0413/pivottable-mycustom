@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<script>
+    var test =
+        `2018	본관	382355	254
+    2018	디지털도서관	412059	324
+    2018	어린이청소년도서관	96176	325
+    2018	세종도서관	810122	324
+    2019	본관	561249	327
+    2019	디지털도서관	284646	287
+    2019	어린이청소년도서관	109094	325
+    2019	세종도서관	823908	123
+    2020	본관	110021	146
+    2020	디지털도서관	12419	122
+    2020	어린이청소년도서관	13191	75
+    2020	세종도서관	156489	123
+    2021	본관	17900	63
+    2021	디지털도서관	11172	63
+    2021	어린이청소년도서관	1981	63
+    2021	세종도서관	28084	69`;
+
+    test = test.split("\n");
+
+    console.log("test", test);
+
+    var temp = [];
+    for (var i = 0; i < test.length; i++) {
+        var data = test[i].split("\t");
+        console.log("data", data);
+
+        var obj = {
+            "연도": parseInt(data[0].trim()),
+            "도서관구분": data[1].trim(),
+            "방문자수": parseInt(data[2].trim()),
+            "개관일수": parseInt(data[3].trim())
+
+        };
+        console.log("obj", obj);
+        temp.push(obj);
+    }
+    console.log(temp)
+
+</script>
+
+<body>
+
+</body>
+
+</html>
