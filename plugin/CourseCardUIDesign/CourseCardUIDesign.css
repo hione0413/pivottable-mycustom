@@ -1,0 +1,119 @@
+@import url('https://fonts.googleapis.com/css?family=Muli&display=swap');
+
+* {
+	box-sizing: border-box;
+}
+
+.course {
+	background-color: #fff;
+	border-radius: 10px;
+	box-shadow: 0 10px 10px rgba(0, 0, 0, 0.2);
+	display: flex;
+	/* max-width: 100%; */
+	margin: 20px;
+	overflow: hidden;
+	min-width: 300px;
+	display:inline-block;
+}
+
+.course h2 {
+	letter-spacing: 1px;
+	margin: 20px 0;
+	text-align: center;
+}
+
+.course-preview {
+	background-color: #033075;
+	color: #fff;
+	padding: 5px;
+	max-width: 100%;
+}
+
+.course-preview a {
+	color: #fff;
+	display: inline-block;
+	font-size: 12px;
+	opacity: 0.6;
+	margin-top: 30px;
+	text-decoration: none;
+}
+
+.course-info {
+	padding: 30px;
+	position: relative;
+	width: 100%;
+}
+th{
+	border: 1px solid #FFFFFF;
+	border-radius: 6px;
+	color: white;
+	background-color: gray;
+	text-align: center;
+}
+
+thead * {
+	padding: 1%;
+	min-width: 50px;
+}
+
+table * {
+	font-size: 12pt;
+}
+.form-control {
+	text-align: right;
+}
+
+.btn-container {
+	margin-right: 20px;
+	float: right;
+}
+
+
+/* DivTable */
+.divTable {
+	display: table, inline-block;
+	/* width: 100%; */
+	/* css 추가된 부분 */
+	background-color: #fff;
+	border-radius: 10px;
+	box-shadow: 0 10px 10px rgba(0, 0, 0, 0.2);
+	display: flex;
+	margin: 20px;
+	overflow: hidden;
+	min-width: 300px;
+	display:inline-block;
+	/* 추가 끝 */
+}
+.divTableRow {
+	display: table-row;
+}
+.divTableHeading {
+	/* background-color: #EEE; */
+	display: table-header-group;
+	font-weight: bold;
+	/* css 추가된 부분 */
+	/* background-color: #2A265F; */
+	background-color: #033075;
+	color: #fff;
+	padding: 30px;
+	max-width: 100%;
+	/* 끝 */
+}
+.divTableCell, .divTableHead {
+	border: 1px solid #999999;
+	display: table-cell;
+	padding: 3px 10px;
+}
+.divTableFoot {
+	background-color: #EEE;
+	display: table-footer-group;
+	font-weight: bold;
+}
+.divTableBody {
+	display: table-row-group;
+	/* css 추가된 부분 */
+	padding: 30px;
+	position: relative;
+	width: 100%;
+}
+/* DivTable 끝 */

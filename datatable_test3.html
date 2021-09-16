@@ -63,32 +63,78 @@
 
 
 		<!-- DataTable 영역 Start -->
+		<!-- 
 		<div class="minwon">
 			<div id="test" style="margin: auto; display: table;">
-				<table>
-					<thead>
-						<tr>
-							<th rowspan="2">연도</th>
-							<th rowspan="2">개관일수</th>
-							<th colspan="2">이용인원(명)</th>
-							<th colspan="2">이용자료수(책)</th>
-						</tr>
-						<tr>
-							<td>이용자수</td>
-							<td>일평균</td>
-							<td>자료수</td>
-							<td>일평균</td>
-						</tr>
-					</thead>
-					<tbody id="testTbody">
-
-					</tbody>
-				</table>
+				<div class="divTable">
+					<div class="divTableHeading">
+						<div class="divTableRow">
+							<div class="divTableHead">연도&nbsp;</div>
+							<div class="divTableHead">개관일수&nbsp;</div>
+							<div class="divTableHead">이용인원(명)&nbsp;</div>
+							<div class="divTableHead">&nbsp;</div>
+							<div class="divTableHead">이용자료수(책)&nbsp;</div>
+							<div class="divTableHead">&nbsp;</div>
+						</div>
+						<div class="divTableRow">
+							<div class="divTableCell">&nbsp;</div>
+							<div class="divTableCell">&nbsp;</div>
+							<div class="divTableCell">이용자수&nbsp;</div>
+							<div class="divTableCell">일평균&nbsp;</div>
+							<div class="divTableCell">자료수&nbsp;</div>
+							<div class="divTableCell">일평균&nbsp;</div>
+						</div>
+					</div>
+					<div class="divTableBody" id="testTbody"></div>
+				</div>
 			</div>
-			<!-- DataTable Table 영역 End -->
-
-
 		</div>
+		 -->
+		<!-- DataTable Table 영역 End -->
+
+
+		<!-- DataTable 영역 Start -->
+		<div class="minwon">
+			<div class="courses-container">
+				<div id="test2" style="margin: auto; display: table;">
+					<div class="course">
+						<div class="course-preview">
+							<h2>자료 총 현황</h2>
+						</div>
+						<div class="course-info">
+							<table>
+								<thead>
+									<tr>
+										<th rowspan="2">연도</th>
+										<th rowspan="2">개관일수</th>
+										<th colspan="2">이용인원(명)</th>
+										<th colspan="2">이용자료수(책)</th>
+									</tr>
+									<tr>
+										<th>이용자수</th>
+										<th>일평균</th>
+										<th>자료수</th>
+										<th>일평균</th>
+									</tr>
+								</thead>
+								<tbody id="testTbody">
+
+								</tbody>
+							</table>
+						</div>
+					</div>
+					<div class="table-footer">
+						<div class="btn-container">
+							<button type="button" class="btn btn-default">엑셀로 받기</button>
+							<button type="button" class="btn btn-default">수정</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- DataTable Table 영역 End -->
+
+	</div>
 </body>
 
 <script>
@@ -106,10 +152,12 @@
 						var data = data.data;
 						var insertTableColumnName = CONST.insertTableColumnName;
 						var temp = [];
+						//var temp2 = [];
 
 						// 데이터의 length 만큼 temp arr 에 table의 td 정보를 담을 Arr 를 생성해준다
 						for (var i = 0; i < data.length; i++) {
 							temp[i] = [];
+							//temp2[i] = [];
 						}
 
 						// <td> String 을 생성한 뒤 
@@ -120,20 +168,26 @@
 								var cellValue = data[i][insertTableColumnName[j]];
 
 								if (j == 0) {
-									var cellHtml = "<td>" + cellValue + "</td>";
+									//var cellHtml2 = '<div class="divTableCell">' + cellValue + '&nbsp;</div>';
+									var cellHtml = '<th>' + cellValue + '</th>';
 								} else {
 									var cellInput = '<input type="text" class="form-control" value="' + cellValue + '" />';
+									//var cellHtml2 = '<div class="divTableCell">' + cellInput + '&nbsp;</div>';
 									var cellHtml = "<td>" + cellInput + "</td>";
 								}
 
 								temp[i].push(cellHtml);
+								//temp2[i].push(cellHtml2);
 							}
 						}
 
 						// 쌓아둔 temp 를 Table tbody에 담을 html로 변환한다
 						var tempHtml = "";
+						//var tempHtml2 = "";
 						for (var i = 0; i < temp.length; i++) {
-							tempHtml += "<tr>" + temp[i].join("") + "</tr>"
+							//tempHtml2 += '<div class="divTableRow">' + temp2[i].join("") + '</div>';
+							tempHtml += "<tr>" + temp[i].join("") + "</tr>";
+
 						}
 
 						// 테이블 생성
