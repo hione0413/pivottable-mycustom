@@ -106,6 +106,7 @@
 
     // 상단 Header 가 차원인 일반 Table 생성
     function createTableTopDimension(data, tableParam) {
+        console.log("data", data);
         var theadHtmlArr = tableParam.theadHtmlArr;
         var theadInfo = tableParam.theadInfo;
 
@@ -116,6 +117,7 @@
 
         for (var i = 0; i < data.length; i++) {
             var dataObj = data[i];
+            console.log("dataObj", dataObj);
 
             for (var j = 0; j < theadInfo.length; j++) {
                 var thInfoName = theadInfo[j].name;
@@ -167,7 +169,6 @@
      * measureArr : 측정값 str 배열
     */
     function realignDataByDoubleDimension(data, dimFirst, dimSecond, measureArr) {
-        console.log("data", data);
         var result = [];
         var tempObj = {};
 
@@ -186,57 +187,25 @@
             }
 
             // 2. dimension Second 값을 세팅할 obj 생성
-            if (!tempObj[dimSecond]) {
-                tempObj[dimSecond] = {};
+            if (!tempObj[rowData[dimSecond]]) {
+                tempObj[rowData[dimSecond]] = {};
             }
 
             // 3. dimension Second 내용 중 key값이 없으면 세팅
 
-
             for (var j = 0; j < measureArr.length; j++) {
-                tempObj[dimSecond][measureArr]
+                tempObj[rowData[dimSecond]][measureArr[j]] = rowData[measureArr[j]];
             }
 
-
-            console.log("tempObj", tempObj);
-
-            // TODO : 고민 중
-            // result = [
-            //     {
-            //         "연도": 2018,
-            //         "도서관구분" : {
-            //             "본관": {
-            //                 "방문자수": 1,
-            //                 "개관일수": 1
-            //             },
-            //             "디지털도서관": {
-
-            //             },
-            //             "어린이청소년도서관": {
-
-            //             }
-            //         }
-
-            //     }
-            // ]
-
-            // 2 안이 유력
             // result = [
             //     {
             //         "연도": 2018,
             //         "본관": {
             //             "방문자수": 1,
             //             "개관일수": 1
-            //         },
-            //         "디지털도서관": {
-
-            //         },
-            //         "어린이청소년도서관": {
-
-            //         }
+            //         }, ...
             //     }
             // ]
-
 
             // 3. 마지막 obj -> arr 저장
             if (i === data.length - 1) {
@@ -244,7 +213,7 @@
             }
         }
 
-        console.log("result", result);
+        return result;
     }
 
 
@@ -252,15 +221,13 @@
         var data = data.data;
 
         // 1. 데이터를 테이블로 만들기 좋게 변환
-        realignDataByDoubleDimension(data, "연도", "도서관구분", ["방문자수", "개관일수"]);
+        var alignedData = realignDataByDoubleDimension(data, "연도", "도서관구분", ["방문자수", "개관일수"]);
 
-        return;
+        // 2. 페이지 별로 테이블 파라메터 세팅
         var tableCreateParam = {
             tableId: "",
             theadId: "testThead",
             tbodyId: "testTbody",
-            dimension: ["기준년도"],
-            measure: ["본관", "디지털도서관", "어린이청소년도서관", "세종도서관"],
             theadHtmlArr: [
                 ['<th colspan="2">구분</th>']
             ],
@@ -282,31 +249,31 @@
                 ['<tr>', '<th colspan="2">(일평균)</th>']                           //11
             ],
             tbodyInfo: [
-                { name: "본관", insertFlag: true, calcFunc: false }, //0
-                { name: "본관 일평균", insertFlag: true, calcFunc: false },//1
-                { name: "디지털도서관", insertFlag: true, calcFunc: false }, //2
-                { name: "디지털도서관 일평균", insertFlag: true, calcFunc: false }, //3
+                { name: "본관", keyOne: "", keyTwo: "", insertFlag: true, calcFunc: false }, //0
+                { name: "본관 일평균", insertFlag: false, calcFunc: false },//1
+                { name: "디지털도서관", keyOne: "", keyTwo: "", insertFlag: true, calcFunc: false }, //2
+                { name: "디지털도서관 일평균", insertFlag: false, calcFunc: false }, //3
                 {
                     name: "소계", insertFlag: true, calcFunc: function (pData) {    //4
                         return pData["본관"] + pData["디지털도서관"];
                     }
                 },
                 {
-                    name: "소계 일평균", insertFlag: true, calcFunc: function (pData) {//5
+                    name: "소계 일평균", insertFlag: false, calcFunc: function (pData) {//5
                         return "";
                     }
                 },
-                { name: "어린이청소년도서관", insertFlag: true, calcFunc: false },  //6
-                { name: "어린이청소년도서관 일평균", insertFlag: true, calcFunc: false },   // 7
-                { name: "세종도서관", insertFlag: true, calcFunc: false }, //8
-                { name: "세종도서관 일평균", insertFlag: true, calcFunc: false }, //9
+                { name: "어린이청소년도서관", keyOne: "", keyTwo: "", insertFlag: true, calcFunc: false },  //6
+                { name: "어린이청소년도서관 일평균", insertFlag: false, calcFunc: false },   // 7
+                { name: "세종도서관", keyOne: "", keyTwo: "", insertFlag: true, calcFunc: false }, //8
+                { name: "세종도서관 일평균", insertFlag: false, calcFunc: false }, //9
                 {
-                    name: "계", insertFlag: true, calcFunc: function (pData) {      //10
+                    name: "계", insertFlag: false, calcFunc: function (pData) {      //10
                         return pData["본관"] + pData["디지털도서관"] + pData["어린이청소년도서관"] + pData["세종도서관"];
                     }
                 },
                 {
-                    name: "계 일평균", insertFlag: true, calcFunc: function (pData) {   //11
+                    name: "계 일평균", insertFlag: false, calcFunc: function (pData) {   //11
                         return "";
                     }
                 }
@@ -316,8 +283,9 @@
             nonInsertRow: [1, 3, 4, 5, 7, 9, 10, 11]
         };
 
-
-        createTableTopDimension(data, tableCreateParam);
+        // 3. 테이블 생성
+        // createTableTopDimension(data, tableCreateParam);
+        createTableTopDimension(alignedData, tableCreateParam);
     });
 
 </script>
