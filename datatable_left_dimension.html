@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <link rel="stylesheet" href="./plugin/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="./plugin/datepicker/datepicker3.min.css" />
+    <link rel="stylesheet" href="./plugin/iCheck/square/blue.css" />
+
+    <link rel="stylesheet" href="./plugin/datatables/jquery.dataTables.min.css" />
+
+    <script src="./plugin/jQuery/jQuery-2.1.4.min.js"></script>
+    <script src="./plugin/jQueryUI/jquery-ui.min.js"></script>
+    <script src="./plugin/bootstrap/js/bootstrap.min.js"></script>
+    <script src="./plugin/datepicker/bootstrap-datepicker.min.js"></script>
+    <script src="./plugin/iCheck/icheck.min.js"></script>
+
+    <script src="./plugin/datatables/jquery.dataTables.js"></script>
+</head>
+
+<body class="main">
+    <div class="container-fluid">
+        <!-- 필터 영역 Start -->
+        <div class="search"
+            style="margin-top:40px; margin-bottom: 40px; padding-bottom:20px; border-bottom: 1px solid #ccc;">
+            <div>
+                <div style="text-align: center; margin-bottom: 20px;">
+                    <h2>국립중앙박물관 통계 시스템 </h2>
+                </div>
+            </div>
+            <div class="" style="margin: auto; text-align: center;">
+                <form class="form-inline">
+                    <div class="form-group" style="padding-right: 20px;">
+                        <input type="radio" name="check" id="check1" checked />
+                        <label for="check1" style="margin-right: 8px;">연별</label>
+                        <input type="radio" name="check" id="check2" />
+                        <label for="check2" style="margin-right: 8px;">월별</label>
+                        <input type="radio" name="check" id="check3" />
+                        <label for="check3" style="margin-right: 8px;">일별</label>
+                    </div>
+                    <div class="form-group">
+                        <label>기간조회</label>
+                        <span style="margin-left: 10px; margin-right: 10px;">|</span>
+                        <input type="text" class="form-control" id="startDt" style="width: 100px; display: inline;"
+                            placeholder="2021-08-13">
+                        <span style="margin-left: 10px; margin-right: 10px;">~</span>
+                        <input type="text" class="form-control" id="endDt" style="width: 100px; display: inline;"
+                            placeholder="2021-09-13">
+                    </div>
+                    <button type="button" class="btn btn-default" style="margin-left: 20px;">조회</button>
+                </form>
+            </div>
+        </div>
+        <!-- 필터 영역 End -->
+
+
+        <!-- DataTable 영역 Start -->
+        <div class="minwon">
+            <div id="test" style="margin: auto; display: table;">
+                <table id="testTable">
+                    <thead>
+                        <tr>
+                            <th rowspan="2">연도</th>
+                            <th rowspan="2">개관일수</th>
+                            <th colspan="2">이용인원(명)</th>
+                            <th colspan="2">이용자료수(책)</th>
+                        </tr>
+                        <tr>
+                            <td>이용자수</td>
+                            <td>일평균</td>
+                            <td>자료수</td>
+                            <td>일평균</td>
+                        </tr>
+                    </thead>
+                    <tbody id="testTbody">
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- DataTable Table 영역 End -->
+    </div>
+</body>
+
+<script>
+
+    var _tableDataInfo = {
+
+    };
+
+    // 좌측 Header 가 차원인 일반 Table 생성
+    function createTableLeftDimension(data, tableParam) {
+        var tableId = tableParam.tableId;
+        var tbodyId = tableParam.tbodyId;
+
+        var tableColumnInfo = tableParam.tableColumnInfo;
+        var nonInsertRow = tableParam.nonInsertRow;
+        var totalRowFlag = tableParam.totalRowFlag;
+
+        var temp = [];
+        var totalTemp = []; // 합계를 구하기 위해 데이터를 보관
+
+        // 1. 데이터의 length 만큼 temp arr 에 table의 td 정보를 담을 Arr 를 준비해준다.
+        for (var i = 0; i < data.length; i++) {
+            temp[i] = [];
+        }
+
+        // 2. <td> String 을 생성한 뒤 
+        //  -> insertTableColumnName를 참조하여 객체별로 분류 
+        //  -> temp 배열에 쌓아준다
+        for (var i = 0; i < data.length; i++) {
+            for (var j = 0; j < tableColumnInfo.length; j++) {
+                var cellObj = tableColumnInfo[j];
+                var cellName = cellObj.name;
+                var cellInsertFlag = cellObj.insertFlag;
+                var cellValue = data[i][cellName];
+                var cellHtml = "";
+
+                // 계산이 필요한 cell
+                if (cellObj.calcFunc) {
+                    cellValue = cellObj.calcFunc(data[i]);
+                }
+
+                if (cellInsertFlag && nonInsertRow.indexOf(i) === -1) {
+                    // (1) 입력셀
+                    var cellInput = '<input type="text" class="form-control" value="' + cellValue + '" />';
+                    cellHtml = "<td>" + cellInput + "</td>";
+                } else {
+                    // (2) 일반셀
+                    cellHtml = "<td>" + cellValue + "</td>";
+                }
+
+                // column 별로 합계값을 저장해둔다
+                if (totalRowFlag) {
+                    var cellTotla = totalTemp[j] ? totalTemp[j] + cellValue : cellValue;
+                    totalTemp[j] = cellTotla;
+                }
+
+                temp[i].push(cellHtml);
+            }
+        }
+
+        // 3. 쌓아둔 temp 를 Table tbody에 담을 html로 변환한다
+        var tempHtml = "";
+        for (var i = 0; i < temp.length; i++) {
+            tempHtml += "<tr>" + temp[i].join("") + "</tr>"
+        }
+
+        // 합계 Row 생성
+        if (totalRowFlag) {
+            tempHtml += "<tr><td>계</td>";
+            for (var i = 1; i < totalTemp.length; i++) {
+                tempHtml += "<td>" + totalTemp[i] + "</td>";
+            }
+            tempHtml += "</tr>";
+        }
+
+
+        // 4. 테이블 생성
+        $("#" + tbodyId).html(tempHtml);
+    }
+
+
+    $.getJSON("./data/dt_tp2.json", function (data) {
+        var data = data.data;
+
+        var tableCreateParam = {
+            tableId: "testTable",
+            tbodyId: "testTbody",
+            tableColumnInfo: [
+                { name: "연도", insertFlag: false, calcFunc: false },
+                { name: "개관일수", insertFlag: true, calcFunc: false },
+                { name: "이용인원 이용자수", insertFlag: true, calcFunc: false },
+                {
+                    name: "이용인원 일평균", insertFlag: true, calcFunc: function (pData) {
+                        return Math.round(pData["이용인원 이용자수"] / pData["개관일수"]);
+                    }
+                },
+                { name: "이용자료수 자료수", insertFlag: true, calcFunc: false },
+                {
+                    name: "이용자료수 일평균", insertFlag: true, calcFunc: function (pData) {
+                        return Math.round(pData["이용자료수 자료수"] / pData["개관일수"]);
+                    }
+                }
+            ],
+            // 입력기능이 존재하지 않는 row
+            nonInsertRow: [0, 1],
+            // Table 에 합계 row가 존재하는 경우 true
+            totalRowFlag: true
+        };
+
+
+        createTableLeftDimension(data, tableCreateParam);
+    });
+
+</script>
+
+</html>
