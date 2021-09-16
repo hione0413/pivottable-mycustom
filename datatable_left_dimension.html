@@ -61,7 +61,7 @@
         <!-- DataTable 영역 Start -->
         <div class="minwon">
             <div id="test" style="margin: auto; display: table;">
-                <table>
+                <table id="testTable">
                     <thead>
                         <tr>
                             <th rowspan="2">연도</th>
@@ -88,11 +88,19 @@
 
 <script>
 
+    var _tableDataInfo = {
+
+    };
+
     // 좌측 Header 가 차원인 일반 Table 생성
-    function createTableTypeTwo(data, tbodyId, tableInfo) {
-        var tableColumnInfo = tableInfo.tableColumnInfo;
-        var nonInsertRow = tableInfo.nonInsertRow;
-        var totalRowFlag = tableInfo.totalRowFlag;
+    function createTableLeftDimension(data, tableParam) {
+        var tableId = tableParam.tableId;
+        var tbodyId = tableParam.tbodyId;
+
+        var tableColumnInfo = tableParam.tableColumnInfo;
+        var nonInsertRow = tableParam.nonInsertRow;
+        var totalRowFlag = tableParam.totalRowFlag;
+
         var temp = [];
         var totalTemp = []; // 합계를 구하기 위해 데이터를 보관
 
@@ -160,7 +168,9 @@
     $.getJSON("./data/dt_tp2.json", function (data) {
         var data = data.data;
 
-        var tableInfo = {
+        var tableCreateParam = {
+            tableId: "testTable",
+            tbodyId: "testTbody",
             tableColumnInfo: [
                 { name: "연도", insertFlag: false, calcFunc: false },
                 { name: "개관일수", insertFlag: true, calcFunc: false },
@@ -184,7 +194,7 @@
         };
 
 
-        createTableTypeTwo(data, "testTbody", tableInfo);
+        createTableLeftDimension(data, tableCreateParam);
     });
 
 </script>

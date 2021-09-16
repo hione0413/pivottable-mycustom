@@ -86,7 +86,7 @@
 
 <script>
     // 상단 Header 가 차원인 일반 Table 생성
-    function createTableTypeOne(data, tableParam) {
+    function createTableTopDimension(data, tableParam) {
         var theadHtmlArr = tableParam.theadHtmlArr;
         var theadInfo = tableParam.theadInfo;
 
@@ -129,7 +129,7 @@
             }
 
 
-        }
+        } // for end
 
         console.log("theadHtmlArr", theadHtmlArr);
         console.log("tbodyHtmlArr", tbodyHtmlArr);
@@ -184,7 +184,7 @@
         };
 
 
-        createTableTypeOne(data, tableCreateParam);
+        createTableTopDimension(data, tableCreateParam);
     });
 
 </script>
