@@ -184,14 +184,22 @@
     // TODO : 변수명 임시
     function compareChangedTableValue(tableKey) {
         var targetTableParam = _TABLE_PARAM[tableKey];
+        var tbodyInfo = targetTableParam.tbodyInfo;
+        var theadInfo = targetTableParam.theadInfo;
+
         var targetData = _tableData[tableKey];  // 변경된 값 정보가 담긴 Array
         var originData = _tableOriginData[tableKey];    // 기존 값 정보가 담긴 Array
-
-        var tbodyInfo = targetTableParam.tbodyInfo;
 
         for (var i = 0; i < targetData.length; i++) {
             var targetDataObj = targetData[i];
             var originDataObj = originData[i];
+            var headerValue = "";
+
+            for (var j = 0; j < theadInfo.length; j++) {
+                var thDimension = theadInfo[j].dimension;
+                var thCellValue = targetDataObj[thDimension];
+                headerValue = thCellValue;
+            }
 
             for (var j = 0; j < tbodyInfo.length; j++) {
                 var tdInfoName = tbodyInfo[j].name;
@@ -212,15 +220,33 @@
                     }
                 }
 
-                if(targetCellValue !== originCellValue) {
-                    // TODO : 변경된 값임
-                    var tdId = tableKey + "_" + i + "_" + j;
-                    
-                    if (cellInsertFlag) {
-                        // (1) input 값 변경
-                        // (2) 변경된 값들 모아둔 obj 에 정보 저장
+                var tdId = tableKey + "_" + i + "_" + j;
+
+
+                if(cellInsertFlag) {
+                    // input
+                    var inputId = tableKey + "_" + headerValue + "_" + tdDimension + "_" + tdMeasure;
+                    var $inputId = $("#" + inputId);
+
+                    if(targetCellValue !== originCellValue) {
+                        // 값이 기존과 다름
+                        $inputId.css("color", "red");
                     } else {
-                        // td값 변경
+                        // 값이 기존과 같음
+                        $inputId.css("color", "black");
+                    }
+                } else {
+                    // td값 변경
+                    var tdId = tableKey + "_" + i + "_" + j;
+                    var $tdId = $("#" + tdId);
+                    $tdId.html(targetCellValue);
+
+                    if(targetCellValue !== originCellValue) {
+                        // 값이 기존과 다름
+                        $tdId.css("color", "red");
+                    } else {
+                        // 값이 기존과 같음
+                        $tdId.css("color", "black");
                     }
                 }
             }
