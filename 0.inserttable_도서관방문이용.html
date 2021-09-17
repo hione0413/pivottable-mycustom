@@ -86,60 +86,198 @@
 
 <script>
 
-    // TODO : 계획 -> input 에 "dimension:::measure" 정보 저장 -> Event 부착
-    var _tableDataInfo = {
-        dimension: {
-            measure_1: {
-                column1: 12,
-                column1_origin: 12,
-                column2: 12,
-                column2_origin: 12,
-                changeFlag: false,
-            },
-            measure_2: {
-                originValue: 12,
-                value: 12,
-                changeFlag: false,
+    var _TABLE_PARAM = {
+        table_first: {
+            tableKey: "table_first",
+            tableId: "",
+            theadId: "testThead",
+            tbodyId: "testTbody",
+            theadHtmlArr: [
+                ['<th colspan="2">연도</th>']
+            ],
+            theadInfo: [
+                { name: "기준년도", dimension: "연도", measure: "" }
+            ],
+            tbodyHtmlArr: [
+                ['<tr>', '<th rowspan="6">국립중앙도서관</th>', '<th>본 관</th>'],  //0
+                ['<tr>', '<th>(일평균)</th>'],                                      //1
+                ['<tr>', '<th>디지털도서관</th>'],                                  //2
+                ['<tr>', '<th>(일평균)</th>'],                                      //3
+                ['<tr>', '<th>소계</th>'],                                          //4
+                ['<tr>', '<th>(일평균)</th>'],                                      //5
+                ['<tr>', '<th colspan="2">어린이청소년도서관</th>'],                //6
+                ['<tr>', '<th colspan="2">(일평균)</th>'],                          //7
+                ['<tr>', '<th colspan="2">세종도서관</th>'],                        //8
+                ['<tr>', '<th colspan="2">(일평균)</th>'],                          //9
+                ['<tr>', '<th colspan="2">계</th>'],                                //10
+                ['<tr>', '<th colspan="2">(일평균)</th>']                           //11
+            ],
+            tbodyInfo: [
+                { name: "본관", dimension: "본관", measure: "방문자수", insertFlag: true, calcFunc: false }, //0
+                {
+                    name: "본관 일평균", insertFlag: false, calcFunc: function (pData) {
+                        return Math.round(pData["본관"]["방문자수"] / pData["본관"]["개관일수"]);
+                    }
+                },//1
+                { name: "디지털도서관", dimension: "디지털도서관", measure: "방문자수", insertFlag: true, calcFunc: false }, //2
+                {
+                    name: "디지털도서관 일평균", insertFlag: false, calcFunc: function (pData) {
+                        return Math.round(pData["디지털도서관"]["방문자수"] / pData["디지털도서관"]["개관일수"]);
+                    }
+                }, //3
+                {
+                    name: "소계", insertFlag: false, calcFunc: function (pData) {
+                        return pData["본관"]["방문자수"] + pData["디지털도서관"]["방문자수"];
+                    }   // 4
+                },
+                {
+                    name: "소계 일평균", insertFlag: false, calcFunc: function (pData) {
+                        return Math.round(
+                            (pData["본관"]["방문자수"] + pData["디지털도서관"]["방문자수"])
+                            / (pData["본관"]["개관일수"] + pData["디지털도서관"]["개관일수"])
+                        );
+                    }
+                },    // 5
+                { name: "어린이청소년도서관", dimension: "어린이청소년도서관", measure: "방문자수", insertFlag: true, calcFunc: false },  //6
+                {
+                    name: "어린이청소년도서관 일평균", insertFlag: false, calcFunc: function (pData) {
+                        return Math.round(pData["어린이청소년도서관"]["방문자수"] / pData["어린이청소년도서관"]["개관일수"]);
+                    }
+                },   // 7
+                { name: "세종도서관", dimension: "세종도서관", measure: "방문자수", insertFlag: true, calcFunc: false }, //8
+                {
+                    name: "세종도서관 일평균", insertFlag: false, calcFunc: function (pData) {
+                        return Math.round(pData["세종도서관"]["방문자수"] / pData["세종도서관"]["개관일수"]);
+                    }
+                }, //9
+                {
+                    name: "계", insertFlag: false, calcFunc: function (pData) {
+                        return pData["본관"]["방문자수"] + pData["디지털도서관"]["방문자수"]
+                            + pData["어린이청소년도서관"]["방문자수"] + pData["세종도서관"]["방문자수"];
+                    }
+                }, //10
+                {
+                    name: "계 일평균", insertFlag: false, calcFunc: function (pData) {
+                        return Math.round(pData["본관"]["방문자수"] / pData["본관"]["개관일수"])
+                            + Math.round(pData["디지털도서관"]["방문자수"] / pData["디지털도서관"]["개관일수"])
+                            + Math.round(pData["어린이청소년도서관"]["방문자수"] / pData["어린이청소년도서관"]["개관일수"])
+                            + Math.round(pData["세종도서관"]["방문자수"] / pData["세종도서관"]["개관일수"])
+                            ;
+                    }
+                } //11
+            ],
+        }
+    }
+
+
+    // TODO : 수정 사항 반영 시 변경된 부분들 표시
+    // TODO : 수정된 사항들 별도 객체에 저장 -> 수정사항 저장할 경우 참조
+    var _tableData = {
+        table_first: []
+    };
+
+    var _tableOriginData = {
+        table_first: []
+    };
+
+
+
+
+    // Table 에서 Input Event Handle : 변경한 부분의 데이터를 전역 변수에서 수정해준다
+    // MEMO : input 이벤트는 IE 9 이상부터 지원 -> 사용자 브라우저 버전 확인할 것
+    function handleChangeTableCellValue(event, tableKey, dimFirstKey, dimFirstVal, dimSecond, measure) {
+        var target = event.target;
+        var inputId = dimFirstVal + '_' + dimSecond + '_' + measure;
+        var $input = $("#" + inputId)
+
+        if (event.which && (event.which > 47 && event.which < 58 || event.which === 8)) {
+            // console.log("숫자임");
+            return;
+        } else if (event.keyCode && event.keyCode === 13) {
+            // Enter
+            // console.log("엔터임");
+        } else {
+            // console.log("숫자아님");
+            target.value = target.value.replace(/[^0-9]/g, "");
+            // event.preventDefault();
+            return;
+        }
+
+        var tableData = _tableData[tableKey];
+
+        for (var i = 0; i < tableData.length; i++) {
+            if (tableData[i][dimFirstKey] == dimFirstVal) {
+                console.log("check!");
+                tableData[i][dimSecond][measure] = parseInt(target.value);
+                break;
             }
         }
-    };
+
+        createTableTopDimension(tableData, _TABLE_PARAM[tableKey]);
+
+        // focus 변경
+        // MEMO : IE Focus 이슈
+        // TODO : 고객 사용 브라우저 확인 -> IE 쓸 경우 적용을 엔터가 아닌 버튼 눌렀을 때로 
+        // $input.focus();
+    }
+
 
     // 상단 Header 가 차원인 일반 Table 생성
     function createTableTopDimension(data, tableParam) {
-        console.log("data", data);
-        var theadHtmlArr = tableParam.theadHtmlArr;
+        var tableKey = tableParam.tableKey;
+
+        var theadHtmlArr = JSON.parse(JSON.stringify(tableParam.theadHtmlArr)); // 깊은 복사 TODO
         var theadInfo = tableParam.theadInfo;
 
-        var tbodyHtmlArr = tableParam.tbodyHtmlArr;
+        var tbodyHtmlArr = JSON.parse(JSON.stringify(tableParam.tbodyHtmlArr)); // 깊은 복사
         var tbodyInfo = tableParam.tbodyInfo;
 
-        var nonInsertRow = tableParam.nonInsertRow;
+        var changedValueCss = 'style="color: red;"';
 
         for (var i = 0; i < data.length; i++) {
             var dataObj = data[i];
-            console.log("dataObj", dataObj);
+            var headerKey = "";
+            var headerValue = "";
+            var dimKey = "";
+            var meaKey = "";
 
+            // 1. table header 생성 : 해당 차트의 dimension 1
             for (var j = 0; j < theadInfo.length; j++) {
-                var thInfoName = theadInfo[j].name;
-                var thCellValue = dataObj[thInfoName];
+                var thDimension = theadInfo[j].dimension;
+                var thCellValue = dataObj[thDimension];
                 var thCellHtml = '<th>' + thCellValue + '</th>';
                 theadHtmlArr[j].push(thCellHtml);
+                headerKey = thDimension;
+                headerValue = thCellValue;
             }
 
+            // 2. table cell 생성 : dimension 2와 measure
             for (var j = 0; j < tbodyInfo.length; j++) {
                 var tdInfoName = tbodyInfo[j].name;
+                var tdDimension = tbodyInfo[j].dimension;
+                var tdMeasure = tbodyInfo[j].measure;
                 var cellInsertFlag = tbodyInfo[j].insertFlag;
-                var tdCellValue = dataObj[tdInfoName];
+                var tdCellValue = "";
                 var tdCellHtml = "";
 
                 // 계산이 필요한 cell
                 if (tbodyInfo[j].calcFunc) {
                     tdCellValue = tbodyInfo[j].calcFunc(dataObj);
+                } else {
+                    if (tdDimension && tdMeasure) {
+                        dimKey = tdDimension;
+                        meaKey = tdMeasure;
+                        tdCellValue = dataObj[tdDimension][tdMeasure];
+                    }
                 }
 
-                if (cellInsertFlag && nonInsertRow.indexOf(j) === -1) {
+
+                // TODO : origin 데이터와 비교하여 변경된 부분은 빨간색표시
+                if (cellInsertFlag) {
                     // (1) 입력셀
-                    var tdCellInput = '<input type="text" class="form-control" value="' + tdCellValue + '" />';
+                    var tdCellInput = '<input type="number" class="form-control" value="' + tdCellValue + '" '
+                        + ' id="' + headerValue + '_' + dimKey + '_' + meaKey + '" '
+                        + ' onKeydown="handleChangeTableCellValue(event, \'' + tableKey + '\', \'' + headerKey + '\', \'' + headerValue + '\', \'' + dimKey + '\', \'' + meaKey + '\')"/>';
                     tdCellHtml = "<td>" + tdCellInput + "</td>";
                 } else {
                     // (2) 일반셀
@@ -152,13 +290,15 @@
 
         } // for end
 
-        console.log("theadHtmlArr", theadHtmlArr);
-        console.log("tbodyHtmlArr", tbodyHtmlArr);
         theadHtmlArr.push("</tr>");
         tbodyHtmlArr.push("</tr>");
 
+        $("#" + tableParam.theadId).empty();
+        $("#" + tableParam.tbodyId).empty();
         $("#" + tableParam.theadId).html(theadHtmlArr.join());
         $("#" + tableParam.tbodyId).html(tbodyHtmlArr.join());
+
+        return data;
     }
 
 
@@ -217,75 +357,26 @@
     }
 
 
-    $.getJSON("./data/도서관이용방문.json", function (data) {
-        var data = data.data;
-
+    /* 테이블 최초 생성 */
+    function initTableTopDimension(data, dimFirst, dimSecond, measureArr, tableParam) {
         // 1. 데이터를 테이블로 만들기 좋게 변환
-        var alignedData = realignDataByDoubleDimension(data, "연도", "도서관구분", ["방문자수", "개관일수"]);
+        var alignedData = realignDataByDoubleDimension(data, dimFirst, dimSecond, measureArr);
 
         // 2. 페이지 별로 테이블 파라메터 세팅
-        var tableCreateParam = {
-            tableId: "",
-            theadId: "testThead",
-            tbodyId: "testTbody",
-            theadHtmlArr: [
-                ['<th colspan="2">구분</th>']
-            ],
-            theadInfo: [
-                { name: "기준년도" }
-            ],
-            tbodyHtmlArr: [
-                ['<tr>', '<th rowspan="6">국립중앙도서관</th>', '<th>본 관</th>'],  //0
-                ['<tr>', '<th>(일평균)</th>'],                                      //1
-                ['<tr>', '<th>디지털도서관</th>'],                                  //2
-                ['<tr>', '<th>(일평균)</th>'],                                      //3
-                ['<tr>', '<th>소계</th>'],                                          //4
-                ['<tr>', '<th>(일평균)</th>'],                                      //5
-                ['<tr>', '<th colspan="2">어린이청소년도서관</th>'],                //6
-                ['<tr>', '<th colspan="2">(일평균)</th>'],                          //7
-                ['<tr>', '<th colspan="2">세종도서관</th>'],                        //8
-                ['<tr>', '<th colspan="2">(일평균)</th>'],                          //9
-                ['<tr>', '<th colspan="2">계</th>'],                                 //10
-                ['<tr>', '<th colspan="2">(일평균)</th>']                           //11
-            ],
-            tbodyInfo: [
-                { name: "본관", keyOne: "", keyTwo: "", insertFlag: true, calcFunc: false }, //0
-                { name: "본관 일평균", insertFlag: false, calcFunc: false },//1
-                { name: "디지털도서관", keyOne: "", keyTwo: "", insertFlag: true, calcFunc: false }, //2
-                { name: "디지털도서관 일평균", insertFlag: false, calcFunc: false }, //3
-                {
-                    name: "소계", insertFlag: true, calcFunc: function (pData) {    //4
-                        return pData["본관"] + pData["디지털도서관"];
-                    }
-                },
-                {
-                    name: "소계 일평균", insertFlag: false, calcFunc: function (pData) {//5
-                        return "";
-                    }
-                },
-                { name: "어린이청소년도서관", keyOne: "", keyTwo: "", insertFlag: true, calcFunc: false },  //6
-                { name: "어린이청소년도서관 일평균", insertFlag: false, calcFunc: false },   // 7
-                { name: "세종도서관", keyOne: "", keyTwo: "", insertFlag: true, calcFunc: false }, //8
-                { name: "세종도서관 일평균", insertFlag: false, calcFunc: false }, //9
-                {
-                    name: "계", insertFlag: false, calcFunc: function (pData) {      //10
-                        return pData["본관"] + pData["디지털도서관"] + pData["어린이청소년도서관"] + pData["세종도서관"];
-                    }
-                },
-                {
-                    name: "계 일평균", insertFlag: false, calcFunc: function (pData) {   //11
-                        return "";
-                    }
-                }
-            ],
-
-            // 입력기능이 존재하지 않는 row
-            nonInsertRow: [1, 3, 4, 5, 7, 9, 10, 11]
-        };
+        _tableData[tableParam.tableKey] = alignedData;
 
         // 3. 테이블 생성
-        // createTableTopDimension(data, tableCreateParam);
-        createTableTopDimension(alignedData, tableCreateParam);
+        var resultData = createTableTopDimension(alignedData, tableParam);
+
+        // 4. 계산이 완료된 값까지 포함한 origin 데이터를 가지고 있는 객체를 생성
+        _tableOriginData[tableParam.tableKey] = JSON.parse(JSON.stringify(resultData)); // 깊은복사
+    }
+
+    $.getJSON("./data/도서관이용방문.json", function (data) {
+        // TODO : 데이터 가져오는 부분은 Ajax(동기화)로 수정 예정
+        var data = data.data;
+
+        initTableTopDimension(data, "연도", "도서관구분", ["방문자수", "개관일수", "입력YN"], _TABLE_PARAM.table_first);
     });
 
 </script>
