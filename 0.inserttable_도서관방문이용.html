@@ -170,7 +170,7 @@
     }
 
 
-    // TODO : 수정 사항 반영 시 변경된 부분들 표시
+    // 수정 사항 반영 시 변경된 부분들 표시
     // TODO : 수정된 사항들 별도 객체에 저장 -> 수정사항 저장할 경우 참조
     var _tableData = {
         table_first: []
@@ -181,24 +181,70 @@
     };
 
 
+    // TODO : 변수명 임시
+    function compareChangedTableValue(tableKey) {
+        var targetTableParam = _TABLE_PARAM[tableKey];
+        var targetData = _tableData[tableKey];  // 변경된 값 정보가 담긴 Array
+        var originData = _tableOriginData[tableKey];    // 기존 값 정보가 담긴 Array
+
+        var tbodyInfo = targetTableParam.tbodyInfo;
+
+        for (var i = 0; i < targetData.length; i++) {
+            var targetDataObj = targetData[i];
+            var originDataObj = originData[i];
+
+            for (var j = 0; j < tbodyInfo.length; j++) {
+                var tdInfoName = tbodyInfo[j].name;
+                var tdDimension = tbodyInfo[j].dimension;
+                var tdMeasure = tbodyInfo[j].measure;
+                var cellInsertFlag = tbodyInfo[j].insertFlag;
+
+                var targetCellValue = "";
+                var originCellValue = "";
+
+                if (tbodyInfo[j].calcFunc) {
+                    targetCellValue = tbodyInfo[j].calcFunc(targetDataObj);
+                    originCellValue = tbodyInfo[j].calcFunc(originDataObj);
+                } else {
+                    if (tdDimension && tdMeasure) {
+                        targetCellValue = targetDataObj[tdDimension][tdMeasure];
+                        originCellValue = originDataObj[tdDimension][tdMeasure];
+                    }
+                }
+
+                if(targetCellValue !== originCellValue) {
+                    // TODO : 변경된 값임
+                    var tdId = tableKey + "_" + i + "_" + j;
+                    
+                    if (cellInsertFlag) {
+                        // (1) input 값 변경
+                        // (2) 변경된 값들 모아둔 obj 에 정보 저장
+                    } else {
+                        // td값 변경
+                    }
+                }
+            }
+        }
+
+    }
 
 
     // Table 에서 Input Event Handle : 변경한 부분의 데이터를 전역 변수에서 수정해준다
     // MEMO : input 이벤트는 IE 9 이상부터 지원 -> 사용자 브라우저 버전 확인할 것
     function handleChangeTableCellValue(event, tableKey, dimFirstKey, dimFirstVal, dimSecond, measure) {
+        console.log("[handleChangeTableCellValue] tableKey", tableKey);
+        console.log(event.which, event.which);
         var target = event.target;
-        var inputId = dimFirstVal + '_' + dimSecond + '_' + measure;
+        var targetValue = target.value;
+        var inputId = tableKey + '_' + dimFirstVal + '_' + dimSecond + '_' + measure;
         var $input = $("#" + inputId)
 
         if (event.which && (event.which > 47 && event.which < 58 || event.which === 8)) {
             // console.log("숫자임");
-            return;
-        } else if (event.keyCode && event.keyCode === 13) {
-            // Enter
-            // console.log("엔터임");
+            //target.value = target.value.replace(/[^0-9]/g, "");
         } else {
             // console.log("숫자아님");
-            target.value = target.value.replace(/[^0-9]/g, "");
+            //target.value = target.value.replace(/[^0-9]/g, "");
             // event.preventDefault();
             return;
         }
@@ -213,12 +259,7 @@
             }
         }
 
-        createTableTopDimension(tableData, _TABLE_PARAM[tableKey]);
-
-        // focus 변경
-        // MEMO : IE Focus 이슈
-        // TODO : 고객 사용 브라우저 확인 -> IE 쓸 경우 적용을 엔터가 아닌 버튼 눌렀을 때로 
-        // $input.focus();
+        compareChangedTableValue(tableKey);
     }
 
 
@@ -271,17 +312,17 @@
                     }
                 }
 
+                var tdId = tableKey + "_" + i + "_" + j;
 
-                // TODO : origin 데이터와 비교하여 변경된 부분은 빨간색표시
                 if (cellInsertFlag) {
                     // (1) 입력셀
                     var tdCellInput = '<input type="number" class="form-control" value="' + tdCellValue + '" '
-                        + ' id="' + headerValue + '_' + dimKey + '_' + meaKey + '" '
-                        + ' onKeydown="handleChangeTableCellValue(event, \'' + tableKey + '\', \'' + headerKey + '\', \'' + headerValue + '\', \'' + dimKey + '\', \'' + meaKey + '\')"/>';
-                    tdCellHtml = "<td>" + tdCellInput + "</td>";
+                        + ' id="' + tableKey + '_' + headerValue + '_' + dimKey + '_' + meaKey + '" '
+                        + ' onKeyup="handleChangeTableCellValue(event, \'' + tableKey + '\', \'' + headerKey + '\', \'' + headerValue + '\', \'' + dimKey + '\', \'' + meaKey + '\')"/>';
+                    tdCellHtml = '<td id="' + tdId + '">' + tdCellInput + "</td>";
                 } else {
                     // (2) 일반셀
-                    tdCellHtml = '<td>' + tdCellValue + '</td>';
+                    tdCellHtml = '<td id="' + tdId + '">' + tdCellValue + '</td>';
                 }
 
                 tbodyHtmlArr[j].push(tdCellHtml);
