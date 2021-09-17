@@ -364,8 +364,6 @@
         $("#" + tableParam.tbodyId).empty();
         $("#" + tableParam.theadId).html(theadHtmlArr.join());
         $("#" + tableParam.tbodyId).html(tbodyHtmlArr.join());
-
-        return data;
     }
 
 
@@ -424,19 +422,31 @@
     }
 
 
+    function checkTableEditedYn(data, keyName, flag) {
+        for( var i = 0; i < data.length; i++ ) {
+            if(data[i][keyName] === flag) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
     /* 테이블 최초 생성 */
     function initTableTopDimension(data, dimFirst, dimSecond, measureArr, tableParam) {
+        // 0. 저장 버튼 활성 비활성 여부 판단
+        var insertYn = checkTableEditedYn(data, "입력YN", "N");
+
         // 1. 데이터를 테이블로 만들기 좋게 변환
         var alignedData = realignDataByDoubleDimension(data, dimFirst, dimSecond, measureArr);
 
         // 2. 페이지 별로 테이블 파라메터 세팅
         _tableData[tableParam.tableKey] = alignedData;
+        _tableOriginData[tableParam.tableKey] = JSON.parse(JSON.stringify(alignedData)); // 깊은복사
 
         // 3. 테이블 생성
-        var resultData = createTableTopDimension(alignedData, tableParam);
-
-        // 4. 계산이 완료된 값까지 포함한 origin 데이터를 가지고 있는 객체를 생성
-        _tableOriginData[tableParam.tableKey] = JSON.parse(JSON.stringify(resultData)); // 깊은복사
+        createTableTopDimension(alignedData, tableParam);
+        
     }
 
     $.getJSON("./data/도서관이용방문.json", function (data) {
