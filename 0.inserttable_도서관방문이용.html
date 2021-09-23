@@ -180,6 +180,8 @@
         table_first: []
     };
 
+    var _tableChangedData = {};
+
 
     // TODO : 변수명 임시
     function compareChangedTableValue(tableKey) {
@@ -190,14 +192,18 @@
         var targetData = _tableData[tableKey];  // 변경된 값 정보가 담긴 Array
         var originData = _tableOriginData[tableKey];    // 기존 값 정보가 담긴 Array
 
+        var changedDataList = [];
+
         for (var i = 0; i < targetData.length; i++) {
             var targetDataObj = targetData[i];
             var originDataObj = originData[i];
+            var headerKey = "";
             var headerValue = "";
 
             for (var j = 0; j < theadInfo.length; j++) {
                 var thDimension = theadInfo[j].dimension;
                 var thCellValue = targetDataObj[thDimension];
+                headerKey = thDimension;
                 headerValue = thCellValue;
             }
 
@@ -231,6 +237,17 @@
                     if (targetCellValue !== originCellValue) {
                         // 값이 기존과 다름
                         $inputId.css("color", "red");
+
+                        // TODO : 변경된 값들 정보 가지고 있기
+                        var changedDataObj = {
+                            "dimensionFirst": headerKey,
+                            "dimensionFirstValue": headerValue,
+                            "dimensionSecond": tdDimension,
+                            "measure": tdMeasure,
+                            "changedMeasureValue": targetCellValue,
+                        };
+                        changedDataList.push(changedDataObj);
+
                     } else {
                         // 값이 기존과 같음
                         $inputId.css("color", "black");
@@ -249,8 +266,10 @@
                         $tdId.css("color", "black");
                     }
                 }
-            }
-        }
+            }   // for j end
+        } // for i end
+
+        _tableChangedData[tableKey] = changedDataList;
 
     }
 
