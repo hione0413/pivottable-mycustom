@@ -89,7 +89,7 @@
     var _TABLE_PARAM = {
         table_first: {
             tableKey: "table_first",
-            tableId: "",
+            tableId: "testTable",
             theadId: "testThead",
             tbodyId: "testTbody",
             theadHtmlArr: [
@@ -170,12 +170,12 @@
     }
 
 
-    // 수정 사항 반영 시 변경된 부분들 표시
-    // TODO : 수정된 사항들 별도 객체에 저장 -> 수정사항 저장할 경우 참조
+    // 화면에서 수정된 내용이 반영된 테이블의 Data 정보
     var _tableData = {
         table_first: []
     };
 
+    // 수정내용이 반영되지 않은 테이블의 기존 Data 정보
     var _tableOriginData = {
         table_first: []
     };
@@ -223,12 +223,12 @@
                 var tdId = tableKey + "_" + i + "_" + j;
 
 
-                if(cellInsertFlag) {
+                if (cellInsertFlag) {
                     // input
                     var inputId = tableKey + "_" + headerValue + "_" + tdDimension + "_" + tdMeasure;
                     var $inputId = $("#" + inputId);
 
-                    if(targetCellValue !== originCellValue) {
+                    if (targetCellValue !== originCellValue) {
                         // 값이 기존과 다름
                         $inputId.css("color", "red");
                     } else {
@@ -241,7 +241,7 @@
                     var $tdId = $("#" + tdId);
                     $tdId.html(targetCellValue);
 
-                    if(targetCellValue !== originCellValue) {
+                    if (targetCellValue !== originCellValue) {
                         // 값이 기존과 다름
                         $tdId.css("color", "red");
                     } else {
@@ -258,8 +258,6 @@
     // Table 에서 Input Event Handle : 변경한 부분의 데이터를 전역 변수에서 수정해준다
     // MEMO : input 이벤트는 IE 9 이상부터 지원 -> 사용자 브라우저 버전 확인할 것
     function handleChangeTableCellValue(event, tableKey, dimFirstKey, dimFirstVal, dimSecond, measure) {
-        console.log("[handleChangeTableCellValue] tableKey", tableKey);
-        console.log(event.which, event.which);
         var target = event.target;
         var targetValue = target.value;
         var inputId = tableKey + '_' + dimFirstVal + '_' + dimSecond + '_' + measure;
@@ -267,11 +265,8 @@
 
         if (event.which && (event.which > 47 && event.which < 58 || event.which === 8)) {
             // console.log("숫자임");
-            //target.value = target.value.replace(/[^0-9]/g, "");
         } else {
             // console.log("숫자아님");
-            //target.value = target.value.replace(/[^0-9]/g, "");
-            // event.preventDefault();
             return;
         }
 
@@ -279,7 +274,6 @@
 
         for (var i = 0; i < tableData.length; i++) {
             if (tableData[i][dimFirstKey] == dimFirstVal) {
-                console.log("check!");
                 tableData[i][dimSecond][measure] = parseInt(target.value);
                 break;
             }
@@ -327,8 +321,8 @@
                 var tdCellValue = "";
                 var tdCellHtml = "";
 
-                // 계산이 필요한 cell
                 if (tbodyInfo[j].calcFunc) {
+                    // 계산이 필요한 cell
                     tdCellValue = tbodyInfo[j].calcFunc(dataObj);
                 } else {
                     if (tdDimension && tdMeasure) {
@@ -423,8 +417,8 @@
 
 
     function checkTableEditedYn(data, keyName, flag) {
-        for( var i = 0; i < data.length; i++ ) {
-            if(data[i][keyName] === flag) {
+        for (var i = 0; i < data.length; i++) {
+            if (data[i][keyName] === flag) {
                 return false;
             }
         }
@@ -446,7 +440,7 @@
 
         // 3. 테이블 생성
         createTableTopDimension(alignedData, tableParam);
-        
+
     }
 
     $.getJSON("./data/도서관이용방문.json", function (data) {
