@@ -6,6 +6,9 @@ function buildTheChart(jsonData, category, row) {
 	// Themes end
 
 	var chart = am4core.create('chartdiv', am4charts.XYChart)
+
+	chart.exporting.menu = new am4core.ExportMenu();
+
 	chart.colors.step = 2;
 
 	chart.legend = new am4charts.Legend()
@@ -28,6 +31,12 @@ function buildTheChart(jsonData, category, row) {
 		series.dataFields.valueY = value
 		series.dataFields.categoryX = category;
 		series.name = name
+
+		// 막대별로 다른 색상을 가지게 하고 싶을 경우
+		//  MEMO : 동일한 측정값을 가지는 막대의 경우 기본적으로는 같은 색상을 가지게됨
+		series.columns.template.adapter.add("fill", function(fill, target) {
+			return chart.colors.getIndex(target.dataItem.index);
+		});
 
 		series.events.on("hidden", arrangeColumns);
 		series.events.on("shown", arrangeColumns);
