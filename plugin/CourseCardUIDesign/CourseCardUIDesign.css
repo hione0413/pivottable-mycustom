@@ -12,31 +12,30 @@
 	/* max-width: 100%; */
 	margin: 20px;
 	overflow: hidden;
-	min-width: 300px;
 	display:inline-block;
 }
 
 .course h2 {
 	letter-spacing: 1px;
-	margin: 20px 0;
+	margin: 8px;
 	text-align: center;
 }
 
 .course-preview {
 	background-color: #033075;
 	color: #fff;
-	padding: 5px;
+	padding: 1px;
 	max-width: 100%;
 }
 
-.course-preview a {
+/* .course-preview a {
 	color: #fff;
 	display: inline-block;
 	font-size: 12px;
 	opacity: 0.6;
 	margin-top: 30px;
 	text-decoration: none;
-}
+} */
 
 .course-info {
 	padding: 30px;
@@ -53,12 +52,21 @@
 }
 */
 
-th{
+th {
 	border: 1px solid #FFFFFF;
 	border-radius: 6px;
 	color: white;
 	background-color: gray;
 	text-align: center;
+	padding: 6px 12px;
+}
+
+td {
+	border: 1px solid #FFFFFF;
+	border-radius: 6px;
+	color: #555;
+	background-color: #f0f0f0;
+	text-align: right;
 }
 
 thead * {
