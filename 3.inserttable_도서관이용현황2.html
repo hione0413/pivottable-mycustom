@@ -2,61 +2,58 @@
 <html lang="en">
 
 <head>
-	<meta charset="UTF-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Document</title>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Document</title>
 
-	<link rel="stylesheet" href="./plugin/bootstrap/css/bootstrap.min.css" />
-	<link rel="stylesheet" href="./plugin/datepicker/datepicker3.min.css" />
-	<link rel="stylesheet" href="./plugin/iCheck/square/blue.css" />
-	<link rel="stylesheet" href="./plugin/datatables/jquery.dataTables.min.css" />
-	<link rel="stylesheet" href="./plugin/CourseCardUIDesign/CourseCardUIDesign.css">
+<link rel="stylesheet" href="./plugin/bootstrap/css/bootstrap.min.css" />
+<link rel="stylesheet" href="./plugin/datepicker/datepicker3.min.css" />
+<link rel="stylesheet" href="./plugin/iCheck/square/blue.css" />
+<link rel="stylesheet"
+	href="./plugin/datatables/jquery.dataTables.min.css" />
+<link rel="stylesheet"
+	href="./plugin/CourseCardUIDesign/CourseCardUIDesign.css">
 
-	<style type="text/css">
-		.insertTable {
-			width: 100%;
-		}
+<style type="text/css">
+.insertTable {
+	width: 100%;
+}
 
-		td {
-			border: 1px solid #FFFFFF;
-			border-radius: 6px;
-			color: #555;
-			background-color: #f0f0f0;
-			text-align: right;
-			flex: 5px;
-		}
+td {
+	border: 1px solid #FFFFFF;
+	border-radius: 6px;
+	color: #555;
+	background-color: #f0f0f0;
+	text-align: right;
+}
 
-		th {
-			padding: 3px 3px;
-			width: 120px;
-		}
+th {
+	padding: 3px 3px;
+	width: 120px;
+	font-size: 10pt;
+}
 
-		thead * {
-			padding: 1%;
-			/* width: auto; */
-		}
+.form-control {
+	padding: 3px 0px;
+	font-size: 10pt;
+}
 
-		.form-control {
-			font-size: 12pt;
-			/* padding: 6px 0px; */
-		}
+input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-inner-spin-button
+	{
+	-webkit-appearance: none;
+}
+</style>
 
-		input[type="number"]::-webkit-outer-spin-button,
-		input[type="number"]::-webkit-inner-spin-button {
-			-webkit-appearance: none;
-		}
-	</style>
+<script src="./plugin/jQuery/jQuery-2.1.4.min.js"></script>
+<script src="./plugin/jQueryUI/jquery-ui.min.js"></script>
+<script src="./plugin/bootstrap/js/bootstrap.min.js"></script>
+<script src="./plugin/datepicker/bootstrap-datepicker.min.js"></script>
+<script src="./plugin/iCheck/icheck.min.js"></script>
 
-	<script src="./plugin/jQuery/jQuery-2.1.4.min.js"></script>
-	<script src="./plugin/jQueryUI/jquery-ui.min.js"></script>
-	<script src="./plugin/bootstrap/js/bootstrap.min.js"></script>
-	<script src="./plugin/datepicker/bootstrap-datepicker.min.js"></script>
-	<script src="./plugin/iCheck/icheck.min.js"></script>
-
-	<script src="./tableCreater.js"></script>
-	<script src="./plugin/table-to-excel/tableToExcel.js"></script>
-	<script src="./plugin/datatables/jquery.dataTables.min.js"></script>
+<script src="./tableCreater.js"></script>
+<script src="./plugin/table-to-excel/tableToExcel.js"></script>
+<script src="./plugin/datatables/jquery.dataTables.min.js"></script>
 </head>
 
 <body class="main">
@@ -72,23 +69,24 @@
 			<div class="" style="margin: auto; text-align: center;">
 				<form class="form-inline">
 					<div class="form-group" style="padding-right: 20px;">
-						<input type="radio" name="check" id="check1" checked />
-						<label for="check1" style="margin-right: 8px;">연별</label>
-						<input type="radio" name="check" id="check2" />
-						<label for="check2" style="margin-right: 8px;">월별</label>
-						<input type="radio" name="check" id="check3" />
-						<label for="check3" style="margin-right: 8px;">일별</label>
+						<input type="radio" name="check" id="check1" checked /> <label
+							for="check1" style="margin-right: 8px;">연별</label> <input
+							type="radio" name="check" id="check2" /> <label for="check2"
+							style="margin-right: 8px;">월별</label> <input type="radio"
+							name="check" id="check3" /> <label for="check3"
+							style="margin-right: 8px;">일별</label>
 					</div>
 					<div class="form-group">
-						<label>기간조회</label>
-						<span style="margin-left: 10px; margin-right: 10px;">|</span>
-						<input type="text" class="form-control" id="startDt" style="width: 100px; display: inline;"
-							placeholder="2021-08-13">
-						<span style="margin-left: 10px; margin-right: 10px;">~</span>
-						<input type="text" class="form-control" id="endDt" style="width: 100px; display: inline;"
-							placeholder="2021-09-13">
+						<label>기간조회</label> <span
+							style="margin-left: 10px; margin-right: 10px;">|</span> <input
+							type="text" class="form-control" id="startDt"
+							style="width: 100px; display: inline;" placeholder="2021-08-13">
+						<span style="margin-left: 10px; margin-right: 10px;">~</span> <input
+							type="text" class="form-control" id="endDt"
+							style="width: 100px; display: inline;" placeholder="2021-09-13">
 					</div>
-					<button type="button" class="btn btn-default" style="margin-left: 20px;">조회</button>
+					<button type="button" class="btn btn-default"
+						style="margin-left: 20px;">조회</button>
 				</form>
 			</div>
 		</div>
@@ -103,16 +101,18 @@
 						<div id="totalDiv" class="course-wrapper">
 							<div class="course">
 								<div class="course-preview">
-									<h2>도서관 이용 현황</h2>
+									<span class="course-title">도서관 이용 현황</span>
 								</div>
 								<div class="course-info">
+									<label class="tableUnit">('21.6.30.기준/단위 : 명)</label>
 									<table class="insertTable" id="totalTable">
 										<thead id="totalThead"></thead>
 										<tbody id="totalTbody"></tbody>
 									</table>
 								</div>
 								<div class="course-footer">
-									<button type="button" class="btn btn-default" id="btnExcelDownload">엑셀로 받기</button>
+									<button type="button" class="btn btn-default"
+										id="btnExcelDownload">엑셀로 받기</button>
 								</div>
 							</div>
 						</div>
@@ -128,7 +128,7 @@
 						<div id="mainLibDiv" class="course-wrapper">
 							<div class="course">
 								<div class="course-preview">
-									<h2>본관</h2>
+									<span class="course-title">본관</span>
 								</div>
 								<div class="course-info">
 									<table class="insertTable" id="mainLibTable">
@@ -150,11 +150,10 @@
 									</table>
 								</div>
 								<div class="course-footer">
-									<button type="button" class="btn btn-default btn-course">제출</button>
-									<br>
-									<label class="submit-info">
-										제출일시: 2021년 09월 24일 09시 33분 14초 / 수정자:홍길동
-									</label>
+									<button type="button" class="btn btn-default"
+										style="float: right;">제출</button>
+									<br> <label>제출일시: 2021년 09월 24일 09시 33분 14초 / 수정자:
+										홍길동</label>
 								</div>
 							</div>
 						</div>
@@ -167,7 +166,7 @@
 						<div id="digitalLibDiv" class="course-wrapper">
 							<div class="course">
 								<div class="course-preview">
-									<h2>디지털도서관</h2>
+									<span class="course-title">디지털도서관</span>
 								</div>
 								<div class="course-info">
 									<table class="insertTable" id="digitalLibTable">
@@ -186,11 +185,10 @@
 									</table>
 								</div>
 								<div class="course-footer">
-									<button type="button" class="btn btn-default btn-course">제출</button>
-									<br>
-									<label class="submit-info">
-										제출일시: 2021년 09월 24일 09시 33분 14초 / 수정자:홍길동
-									</label>
+									<button type="button" class="btn btn-default"
+										style="float: right;">제출</button>
+									<br> <label>제출일시: 2021년 09월 24일 09시 33분 14초 / 수정자:
+										홍길동</label>
 								</div>
 							</div>
 						</div>
@@ -206,7 +204,7 @@
 <script>
 	/* $(document).ready(totalTblMaking(), jsonStart(), jsonStart2()); */
 
-	$.getJSON("./data/본관이용현황.json", function (data) {
+	$.getJSON("./data/본관이용현황.json", function(data) {
 		var data = data.data;
 
 		// 0. 저장 버튼 활성 비활성 여부 판단
@@ -214,16 +212,16 @@
 
 		totalTblMaking();
 		//createTableLeftDimension(data, tableCreateParam);
-		initTableLeftDimension(data, "연도", "도서관구분", ["방문자수", "개관일수",
-			"자료수", "입력YN"], tblParamByLib.main);
+		initTableLeftDimension(data, "연도", "도서관구분", [ "방문자수", "개관일수", "자료수",
+				"입력YN" ], tblParamByLib.main);
 	});
 
 	// Excel 다운로드 : 이런 식으로 저장된다는 걸 보여주기 위한 용도
 	function tableToExcel() {
 		TableToExcel.convert(document.getElementById("totalTable"), {
-			name: "국립중앙박물관_도서관 방문 이용 현황 Excel.xlsx",
-			sheet: {
-				name: "Sheet 1"
+			name : "국립중앙박물관_도서관 방문 이용 현황 Excel.xlsx",
+			sheet : {
+				name : "Sheet 1"
 			}
 		});
 	}
