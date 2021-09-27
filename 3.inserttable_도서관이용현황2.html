@@ -11,37 +11,7 @@
 	<link rel="stylesheet" href="./plugin/datepicker/datepicker3.min.css" />
 	<link rel="stylesheet" href="./plugin/iCheck/square/blue.css" />
 	<link rel="stylesheet" href="./plugin/datatables/jquery.dataTables.min.css" />
-	<link rel="stylesheet" href="./plugin/CourseCardUIDesign/CourseCardUIDesign.css">
-
-	<style type="text/css">
-		.insertTable {
-			width: 100%;
-		}
-
-		td {
-			border: 1px solid #FFFFFF;
-			border-radius: 6px;
-			color: #555;
-			background-color: #f0f0f0;
-			text-align: right;
-		}
-
-		th {
-			padding: 3px 3px;
-			width: 120px;
-			font-size: 10pt;
-		}
-
-		.form-control {
-			padding: 3px 0px;
-			font-size: 10pt;
-		}
-
-		input[type="number"]::-webkit-outer-spin-button,
-		input[type="number"]::-webkit-inner-spin-button {
-			-webkit-appearance: none;
-		}
-	</style>
+	<link rel="stylesheet" href="./plugin/zCardUIDesign/zCardUIDesign.css">
 
 	<script src="./plugin/jQuery/jQuery-2.1.4.min.js"></script>
 	<script src="./plugin/jQueryUI/jquery-ui.min.js"></script>
@@ -91,20 +61,20 @@
 			<!-- TotalTable 영역 Start -->
 			<div class="col-md-6" style="float: left;">
 				<div class="row">
-					<div class="col-md-12 courses-container">
-						<div id="totalDiv" class="course-wrapper">
-							<div class="course">
-								<div class="course-preview">
-									<span class="course-title">도서관 이용 현황</span>
+					<div class="col-md-12 z-cards-container">
+						<div id="totalDiv" class="z-card-wrapper">
+							<div class="z-card">
+								<div class="z-card-preview">
+									<span class="z-card-title">도서관 이용 현황</span>
 								</div>
-								<div class="course-info">
-									<label class="cource-tableUnit">('21.6.30.기준/단위 : 명)</label>
-									<table class="insertTable" id="totalTable">
+								<div class="z-card-info">
+									<label class="z-card-table-unit">('21.6.30.기준/단위 : 명)</label>
+									<table class="z-submit-table" id="totalTable">
 										<thead id="totalThead"></thead>
 										<tbody id="totalTbody"></tbody>
 									</table>
 								</div>
-								<div class="course-footer">
+								<div class="z-card-footer">
 									<button type="button" class="btn btn-default" id="btnExcelDownload">엑셀로 받기</button>
 								</div>
 							</div>
@@ -116,16 +86,16 @@
 			<div class="col-md-6" style="float: right;">
 				<div class="row">
 					<!-- 본관Table 영역 Start -->
-					<div class="col-md-12 courses-container">
+					<div class="col-md-12 z-cards-container">
 						<!-- <div id="mainLibDiv" style="margin: auto; display: table;"> -->
-						<div id="mainLibDiv" class="course-wrapper">
-							<div class="course">
-								<div class="course-preview">
-									<span class="course-title">본관</span>
+						<div id="mainLibDiv" class="z-card-wrapper">
+							<div class="z-card">
+								<div class="z-card-preview">
+									<span class="z-card-title">본관</span>
 								</div>
-								<div class="course-info">
-								<label class="cource-tableUnit">('21.6.30.기준)</label>
-									<table class="insertTable" id="mainLibTable">
+								<div class="z-card-info">
+									<label class="z-card-table-unit">('21.6.30.기준)</label>
+									<table class="z-submit-table" id="mainLibTable">
 										<thead id="mainLibThead">
 											<tr>
 												<th rowspan="2">연도</th>
@@ -143,8 +113,8 @@
 										<tbody id="mainLibTbody"></tbody>
 									</table>
 								</div>
-								<div class="course-footer">
-									<button type="button" class="btn btn-default btn-course">제출</button>
+								<div class="z-card-footer">
+									<button type="button" class="btn btn-default btn-z-card">제출</button>
 									<br>
 									<label class="submit-info">
 										제출일시: 2021년 09월 24일 09시 33분 14초 / 수정자:홍길동
@@ -157,15 +127,15 @@
 				<!-- 본관Table 영역 End -->
 				<div class="row">
 					<!-- 디지털도서관Table 영역 Start -->
-					<div class="col-md-12 courses-container">
-						<div id="digitalLibDiv" class="course-wrapper">
-							<div class="course">
-								<div class="course-preview">
-									<span class="course-title">디지털도서관</span>
+					<div class="col-md-12 z-cards-container">
+						<div id="digitalLibDiv" class="z-card-wrapper">
+							<div class="z-card">
+								<div class="z-card-preview">
+									<span class="z-card-title">디지털도서관</span>
 								</div>
-								<div class="course-info">
-								<label class="cource-tableUnit">('21.6.30.기준)</label>
-									<table class="insertTable" id="digitalLibTable">
+								<div class="z-card-info">
+									<label class="z-card-table-unit">('21.6.30.기준)</label>
+									<table class="z-submit-table" id="digitalLibTable">
 										<thead id="digitalLibThead">
 											<tr>
 												<th rowspan="2">연도</th>
@@ -183,8 +153,8 @@
 										<tbody id="digitalLibTbody"></tbody>
 									</table>
 								</div>
-								<div class="course-footer">
-									<button type="button" class="btn btn-default btn-course">제출</button>
+								<div class="z-card-footer">
+									<button type="button" class="btn btn-default btn-z-card">제출</button>
 									<br>
 									<label class="submit-info">
 										제출일시: 2021년 09월 24일 09시 33분 14초 / 수정자:홍길동
@@ -211,9 +181,14 @@
 		var insertYn = checkTableEditedYn(data, "입력YN", "N");
 
 		totalTblMaking();
-		//createTableLeftDimension(data, tableCreateParam);
-		initTableLeftDimension(data, "연도", "도서관구분", ["방문자수", "개관일수", "자료수",
-			"입력YN"], tblParamByLib.main);
+
+		initTableLeftDimension(
+			data,
+			"연도",
+			"도서관구분",
+			["방문자수", "개관일수", "자료수", "입력YN"],
+			tblParamByLib.main
+		);
 	});
 
 	// Excel 다운로드 : 이런 식으로 저장된다는 걸 보여주기 위한 용도
