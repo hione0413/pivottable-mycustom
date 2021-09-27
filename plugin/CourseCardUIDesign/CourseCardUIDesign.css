@@ -8,6 +8,12 @@
 	padding: 20px;
 }
 
+.cource-tableUnit {
+	float: right;
+	font-size: 9pt;
+	color: red;
+}
+
 .course {
 	background-color: #fff;
 	border-radius: 10px;

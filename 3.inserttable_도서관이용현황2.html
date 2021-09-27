@@ -98,7 +98,7 @@
 									<span class="course-title">도서관 이용 현황</span>
 								</div>
 								<div class="course-info">
-									<label class="tableUnit">('21.6.30.기준/단위 : 명)</label>
+									<label class="cource-tableUnit">('21.6.30.기준/단위 : 명)</label>
 									<table class="insertTable" id="totalTable">
 										<thead id="totalThead"></thead>
 										<tbody id="totalTbody"></tbody>
@@ -124,6 +124,7 @@
 									<span class="course-title">본관</span>
 								</div>
 								<div class="course-info">
+								<label class="cource-tableUnit">('21.6.30.기준)</label>
 									<table class="insertTable" id="mainLibTable">
 										<thead id="mainLibThead">
 											<tr>
@@ -163,17 +164,21 @@
 									<span class="course-title">디지털도서관</span>
 								</div>
 								<div class="course-info">
+								<label class="cource-tableUnit">('21.6.30.기준)</label>
 									<table class="insertTable" id="digitalLibTable">
 										<thead id="digitalLibThead">
-											<th rowspan="2">연도</th>
-											<th rowspan="2">개관일수</th>
-											<th colspan="2">이용인원(명)</th>
-											<th colspan="2">이용자료수(책)</th>
+											<tr>
+												<th rowspan="2">연도</th>
+												<th rowspan="2">개관일수</th>
+												<th colspan="2">이용인원(명)</th>
+												<th colspan="2">이용자료수(책)</th>
+											</tr>
 											<tr>
 												<th>이용자수</th>
 												<th>일평균</th>
 												<th>자료수</th>
 												<th>일평균</th>
+											</tr>
 										</thead>
 										<tbody id="digitalLibTbody"></tbody>
 									</table>
