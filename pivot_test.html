@@ -16,6 +16,7 @@
     <script src="./plugin/jQueryUI/jquery-ui.min.js"></script>
     <script src="./plugin/bootstrap/js/bootstrap.min.js"></script>
     <script src="./plugin/datepicker/bootstrap-datepicker.min.js"></script>
+    <script src="./plugin/datepicker/locales/bootstrap-datepicker.kr.js" charset="UTF-8"></script>
     <script src="./plugin/iCheck/icheck.min.js"></script>
     <script src="./plugin/zPivottable/pivot.min.js"></script> <!-- customize lib : zPivottable -->
 
@@ -78,10 +79,11 @@
     var datapickerFormat = "yyyy-mm-dd";
     $("#startDt").datepicker({
         format: datapickerFormat,
-        startDate: '-1m'
+        language: 'kr'
     });
     $("#endDt").datepicker({
         format: datapickerFormat,
+        language: 'kr'
     });
     // Datapicker setting End
 
