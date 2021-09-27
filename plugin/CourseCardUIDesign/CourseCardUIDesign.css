@@ -90,12 +90,21 @@ table * {
 }
 
 .course-footer{
-	float: right;
+	text-align: right;
 	padding-right: 30px;
 	margin-top: -20px;
 	margin-bottom: 20px;
 }
 
+.course-footer .btn-course {
+	margin-top: 6px;
+	margin-bottom: 6px;
+}
+
+.course-footer .submit-info {
+	font-size: 8px;
+	color: gray;
+}
 
 /* DivTable */
 .divTable {
