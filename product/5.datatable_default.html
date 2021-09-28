@@ -47,8 +47,6 @@
     <script src="/plugin/iCheck/icheck.min.js"></script>
     <script src="/plugin/datatables/jquery.dataTables.min.js"></script>
 
-
-    <!-- <script src="/plugin/table-to-excel/tableToExcel.js"></script> -->
 </head>
 
 <body class="main">
@@ -103,7 +101,7 @@
                         <div class="z-card-info">
                             <label class="z-card-table-unit">('21.6.30.기준/단위 : 명)</label>
                             <table id="dataTable">
-                                <thead>
+                                <!-- <thead>
                                     <tr>
                                         <th>No</th>
                                         <th>기준일자</th>
@@ -116,7 +114,7 @@
                                         <th>이용목적별</th>
                                         <th>지역별</th>
                                     </tr>
-                                </thead>
+                                </thead> -->
                             </table>
                         </div>
                         <div class="z-card-footer">
@@ -152,11 +150,58 @@
     });
     // iCheck setting End
 
-    // Create Pivot Table Start
-    function createDataTableDefault(tableId, dataSet, tableParamObj) {
-        var columnDefs = tableParamObj.columnDefs ? tableParamObj.columnDefs : [];
 
-        var t = $("#" + tableId).DataTable({
+    var _TABLE_COLUMN_PARAM = {
+        dataTable_1: {
+            columnInfo: [
+                { target: 0, tHeaderName: "No", dataColumnName: null },
+                { target: 1, tHeaderName: "기준일자", dataColumnName: "기준일자" },
+                { target: 2, tHeaderName: "가입위치별", dataColumnName: "가입위치별" },
+                { target: 3, tHeaderName: "가입자수", dataColumnName: "가입자수" },
+                { target: 4, tHeaderName: "관심분야별", dataColumnName: "관심분야별" },
+                { target: 5, tHeaderName: "도서관별", dataColumnName: "도서관별" },
+                { target: 6, tHeaderName: "성별", dataColumnName: "성별" },
+                { target: 7, tHeaderName: "연령별", dataColumnName: "연령별" },
+                { target: 8, tHeaderName: "이용목적별", dataColumnName: "이용목적별" },
+                { target: 9, tHeaderName: "지역별", dataColumnName: "지역별" }
+            ],
+            columnDefs: [
+                { targets: 0, orderable: false, searchable: false },
+                { targets: 2, orderable: false, searchable: false }
+            ]
+        }
+    };
+
+    // Create Pivot Table Start
+    function createDataTableDefault(tableId, dataSet, columnInfo, columnDefs, tableParamObj) {
+        // 0. 파라메터 준비
+        var rowNumFlag = tableParamObj.rowNumFlag; // No 칼럼 default : false
+        var pagingFlag = tableParamObj.pagingFlag ? tableParamObj.pagingFlag : false; // 페이징 default : false
+        // 데이터가 각 페이지에서 설정한 특정값 이상일 경우 강제로 페이징처리
+        var pagingTurningPoint = tableParamObj.pagingTurningPoint ? tableParamObj.pagingTurningPoint : false;
+
+        // 1. column info 정보를 토대로 아래와 같은 작업 진행
+        var theaderStrArr = ["<thead><tr>"];
+        var columnsArr = [];
+
+        for (var i = 0; i < columnInfo.length; i++) {
+            var tHeaderName = columnInfo[i].tHeaderName;
+            var dataColumnName = columnInfo[i].dataColumnName;
+
+            // (1) Table theader html 준비
+            theaderStrArr.push("<th>" + tHeaderName + "</th>");
+
+            // (2) columns Arr 준비
+            columnsArr.push({
+                data: dataColumnName,
+                defaultContent: "null"
+            });
+        }
+
+        theaderStrArr.push("</tr></thead>");
+
+        // (3) DataTable Param Object 작성
+        var dataTableParam = {
             // ajax: function (dataSent, callback, settings) {
             //     var resultData = this.api().ajax.json();
             //     if (resultData == undefined) {
@@ -173,51 +218,52 @@
             data: dataSet,
             scrollY: "350px",   // y scroll
             scrollCollapse: true, // y scroll
-            paging: false, // y scroll
-            columns: [
-                { data: null, defaultContent: "1" },
-                { data: "기준일자" },
-                { data: "가입위치별" },
-                { data: "가입자수" },
-                { data: "관심분야별" },
-                { data: "도서관별" },
-                { data: "성별" },
-                { data: "연령별" },
-                { data: "이용목적별" },
-                { data: "지역별" },
-            ],
+            paging: pagingFlag, // y scroll
+            columns: columnsArr,
             columnDefs: columnDefs
-        });
+        }
+
+        if (pagingTurningPoint && dataSet.length > pagingTurningPoint) {
+            dataTableParam.paging = true;
+        }
+
+
+        var $targetTable = $("#" + tableId);
+
+        // 2. Table theader 생성
+        $targetTable.empty();
+        $targetTable.append(theaderStrArr.join(""));
+
+        // 3. DataTable 생성
+        var t = $targetTable.DataTable(dataTableParam);
 
         // No 값 자동생성
-        t.on('order.dt search.dt', function () {
-            t.column(0, { search: 'applied', order: 'applied' }).nodes().each(function (cell, i) {
-                cell.innerHTML = i + 1;
-            });
-        }).draw();
+        if (rowNumFlag) {
+            t.on('order.dt search.dt', function () {
+                t.column(0, { search: 'applied', order: 'applied' }).nodes().each(function (cell, i) {
+                    cell.innerHTML = i + 1;
+                });
+            }).draw();
+        }
     }
 
     $.getJSON("/data/sample2.json", function (data) {
         var dataSet = data.data;
-        // console.log("dataSet", dataSet);
-
+        var columnInfo = _TABLE_COLUMN_PARAM.dataTable_1.columnInfo;
+        var columnDefs = _TABLE_COLUMN_PARAM.dataTable_1.columnDefs;
         var tableParamObj = {
-            columnDefs: [
-                {
-                    targets: 0,
-                    orderable: false,
-                    searchable: false
-                },
-                {
-                    targets: 2,
-                    orderable: false,
-                    searchable: false
-                }
-            ]
+            rowNumFlag: true,   // Row Num 유무
+            pagingFlag: false,  // 페이징 유무
+            // pagingTurningPoint: 300 // 데이터가 설정한 특정값 이상일 경우 강제로 페이징처리
         };
 
-        createDataTableDefault("dataTable", dataSet, tableParamObj);
-
+        createDataTableDefault(
+            "dataTable",
+            dataSet,
+            columnInfo,
+            columnDefs,
+            tableParamObj
+        );
     });
 
 
