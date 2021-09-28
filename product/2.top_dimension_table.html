@@ -10,18 +10,47 @@
 <link rel="stylesheet" href="/plugin/bootstrap/css/bootstrap.min.css" />
 <link rel="stylesheet" href="/plugin/datepicker/datepicker3.min.css" />
 <link rel="stylesheet" href="/plugin/iCheck/square/blue.css" />
+
 <link rel="stylesheet"
 	href="/plugin/datatables/jquery.dataTables.min.css" />
 <link rel="stylesheet" href="/plugin/zCardUIDesign/zCardUIDesign.css">
+
+<style type="text/css">
+td {
+	border: 1px solid #FFFFFF;
+	border-radius: 6px;
+	color: #555;
+	background-color: #f0f0f0;
+	text-align: right;
+}
+
+th {
+	padding: 6px 6px;
+}
+
+.form-control {
+	font-size: 12pt;
+}
+
+input[type="number"] {
+	padding: 6px 0px;
+	position: relative;
+}
+
+input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-inner-spin-button
+	{
+	-webkit-appearance: none;
+}
+</style>
 
 <script src="/plugin/jQuery/jQuery-2.1.4.min.js"></script>
 <script src="/plugin/jQueryUI/jquery-ui.min.js"></script>
 <script src="/plugin/bootstrap/js/bootstrap.min.js"></script>
 <script src="/plugin/datepicker/bootstrap-datepicker.min.js"></script>
 <script src="/plugin/iCheck/icheck.min.js"></script>
-<script src="/plugin/tableCreater/tableCreater.js"></script>
+<script src="/plugin/tableCreater/topDimTableCreater.js"></script>
 <script src="/plugin/table-to-excel/tableToExcel.js"></script>
-<script src="/plugin/datatables/jquery.dataTables.min.js"></script>
+<script src="/plugin/datatables/jquery.dataTables.js"></script>
 </head>
 
 <body class="main">
@@ -37,115 +66,90 @@
 			<div class="" style="margin: auto; text-align: center;">
 				<form class="form-inline">
 					<div class="form-group" style="padding-right: 20px;">
-						<input type="radio" name="check" id="check1" checked /> <label for="check1" style="margin-right: 8px;">연별</label>
-						<input type="radio" name="check" id="check2" /> <label for="check2" style="margin-right: 8px;">월별</label>
-						<input type="radio" name="check" id="check3" /> <label for="check3" style="margin-right: 8px;">일별</label>
+						<input type="radio" name="check" id="check1" checked /> <label for="check1"
+							style="margin-right: 8px;">연별</label> <input type="radio" name="check" id="check2" /> <label
+							for="check2" style="margin-right: 8px;">월별</label> <input type="radio" name="check"
+							id="check3" /> <label for="check3" style="margin-right: 8px;">일별</label>
 					</div>
 					<div class="form-group">
-						<label>기간조회</label> <span style="margin-left: 10px; margin-right: 10px;">|</span>
-						<input type="text" class="form-control" id="startDt" style="width: 100px; display: inline;" placeholder="2021-08-13">
-						<span style="margin-left: 10px; margin-right: 10px;">~</span>
-						<input type="text" class="form-control" id="endDt" style="width: 100px; display: inline;" placeholder="2021-09-13">
+						<label>기간조회</label> <span style="margin-left: 10px; margin-right: 10px;">|</span> <input
+							type="text" class="form-control" id="startDt" style="width: 100px; display: inline;"
+							placeholder="2021-08-13">
+						<span style="margin-left: 10px; margin-right: 10px;">~</span> <input type="text"
+							class="form-control" id="endDt" style="width: 100px; display: inline;"
+							placeholder="2021-09-13">
 					</div>
-					<button type="button" class="btn btn-default"
-						style="margin-left: 20px;">조회</button>
+					<button type="button" class="btn btn-default" style="margin-left: 20px;">조회</button>
 				</form>
 			</div>
 		</div>
 		<!-- 필터 영역 End -->
 
-		<div class="col-md-12">
-			<div class="row">
-				<!-- 본관Table 영역 Start -->
-				<div class="col-md-12 z-cards-container">
-					<!-- <div id="mainLibDiv" style="margin: auto; display: table;"> -->
-					<div id="mainLibDiv" class="z-card-wrapper">
-						<div class="z-card">
-							<div class="z-card-preview">
-								<span class="z-card-title">본관</span>
-							</div>
-							<div class="z-card-info">
-								<label class="z-card-table-unit">('21.6.30.기준)</label>
-								<table class="z-submit-table" id="mainLibTable">
-									<thead id="mainLibThead">
-										<tr>
-											<th rowspan="2">연도</th>
-											<th rowspan="2">개관일수</th>
-											<th colspan="2">이용인원(명)</th>
-											<th colspan="2">이용자료수(책)</th>
-										</tr>
-										<tr>
-											<th>이용자수</th>
-											<th>일평균</th>
-											<th>자료수</th>
-											<th>일평균</th>
-										</tr>
-									</thead>
-									<tbody id="mainLibTbody"></tbody>
-								</table>
-							</div>
-							<div class="z-card-footer">
-								<button type="button" class="btn btn-default btn-z-card">제출</button>
-								<br> <label class="submit-info"> 제출일시: 2021년 09월
-									24일 09시 33분 14초 / 수정자:홍길동 </label>
-							</div>
+
+		<!-- TotalTable 영역 Start -->
+		<div class="row">
+			<div class="col-md-12 z-cards-container">
+				<div id="totalDiv" class="z-card-wrapper">
+					<div class="z-card">
+						<div class="z-card-preview">
+							<span class="z-card-title">도서관 이용 현황</span>
 						</div>
-					</div>
-				</div>
-			</div>
-			<!-- 본관Table 영역 End -->
-			<div class="row">
-				<!-- 디지털도서관Table 영역 Start -->
-				<div class="col-md-12 z-cards-container">
-					<div id="digitalLibDiv" class="z-card-wrapper">
-						<div class="z-card">
-							<div class="z-card-preview">
-								<span class="z-card-title">디지털도서관</span>
-							</div>
-							<div class="z-card-info">
-								<label class="z-card-table-unit">('21.6.30.기준)</label>
-								<table class="z-submit-table" id="digitalLibTable">
-									<thead id="digitalLibThead">
-										<tr>
-											<th rowspan="2">연도</th>
-											<th rowspan="2">개관일수</th>
-											<th colspan="2">이용인원(명)</th>
-											<th colspan="2">이용자료수(책)</th>
-										</tr>
-										<tr>
-											<th>이용자수</th>
-											<th>일평균</th>
-											<th>자료수</th>
-											<th>일평균</th>
-										</tr>
-									</thead>
-									<tbody id="digitalLibTbody"></tbody>
-								</table>
-							</div>
-							<div class="z-card-footer">
-								<button type="button" class="btn btn-default btn-z-card">제출</button>
-								<br> <label class="submit-info"> 제출일시: 2021년 09월
-									24일 09시 33분 14초 / 수정자:홍길동 </label>
-							</div>
+						<div class="z-card-info">
+							<label class="z-card-table-unit">('21.6.30.기준/단위 : 명)</label>
+							<table class="z-submit-table" id="totalTable">
+								<thead id="totalThead">
+									<tr>
+										<th rowspan="2">연도</th>
+										<th rowspan="2">개관일수</th>
+										<th colspan="2">이용인원(명)</th>
+										<th colspan="2">이용자료수(책)</th>
+									</tr>
+									<tr>
+										<th>이용자수</th>
+										<th>일평균</th>
+										<th>자료수</th>
+										<th>일평균</th>
+									</tr>
+								</thead>
+								<tbody id="totalTbody"></tbody>
+							</table>
+						</div>
+						<div class="z-card-footer">
+							<button type="button" class="btn btn-default"
+								id="btnExcelDownload">엑셀로 받기</button>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
+		<!-- TotalTable 영역 Start -->
 	</div>
 </body>
 
-
 <script>
-  $(document).ready(jsonStart());
+  $.getJSON("/data/이용현황.json", function(data) {
+    var data = data.data;
+
+    // 0. 저장 버튼 활성 비활성 여부 판단
+    var insertYn = checkTableEditedYn(data, "입력YN", "N");
+
+    //createTableLeftDimension(data, tableCreateParam);
+    initTableLeftDimension(data, "연도", "도서관구분",
+        [ "방문자수", "개관일수", "자료수", "입력YN" ], _TABLE_PARAM.table_first);
+  });
 
   // Excel 다운로드 : 이런 식으로 저장된다는 걸 보여주기 위한 용도
   function tableToExcel() {
-    TableToExcel.convert(document.getElementById("totalTable"), {
-      name : "국립중앙박물관_도서관 방문 이용 현황 Excel.xlsx",
+    document.getElementsByClassName("pvtTable")[0].setAttribute("id",
+        "pvtTable");
+
+    TableToExcel.convert(document.getElementById("pvtTable"), {
+      name : "국립중앙박물관 통계 시스템 Excel.xlsx",
       sheet : {
         name : "Sheet 1"
       }
     });
   }
 </script>
+
+</html>

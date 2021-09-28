@@ -319,7 +319,7 @@ function biggerChart(btn) {
 	}
 }
 
-function biggerChart2(btn) {
+function switchingCharts(btn) {
 	
 	var str = "";
 	var absolute1stId = document.getElementsByClassName("z-card-info")[0].children[0].id;
@@ -345,6 +345,8 @@ function biggerChart2(btn) {
 	barChartAjax();
 	lineChartAjax();
 	pieChartAjax();
+	
+	document.documentElement.scrollTop = 0;
 }
   
   

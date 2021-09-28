@@ -23,13 +23,13 @@ var _TABLE_PARAM = {
 			name: "개관일수",
 			dimension: "본관",
 			measure: "개관일수",
-			insertFlag: false,
+			insertFlag: true,
 			calcFunc: false
 		}, {
 			name: "이용인원 이용자수",
 			dimension: "본관",
 			measure: "방문자수",
-			insertFlag: false,
+			insertFlag: true,
 			calcFunc: false
 		}, {
 			name: "이용인원 일평균",
@@ -41,7 +41,7 @@ var _TABLE_PARAM = {
 			name: "이용자료수 자료수",
 			dimension: "본관",
 			measure: "자료수",
-			insertFlag: false,
+			insertFlag: true,
 			calcFunc: false
 		}, {
 			name: "이용자료수 일평균",
