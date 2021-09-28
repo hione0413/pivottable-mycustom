@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <link rel="stylesheet" href="/plugin/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/plugin/datepicker/datepicker3.min.css" />
+    <link rel="stylesheet" href="/plugin/iCheck/square/blue.css" />
+    <link rel="stylesheet" href="/plugin/datatables/jquery.dataTables.min.css" />
+
+
+    <link rel="stylesheet" href="/custom_resource/css/z-top.css" />
+    <link rel="stylesheet" href="/custom_resource/lib/zCardUIDesign/zCardUIDesign.css">
+
+    <style>
+        /** 버튼 경로 못 찾아서 임시로 고정해둠 */
+        table.dataTable thead .sorting_asc {
+            background-image: url("/plugin/datatables/images/sort_asc.png")
+        }
+
+        table.dataTable thead .sorting_desc {
+            background-image: url("/plugin/datatables/images/sort_desc.png")
+        }
+
+        table.dataTable thead .sorting {
+            background-image: url("/plugin/datatables/images/sort_both.png")
+        }
+
+        table.dataTable thead .sorting_asc_disabled {
+            background-image: url("/plugin/datatables/images/sort_asc_disabled.png")
+        }
+
+        table.dataTable thead .sorting_desc_disabled {
+            background-image: url("/plugin/datatables/images/sort_desc_disabled.png")
+        }
+    </style>
+
+    <script src="/plugin/jQuery/jQuery-2.1.4.min.js"></script>
+    <script src="/plugin/jQueryUI/jquery-ui.min.js"></script>
+    <script src="/plugin/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/plugin/datepicker/bootstrap-datepicker.min.js"></script>
+    <script src="/plugin/datepicker/locales/bootstrap-datepicker.kr.js" charset="UTF-8"></script>
+    <script src="/plugin/iCheck/icheck.min.js"></script>
+    <script src="/plugin/datatables/jquery.dataTables.min.js"></script>
+
+</head>
+
+<body class="main">
+    <div class="container-fluid">
+        <!-- 필터 영역 Start -->
+        <div class="z-top">
+            <div>
+                <div class="z-title-wrapper">
+                    <label class="z-title">국립중앙박물관 통계 시스템 </label>
+                </div>
+            </div>
+            <div class="z-filter-wrapper">
+                <form class="form-inline">
+                    <div class="form-group z-filter-group">
+                        <input type="radio" name="check" id="check1" checked />
+                        <label for="check1" class="z-filter-check-label">연별</label>
+                        <input type="radio" name="check" id="check2" />
+                        <label for="check2" class="z-filter-check-label">월별</label>
+                        <input type="radio" name="check" id="check3" />
+                        <label for="check3" class="z-filter-check-label">일별</label>
+                    </div>
+                    <div class="form-group z-filter-group">
+                        <label>SELECT</label>
+                        <span class="z-filter-separator">|</span>
+                        <select class="form-control">
+                            <option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                        </select>
+                    </div>
+                    <div class="form-group z-filter-group">
+                        <label>기간조회</label>
+                        <span class="z-filter-separator">|</span>
+                        <input type="text" class="form-control z-filter-textbox" id="startDt" placeholder="2021-08-13">
+                        <span class="z-filter-separator">~</span>
+                        <input type="text" class="form-control z-filter-textbox" id="endDt" placeholder="2021-09-13">
+                    </div>
+                    <button type="button" class="btn btn-default z-filter-btn">조회</button>
+                </form>
+            </div>
+        </div>
+        <!-- 필터 영역 End -->
+
+        <!-- Data Table 영역 Start -->
+        <div class="minwon row">
+            <div class="col-md-6">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h2 class="panel-title">데이터 테이블 (기본)</h2>
+                    </div>
+                    <div class="panel-body">
+                        <label class="z-card-table-unit">('21.6.30.기준/단위 : 명)</label>
+                        <table id="dataTable"></table>
+                    </div>
+                    <div class="panel-footer" style="text-align: right;">
+                        <button type="button" class="btn btn-default" id="btnExcelDownload">엑셀 다운로드</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h2 class="panel-title">데이터 테이블 (기본)</h2>
+                    </div>
+                    <div class="panel-body">
+                        <label class="z-card-table-unit">('21.6.30.기준/단위 : 명)</label>
+                        <table id="dataTable2"></table>
+                    </div>
+                    <div class="panel-footer" style="text-align: right;">
+                        <button type="button" class="btn btn-default" id="btnExcelDownload">엑셀 다운로드</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    </div>
+    <!-- Data Table 영역 End -->
+
+    <a type="hidden" id="downloadLink"></a>
+
+    </div>
+</body>
+<script>
+
+    // Datapicker setting start
+    var datapickerFormat = "yyyy-mm-dd";
+    $("#startDt").datepicker({
+        format: datapickerFormat,
+        language: 'kr'
+    });
+    $("#endDt").datepicker({
+        format: datapickerFormat,
+        language: 'kr'
+    });
+    // Datapicker setting End
+
+    // iCheck setting Start 
+    $("input[name=check]").iCheck({
+        radioClass: 'iradio_square-blue',
+    });
+    // iCheck setting End
+
+
+    var _TABLE_COLUMN_PARAM = {
+        dataTable_1: {
+            columnInfo: [
+                { target: 0, tHeaderName: "No", dataColumnName: null },
+                { target: 1, tHeaderName: "기준일자", dataColumnName: "기준일자" },
+                { target: 2, tHeaderName: "가입위치별", dataColumnName: "가입위치별" },
+                { target: 3, tHeaderName: "가입자수", dataColumnName: "가입자수" },
+                { target: 4, tHeaderName: "관심분야별", dataColumnName: "관심분야별" },
+                { target: 5, tHeaderName: "도서관별", dataColumnName: "도서관별" },
+                { target: 6, tHeaderName: "성별", dataColumnName: "성별" },
+                { target: 7, tHeaderName: "연령별", dataColumnName: "연령별" },
+                { target: 8, tHeaderName: "이용목적별", dataColumnName: "이용목적별" },
+                { target: 9, tHeaderName: "지역별", dataColumnName: "지역별" }
+            ],
+            columnDefs: [
+                { targets: 0, orderable: false, searchable: false },
+                { targets: 2, orderable: false, searchable: false }
+            ]
+        }
+    };
+
+
+    // Create Data Table(default) Start
+    function createDataTableDefault(tableId, dataSet, columnInfo, columnDefs, tableParamObj) {
+        // 0. 파라메터 준비
+        var rowNumFlag = tableParamObj.rowNumFlag; // No 칼럼 default : false
+        var pagingFlag = tableParamObj.pagingFlag ? tableParamObj.pagingFlag : false; // 페이징 default : false
+        // 데이터가 각 페이지에서 설정한 특정값 이상일 경우 강제로 페이징처리
+        var pagingTurningPoint = tableParamObj.pagingTurningPoint ? tableParamObj.pagingTurningPoint : false;
+
+        // 1. column info 정보를 토대로 아래와 같은 작업 진행
+        var theaderStrArr = ["<thead><tr>"];
+        var columnsArr = [];
+
+        for (var i = 0; i < columnInfo.length; i++) {
+            var tHeaderName = columnInfo[i].tHeaderName;
+            var dataColumnName = columnInfo[i].dataColumnName;
+
+            // (1) Table theader html 준비
+            theaderStrArr.push("<th>" + tHeaderName + "</th>");
+
+            // (2) columns Arr 준비
+            columnsArr.push({
+                data: dataColumnName,
+                defaultContent: "null"
+            });
+        }
+
+        theaderStrArr.push("</tr></thead>");
+
+        // (3) DataTable Param Object 작성
+        var dataTableParam = {
+            // ajax: function (dataSent, callback, settings) {
+            //     var resultData = this.api().ajax.json();
+            //     if (resultData == undefined) {
+            //         resultData = dataSet;
+            //     } else {
+            //         resultData = data.data;
+            //         for (i = 0; i < resultData.length; i++) {
+            //             resultData[i].last.push(resultData[i].last.shift())
+            //         }
+            //     }
+
+            //     callback({ data: resultData });
+            // },
+            data: dataSet,
+            scrollY: "350px",   // y scroll
+            scrollCollapse: true, // y scroll
+            paging: pagingFlag, // y scroll
+            columns: columnsArr,
+            columnDefs: columnDefs
+        }
+
+        if (pagingTurningPoint && dataSet.length > pagingTurningPoint) {
+            dataTableParam.paging = true;
+        }
+
+        // 2. Table theader 생성
+        var $targetTable = $("#" + tableId);
+        $targetTable.empty();
+        $targetTable.append(theaderStrArr.join(""));
+
+        // 3. DataTable 생성
+        var t = $targetTable.DataTable(dataTableParam);
+
+        // No 값 자동생성
+        if (rowNumFlag) {
+            t.on('order.dt search.dt', function () {
+                t.column(0, { search: 'applied', order: 'applied' }).nodes().each(function (cell, i) {
+                    cell.innerHTML = i + 1;
+                });
+            }).draw();
+        }
+    } // function createDataTableDefault End
+
+    // Create Data Table(default) End
+
+
+    $.getJSON("/data/sample2.json", function (data) {
+        var dataSet = data.data;
+        var columnInfo = _TABLE_COLUMN_PARAM.dataTable_1.columnInfo;
+        var columnDefs = _TABLE_COLUMN_PARAM.dataTable_1.columnDefs;
+        var tableParamObj = {
+            rowNumFlag: true,   // Row Num 유무
+            pagingFlag: false,  // 페이징 유무
+            // pagingTurningPoint: 300 // 데이터가 설정한 특정값 이상일 경우 강제로 페이징처리
+        };
+
+        createDataTableDefault(
+            "dataTable",
+            dataSet,
+            columnInfo,
+            columnDefs,
+            tableParamObj
+        );
+
+        createDataTableDefault(
+            "dataTable2",
+            dataSet,
+            columnInfo,
+            columnDefs,
+            tableParamObj
+        );
+    });
+
+
+</script>
+
+</html>
