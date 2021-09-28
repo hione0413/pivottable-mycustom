@@ -151,51 +151,272 @@
     // iCheck setting End
 
 
-    var _TABLE_COLUMN_PARAM = {
-        dataTable_1: {
-            columnInfo: [
-                { target: 0, tHeaderName: "No", dataColumnName: null },
-                { target: 1, tHeaderName: "기준일자", dataColumnName: "기준일자" },
-                { target: 2, tHeaderName: "가입위치별", dataColumnName: "가입위치별" },
-                { target: 3, tHeaderName: "가입자수", dataColumnName: "가입자수" },
-                { target: 4, tHeaderName: "관심분야별", dataColumnName: "관심분야별" },
-                { target: 5, tHeaderName: "도서관별", dataColumnName: "도서관별" },
-                { target: 6, tHeaderName: "성별", dataColumnName: "성별" },
-                { target: 7, tHeaderName: "연령별", dataColumnName: "연령별" },
-                { target: 8, tHeaderName: "이용목적별", dataColumnName: "이용목적별" },
-                { target: 9, tHeaderName: "지역별", dataColumnName: "지역별" }
-            ],
-            columnDefs: [
-                { targets: 0, orderable: false, searchable: false },
-                { targets: 2, orderable: false, searchable: false }
-            ]
+    // Create Data Table(default) Start
+    function createDataTableDefault(tableId, dataSet, columnInfo, columnDefs, tableParamObj) {
+        // 0. 파라메터 준비
+        var rowNumFlag = tableParamObj.rowNumFlag; // No 칼럼 default : false
+        var pagingFlag = tableParamObj.pagingFlag ? tableParamObj.pagingFlag : false; // 페이징 default : false
+        // 데이터가 각 페이지에서 설정한 특정값 이상일 경우 강제로 페이징처리
+        var pagingTurningPoint = tableParamObj.pagingTurningPoint ? tableParamObj.pagingTurningPoint : false;
+
+        // 1. column info 정보를 토대로 아래와 같은 작업 진행
+        var theaderStrArr = ["<thead><tr>"];
+        var columnsArr = [];
+
+        for (var i = 0; i < columnInfo.length; i++) {
+            var tHeaderName = columnInfo[i].tHeaderName;
+            var dataColumnName = columnInfo[i].dataColumnName;
+
+            // (1) Table theader html 준비
+            theaderStrArr.push("<th>" + tHeaderName + "</th>");
+
+            // (2) columns Arr 준비
+            columnsArr.push({
+                data: dataColumnName,
+                defaultContent: 0
+            });
         }
-    };
+
+        theaderStrArr.push("</tr></thead>");
+
+        // (3) DataTable Param Object 작성
+        var dataTableParam = {
+            data: dataSet,
+            scrollY: "350px",   // y scroll
+            scrollCollapse: true, // y scroll
+            paging: pagingFlag, // y scroll
+            columns: columnsArr,
+            columnDefs: columnDefs,
+            // drawCallback: function () {
+            //     $("#" + tableId + " tbody td").not(":nth-child(1),:nth-child(2)").colorize();
+            // }
+        }
+
+        if (pagingTurningPoint && dataSet.length > pagingTurningPoint) {
+            dataTableParam.paging = true;
+        }
+
+        // 2. Table theader 생성
+        var $targetTable = $("#" + tableId);
+        $targetTable.empty();
+        $targetTable.append(theaderStrArr.join(""));
+
+        // 3. DataTable 생성
+        var t = $targetTable.DataTable(dataTableParam);
+
+        // No 값 자동생성
+        if (rowNumFlag) {
+            t.on('order.dt search.dt', function () {
+                t.column(0, { search: 'applied', order: 'applied' }).nodes().each(function (cell, i) {
+                    cell.innerHTML = i + 1;
+                });
+            }).draw();
+        }
+    } // function createDataTableDefault End
+
+    // Create Data Table(default) End
 
 
+    function getCodeList() {
+        return ["국내서", "서양서", "일본서", "중국서", "기타"];
+    }
 
+    /**
+     * 데이터 Pivot으로 재정렬
+     * @pData : Pivot할 대상 데이터
+     * @leftDimension : 차원1 - 테이블의 row 첫번째 cell 값에 해당
+     * @topDimension : 차원2 - 테이블의 column 에 해당
+     * @measure : 측정값
+    */
+    function realignDataToPivot(pData, leftDimension, topDimension, measure) {
+        var result = [];
+        var tempObj = {};
 
+        for (var i = 0; i < pData.length; i++) {
+            var rowData = pData[i];
 
-    $.getJSON("/data/sample2.json", function (data) {
+            // 0. dimension First 값이 기존과 다를 경우 obj -> arr에 저장 후 초기화
+            if (tempObj[leftDimension] && tempObj[leftDimension] !== rowData[leftDimension]) {
+                result.push(tempObj);
+                tempObj = {};
+            }
+
+            // 1. left dimension 값 세팅
+            if (!tempObj[leftDimension]) {
+                tempObj[leftDimension] = rowData[leftDimension];
+            }
+
+            // 2. topDimension : measure 값 세팅
+            if (!tempObj[rowData[topDimension]]) {
+                tempObj[rowData[topDimension]] = rowData[measure];
+            }
+
+            // 3. 마지막 obj -> arr 저장
+            if (i === pData.length - 1) {
+                result.push(tempObj);
+            }
+        }
+
+        return result;
+    }
+
+    $.getJSON("/data/pivot_sample.json", function (data) {
         var dataSet = data.data;
-        var columnInfo = _TABLE_COLUMN_PARAM.dataTable_1.columnInfo;
-        var columnDefs = _TABLE_COLUMN_PARAM.dataTable_1.columnDefs;
+        var alignedData = realignDataToPivot(dataSet, "DATE", "GOUBOON", "CNT");
 
+        // 1. table 상단 Column 으로 입력될 code 목록
+        var codeArr = getCodeList();
 
-        // var tableParamObj = {
-        //     rowNumFlag: true,   // Row Num 유무
-        //     pagingFlag: false,  // 페이징 유무
-        //     // pagingTurningPoint: 300 // 데이터가 설정한 특정값 이상일 경우 강제로 페이징처리
-        // };
+        // 2. 코드목록을 바탕으로 테이블을 그리기 위한 column 정보를 생성한다
+        // (1) 코드와 관계없이 들어갈 기본값
+        var columnInfo = [
+            { target: 0, tHeaderName: "No", dataColumnName: null },
+            { target: 1, tHeaderName: "날짜", dataColumnName: "DATE" },
+        ];
 
-        // createDataTableDefault(
-        //     "dataTable",
-        //     dataSet,
-        //     columnInfo,
-        //     columnDefs,
-        //     tableParamObj
-        // );
+        // (2) 코드
+        for (var i = 0; i < codeArr.length; i++) {
+            columnInfo.push({
+                target: i + 2,
+                tHeaderName: codeArr[i],
+                dataColumnName: codeArr[i]
+            });
+        }
+
+        var columnDefs = [
+            { targets: 0, orderable: false, searchable: false },
+            { targets: 1, orderable: true, searchable: false }
+        ]
+
+        var tableParamObj = {
+            rowNumFlag: true,   // Row Num 유무
+            pagingFlag: false,  // 페이징 유무
+            // pagingTurningPoint: 300 // 데이터가 설정한 특정값 이상일 경우 강제로 페이징처리
+        };
+
+        createDataTableDefault(
+            "dataTable",
+            alignedData,
+            columnInfo,
+            columnDefs,
+            tableParamObj
+        );
     });
+
+
+    /*************************************/
+    // (function ($) {
+
+    //     $.fn.colorize = function (oOptions) {
+    //         var settings = $.extend({
+    //             parse: function (e) {
+    //                 return parseFloat(e.html());
+    //             },
+    //             min: undefined,
+    //             max: undefined,
+    //             readable: true,
+    //             themes: {
+    //                 "default": {
+    //                     color_min: "#C80000",
+    //                     color_mid: "#FFFFFF",
+    //                     color_max: "#10A54A"
+    //                 },
+    //                 "blue-white-red": {
+    //                     color_min: "#312F9D",
+    //                     color_mid: "#FFFFFF",
+    //                     color_max: "#C80000"
+    //                 }
+    //             },
+    //             theme: "default",
+    //             center: undefined,
+    //             percent: false
+    //         }, oOptions);
+
+    //         var min = 0;
+    //         var max = 0;
+    //         this.each(function () {
+    //             var value = parseFloat(settings.parse($(this)));
+    //             if (!isNaN(value) && isFinite(value)) {
+    //                 min = Math.min(min, value);
+    //                 max = Math.max(max, value);
+    //                 $(this).data('colorize', value);
+    //             }
+    //         });
+
+    //         if (settings.center === undefined) settings.center = mean(this);
+    //         var adj = settings.center - min;
+
+    //         this.each(function () {
+    //             var value = $(this).data('colorize');
+    //             var ratio = (settings.center - value) / adj;
+    //             var color1, color2;
+
+    //             if (!settings.percent && value <= settings.min) {
+    //                 color1 = settings.themes[settings.theme].color_min;
+    //                 color2 = settings.themes[settings.theme].color_min;
+    //             } else if (!settings.percent && value >= settings.max) {
+    //                 color1 = settings.themes[settings.theme].color_max;
+    //                 color2 = settings.themes[settings.theme].color_max;
+    //             } else if (settings.percent && ratio <= settings.min) {
+    //                 color1 = settings.themes[settings.theme].color_min;
+    //                 color2 = settings.themes[settings.theme].color_min;
+    //             } else if (settings.percent && ratio >= settings.max) {
+    //                 color1 = settings.themes[settings.theme].color_max;
+    //                 color2 = settings.themes[settings.theme].color_max;
+    //             } else if (value < settings.center) {
+    //                 ratio = Math.abs(ratio);
+    //                 if (ratio < -1) ratio = -1;
+    //                 color1 = settings.themes[settings.theme].color_min;
+    //                 color2 = settings.themes[settings.theme].color_mid;
+    //             } else {
+    //                 ratio = Math.abs(ratio);
+    //                 if (ratio > 1) ratio = 1;
+    //                 color1 = settings.themes[settings.theme].color_max;
+    //                 color2 = settings.themes[settings.theme].color_mid;
+    //             }
+    //             var color = getColor(color1, color2, ratio);
+    //             $(this).css('background-color', color);
+    //             if (settings.readable)
+    //                 $(this).css('color', getContrastYIQ(color));
+    //         });
+
+    //         function getColor(color1, color2, ratio) {
+    //             var hex = function (x) {
+    //                 x = x.toString(16);
+    //                 return (x.length == 1) ? '0' + x : x;
+    //             }
+    //             color1 = (color1.charAt(0) == "#") ? color1.slice(1) : color1
+    //             color2 = (color2.charAt(0) == "#") ? color2.slice(1) : color2
+    //             var r = Math.ceil(parseInt(color1.substring(0, 2), 16) * ratio + parseInt(color2.substring(0, 2), 16) * (1 - ratio));
+    //             var g = Math.ceil(parseInt(color1.substring(2, 4), 16) * ratio + parseInt(color2.substring(2, 4), 16) * (1 - ratio));
+    //             var b = Math.ceil(parseInt(color1.substring(4, 6), 16) * ratio + parseInt(color2.substring(4, 6), 16) * (1 - ratio));
+    //             return "#" + (hex(r) + hex(g) + hex(b)).toUpperCase();
+    //         }
+
+    //         function mean(arr) {
+    //             var avg = 0;
+    //             arr.each(function () {
+    //                 if ($(this).data('colorize') !== undefined) {
+    //                     avg += $(this).data('colorize');
+    //                 }
+    //             });
+    //             return avg / arr.length;
+    //         }
+
+    //         // http://24ways.org/2010/calculating-color-contrast/
+    //         function getContrastYIQ(hexcolor) {
+    //             var hex = (hexcolor.charAt(0) == "#") ? hexcolor.slice(1) : hexcolor;
+    //             var r = parseInt(hex.substr(0, 2), 16);
+    //             var g = parseInt(hex.substr(2, 2), 16);
+    //             var b = parseInt(hex.substr(4, 2), 16);
+    //             var yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+    //             return (yiq >= 128) ? 'black' : 'white';
+    //         }
+
+    //         return this;
+    //     };
+
+    // }(jQuery));
 
 
 </script>
