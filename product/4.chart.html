@@ -40,6 +40,7 @@
 				</div>
 				<div class="z-card-footer">
 					<button type="button" class="btn btn-default btn-z-card" onclick="biggerChart(this)">+</button>
+					<button type="button" class="btn btn-default btn-z-card" onclick="biggerChart2(this)">크게 보기</button>
 				</div>
 			</div>
 		</div>
@@ -55,6 +56,7 @@
 				</div>
 				<div class="z-card-footer">
 					<button type="button" class="btn btn-default btn-z-card" onclick="biggerChart(this)">+</button>
+					<button type="button" class="btn btn-default btn-z-card" onclick="biggerChart2(this)">크게 보기</button>
 				</div>
 			</div>
 		</div>
@@ -68,6 +70,7 @@
 				</div>
 				<div class="z-card-footer">
 					<button type="button" class="btn btn-default btn-z-card" onclick="biggerChart(this)">+</button>
+					<button type="button" class="btn btn-default btn-z-card" onclick="biggerChart2(this)">크게 보기</button>
 				</div>
 			</div>
 		</div>
@@ -75,59 +78,27 @@
 
 </body>
 <script type="text/javascript">
-  var libraries = [ "어린이청소년도서관", "디지털도서관", "국립중앙도서관", "국립세종도서관" ];
 
-  $.ajax({
-    url: "/data/fileForLineChart.json",
-    cache: false,
-    dataType: "json",
-    success: function(data) {
-      var jsonData = data.data;
-      buildLineChart(jsonData, libraries);
-    },
-    error: function (request, status, error) { alert(status + ", " + error); }
-  });
-  
-  /* $.getJSON("/data/fileForLineChart.json", function(data) {
-    var jsonData = data.data;
-    buildLineChart(jsonData, libraries);
-  }); */
-
-  $.ajax({
-    url: "/data/fileForBarChart.json",
-    cache: false,
-    dataType: "json",
-    success: function(data) {
-      var sending = data.data;
-      var category = "자료실";
-      var row = "방문자수";
-      buildBarChart(sending, category, row);
-    },
-    error: function (request, status, error) { alert(status + ", " + error); }
-  });
- /*  $.getJSON("/data/fileForBarChart.json", function(data) {
-    var sending = data.data;
-    var category = "자료실";
-    var row = "방문자수";
-    buildBarChart(sending, category, row);
-  }); */
-  $.ajax({
-    url: "/data/fileForPieChart.json",
-    cache: false,
-    dataType: "json",
-    success: function(data) {
-      var jsonData = data.data;
-      var value = "방문자수";
-      var category = "방문목적";
-      buildPieChart(jsonData, value, category);
-    },
-    error: function (request, status, error) { alert(status + ", " + error); }
-  });
-  /* $.getJSON("/data/fileForPieChart.json", function(data) {
-    var jsonData = data.data;
-    var value = "방문자수";
-    var category = "방문목적";
-    buildPieChart(jsonData, value, category);
-  }); */
+$(document).ready(barChartAjax(), lineChartAjax(), pieChartAjax());
+  /*
+  	$.getJSON("/data/fileForLineChart.json", function(data) {
+	    var jsonData = data.data;
+	    buildLineChart(jsonData, libraries);
+	}); 
+ 
+	$.getJSON("/data/fileForBarChart.json", function(data) {
+	    var sending = data.data;
+	    var category = "자료실";
+	    var row = "방문자수";
+	    buildBarChart(sending, category, row);
+	});
+ 
+	$.getJSON("/data/fileForPieChart.json", function(data) {
+	    var jsonData = data.data;
+	    var value = "방문자수";
+	    var category = "방문목적";
+	    buildPieChart(jsonData, value, category);
+  	}); 
+	*/
 </script>
 </html>

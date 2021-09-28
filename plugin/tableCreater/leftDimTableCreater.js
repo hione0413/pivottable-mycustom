@@ -1,266 +1,69 @@
+var yearForExcelExport = [];
+var libraries = ["본관", "디지털도서관", "어린이청소년도서관", "세종도서관"];
+var inputVals = [];
+var inputTags = [];
+for (var i = 0; i < libraries.length; i++) {
+	inputVals[i] = [0];
+	inputTags[i] = [0];
+};
+var inputTagValSw = 0;
+
 var _TABLE_PARAM = {
-	table_0: {
-		tableKey: "table_0",
+	table_first: {
+		tableKey: "table_first",
 		tableId: "totalTable",
-		theadId: "totalThead",
 		tbodyId: "totalTbody",
-		theadHtmlArr: [['<th colspan="2">연도</th>'],
-		['<th>2018</th>'], ['<th>2019</th>'],
-		['<th>2020</th>'], ['<th>2021</th>'],],
-		tbodyHtmlArr: [
-			['<tr><th rowspan="6">국립중앙도서관</th><th>본 관</th>'], // 0
-			['<tr><th>(일평균)</th>'], //1
-			['<tr><th>디지털도서관</th>'], //2
-			['<tr><th>(일평균)</th>'], //3
-			['<tr><th>소계</th>'], //4
-			['<tr><th>(일평균)</th>'], //5
-			['<tr><th colspan="2">어린이청소년도서관</th>'], //6
-			['<tr><th colspan="2">(일평균)</th>'], //7
-			['<tr><th colspan="2">세종도서관</th>'], //8
-			['<tr><th colspan="2">(일평균)</th>'], //9
-			['<tr><th colspan="2">계</th>'], //10
-			['<tr><th colspan="2">(일평균)</th>'] //11
-		]
-	},
-	table_1: {
-		tableKey: "table_1",
-		tableId: "mainLibTable",
-		tbodyId: "mainLibTbody",
 		dimensionFirstKey: "연도",
-		tableColumnInfo: [
-			{
-				name: "연도",
-				dimension: "연도",
-				insertFlag: false,
-				calcFunc: false
-			},
-			{
-				name: "개관일수",
-				dimension: "본관",
-				measure: "개관일수",
-				insertFlag: true,
-				calcFunc: false
-			},
-			{
-				name: "이용인원 이용자수",
-				dimension: "본관",
-				measure: "방문자수",
-				insertFlag: true,
-				calcFunc: false
-			},
-			{
-				name: "이용인원 일평균",
-				insertFlag: false,
-				calcFunc: function(pData) {
-					return Math.round(pData["본관"]["방문자수"]
-						/ pData["본관"]["개관일수"]);
-				}
-			},
-			{
-				name: "이용자료수 자료수",
-				dimension: "본관",
-				measure: "자료수",
-				insertFlag: true,
-				calcFunc: false
-			},
-			{
-				name: "이용자료수 일평균",
-				insertFlag: false,
-				calcFunc: function(pData) {
-					return Math.round(pData["본관"]["자료수"]
-						/ pData["본관"]["개관일수"]);
-				}
-			}],
-		// 입력기능이 존재하지 않는 row
-		// nonInsertRow : [ 0, 1 ],
-		nonInsertRow: [],
-		// Table 에 합계 row가 존재하는 경우 true
-		totalRowFlag: true
-	},
-	table_2: {
-		tableKey: "table_2",
-		tableId: "digitalLibTable",
-		theadId: "digitalLibTHead",
-		tbodyId: "digitalLibTbody",
-		theadHtmlArr: [['<th rowspan="2">연도</th>'],
-		['<th rowspan="2">개관일수</th>'], ['<th colspan="2">이용인원(명)</th>'],
-		['<th colspan="2">이용자료수(책)</th>'], ['<tr><th>이용자수</th>'], ['<th>일평균</th>'], ['<th>자료수</th>'], ['<th>일평균</th>']],
-		tableColumnInfo: [
-			{
-				name: "연도",
-				dimension: "연도",
-				measure: "연도",
-				insertFlag: false,
-				calcFunc: false
-			},
-			{
-				name: "개관일수",
-				dimension: "디지털도서관",
-				measure: "개관일수",
-				insertFlag: true,
-				calcFunc: false
-			},
-			{
-				name: "이용인원 이용자수",
-				dimension: "디지털도서관",
-				measure: "방문자수",
-				insertFlag: true,
-				calcFunc: false
-			},
-			{
-				name: "이용인원 일평균",
-				measure: "일평균",
-				insertFlag: false,
-				calcFunc: function(pData) {
-					return Math.round(pData["방문자수"]
-						/ pData["개관일수"]);
-				}
-			},
-			{
-				name: "이용자료수 자료수",
-				dimension: "디지털도서관",
-				measure: "자료수",
-				insertFlag: true,
-				calcFunc: false
-			},
-			{
-				name: "이용자료수 일평균",
-				measure: "일평균",
-				insertFlag: false,
-				calcFunc: function(pData) {
-					return Math.round(pData["자료수"]
-						/ pData["개관일수"]);
-				}
-			}],
-		// 입력기능이 존재하지 않는 row
-		// nonInsertRow : [ 0, 1 ],
-		nonInsertRow: [],
-		// Table 에 합계 row가 존재하는 경우 true
-		totalRowFlag: true
-	}
-}
-
-function totalTblMaking() {
-	var table = _TABLE_PARAM.table_0;
-	var theadIp = "";
-	var tbodyIp = "";
-	for (var i = 0; i < table.theadHtmlArr.length; i++) {
-		theadIp += table.theadHtmlArr[i];
-	}
-	for (var i = 0; i < table.tbodyHtmlArr.length; i++) {
-		tbodyIp += table.tbodyHtmlArr[i];
-		for (var j = 0; j < table.theadHtmlArr.length - 1; j++) {
-			tbodyIp += "<td id='" + table.tableKey + "_" + i + "_" + j + "'></td>";
-		}
-	}
-	$("#totalThead").html(theadIp);
-	$("#totalTbody").html(tbodyIp);
-}
-
-/*
-function tblMaking(tableParam, jsonData) {
-	var tmpNm = 0;
-	var tHeadHtml = "";
-	var tBodyHtml = "";
-	var colInfo = tableParam.tableColumnInfo;
-	var tableKey = tableParam.tableKey;
-	var tabletheadId = tableParam.theadId;
-	var tabletbodyId = tableParam.tbodyId;
-	for (var i in tableParam.theadHtmlArr) {
-		tHeadHtml += tableParam.theadHtmlArr[i];
-	}
-
-	jsonData.forEach((item) => {
-		for (var i in colInfo) {
-			// console.log(i);
-			//console.log(colInfo[i]["name"]);
-			var txt = colInfo[i]["measure"]
-			var temp = [ "", "", "", "" ];
-			if (colInfo[i]["insertFlag"] == false) {
-				if (i == 0) {
-					tBodyHtml += "<tr><th>" + item.연도 + "</th>";
-					temp[i] = "<tr><th>" + item.연도 + "</th>";
-				} else if (colInfo[i]["calcFunc"] == true) {
-					tBodyHtml += "<td id='" + tableKey + "_" + tmpNm + "_" + [i] + "'>" + colInfo[i]["calcFunc"](item) + "</td>";
-					temp[i] = "<td id='" + tableKey + "_" + tmpNm + "_" + [i] + "'>" + colInfo[i]["calcFunc"](item) + "</td>";
-				}
-				console.log(i);
-			} else {
-				tBodyHtml += '<td id=\''
-					+ tableKey
-					+ '_'
-					+ tmpNm
-					+ '_'
-					+ i
-					+ '\'>'
-					+ '<input type=\'number\' class=\'form-control\' value=\''
-					+ item.txt
-					+ '\' id=\''
-					+ tableKey + '_'
-					+ item.연도 + '_'
-					+ colInfo[i]["dimension"]
-					+ '_'
-					+ txt
-					+ '\''
-					+ ' onkeyup="handleChangeTableCellValueTp2(event, \''
-					+ tableKey
-					+ '\', \'연도\', \''
-					+ item.연도
-					+ '\', \''
-					+ colInfo[i]["dimension"]
-					+ '\', \''
-					+ txt
-					+ '\')\">'
-					+ '</td>';
-					
-				temp[i] = '<td id=\''
-					+ tableKey
-					+ '_'
-					+ tmpNm
-					+ '_'
-					+ i
-					+ '\'>'
-					+ '<input type=\'number\' class=\'form-control\' value=\''
-					+ item.txt
-					+ '\' id=\''
-					+ tableKey + '_'
-					+ item.연도 + '_'
-					+ colInfo[i]["dimension"]
-					+ '_'
-					+ txt
-					+ '\''
-					+ ' onkeyup="handleChangeTableCellValueTp2(event, \''
-					+ tableKey
-					+ '\', \'연도\', \''
-					+ item.연도
-					+ '\', \''
-					+ colInfo[i]["dimension"]
-					+ '\', \''
-					+ txt
-					+ '\')\">'
-					+ '</td>';
-				console.log(i);
+		tableColumnInfo: [{
+			name: "연도",
+			dimension: "연도",
+			insertFlag: false,
+			calcFunc: false
+		}, {
+			name: "개관일수",
+			dimension: "본관",
+			measure: "개관일수",
+			insertFlag: false,
+			calcFunc: false
+		}, {
+			name: "이용인원 이용자수",
+			dimension: "본관",
+			measure: "방문자수",
+			insertFlag: false,
+			calcFunc: false
+		}, {
+			name: "이용인원 일평균",
+			insertFlag: false,
+			calcFunc: function(pData) {
+				return Math.round(pData["본관"]["방문자수"] / pData["본관"]["개관일수"]);
 			}
-		}
-		console.log(tBodyHtml);
-		++tmpNm;
-		console.log(temp)
-	});
-	//console.log(tBodyHtml);
-	$("#" + tabletheadId).html(tHeadHtml);
-	$("#" + tabletbodyId).html(tBodyHtml);
-
+		}, {
+			name: "이용자료수 자료수",
+			dimension: "본관",
+			measure: "자료수",
+			insertFlag: false,
+			calcFunc: false
+		}, {
+			name: "이용자료수 일평균",
+			insertFlag: false,
+			calcFunc: function(pData) {
+				return Math.round(pData["본관"]["자료수"] / pData["본관"]["개관일수"]);
+			}
+		}],
+		// 입력기능이 존재하지 않는 row
+		// nonInsertRow : [ 0, 1 ],
+		nonInsertRow: [],
+		// Table 에 합계 row가 존재하는 경우 true
+		totalRowFlag: true
+	}
 }
-*/
 
 var _tableData = {
-	table_1: [],
-	table_2: []
+	table_first: []
 };
 
 var _tableOriginData = {
-	table_1: [],
-	table_2: []
+	table_first: []
 };
 
 // TODO : 변수명 임시
@@ -449,27 +252,11 @@ function createTableLeftDimension(data, tableParam) {
 			if (cellInsertFlag && nonInsertRow.indexOf(i) === -1) {
 				// (1) 입력셀
 				var cellInput = '<input type="number" class="form-control" value="'
-					+ cellValue
-					+ '" '
-					+ ' id="'
-					+ tableKey
-					+ '_'
-					+ dimFirstVal
-					+ '_'
-					+ dimKey
-					+ '_'
-					+ meaKey
-					+ '" '
-					+ ' onKeyup="handleChangeTableCellValueTp2(event, \''
-					+ tableKey
-					+ '\', \''
-					+ dimFirstKey
-					+ '\', \''
-					+ dimFirstVal
-					+ '\', \''
-					+ dimKey
-					+ '\', \''
-					+ meaKey + '\')"/>';
+					+ cellValue + '" ' + ' id="' + tableKey + '_' + dimFirstVal + '_'
+					+ dimKey + '_' + meaKey + '" '
+					+ ' onKeyup="handleChangeTableCellValueTp2(event, \'' + tableKey
+					+ '\', \'' + dimFirstKey + '\', \'' + dimFirstVal + '\', \''
+					+ dimKey + '\', \'' + meaKey + '\')"/>';
 
 				cellHtml = '<td id="' + tdId + '">' + cellInput + "</td>";
 			} else if (j == 0) {
@@ -481,8 +268,7 @@ function createTableLeftDimension(data, tableParam) {
 
 			// column 별로 합계값을 저장해둔다
 			if (totalRowFlag) {
-				var cellTotla = totalTemp[j] ? totalTemp[j] + cellValue
-					: cellValue;
+				var cellTotla = totalTemp[j] ? totalTemp[j] + cellValue : cellValue;
 				totalTemp[j] = cellTotla;
 			}
 
@@ -501,8 +287,7 @@ function createTableLeftDimension(data, tableParam) {
 		tempHtml += "<tr><th>계</th>";
 		for (var i = 1; i < totalTemp.length; i++) {
 			var totalTdId = tableKey + "_total_" + i;
-			tempHtml += '<td id="' + totalTdId + '">' + totalTemp[i]
-				+ "</td>";
+			tempHtml += '<td id="' + totalTdId + '">' + totalTemp[i] + "</td>";
 		}
 		tempHtml += "</tr>";
 	}
@@ -582,8 +367,8 @@ function initTableLeftDimension(data, dimFirst, dimSecond, measureArr,
 	var insertYn = checkTableEditedYn(data, "입력YN", "N");
 
 	// 1. 데이터를 테이블로 만들기 좋게 변환
-	var alignedData = realignDataByDoubleDimension(data, dimFirst,
-		dimSecond, measureArr);
+	var alignedData = realignDataByDoubleDimension(data, dimFirst, dimSecond,
+		measureArr);
 
 	// 2. 페이지 별로 테이블 파라메터 세팅
 	_tableData[tableParam.tableKey] = alignedData;
@@ -595,31 +380,46 @@ function initTableLeftDimension(data, dimFirst, dimSecond, measureArr,
 
 }
 
-var tblParamByLib = { main: _TABLE_PARAM.table_1, digital: _TABLE_PARAM.table_2 };
 
-function jsonStart() {
-	$.getJSON("/data/본관이용현황.json", function(data) {
-		var data = data.data;
+$("#btnExcelDownload").click(function(e) {
+	tableToExcel();
+});
 
-		// 0. 저장 버튼 활성 비활성 여부 판단
-		var insertYn = checkTableEditedYn(data, "입력YN", "N");
+$("#conversion").click(function(e) {
+	console.log("conversion");
+	var str1 = "table_first_";
+	var str3 = "_방문자수";
+	for (var i in yearForExcelExport) {
+		// console.log(yearForExcelExport[i]);
+		for (var j = 0; j < libraries.length; j++) {
+			var str2 = yearForExcelExport[i] + "_" + libraries[j];
+			var id = str1 + str2 + str3;
+			// console.log($('#' + id));
+			// console.log($('#' + id).val());
+			inputTags[i][j] = $('#' + id).parent().html();
+			inputVals[i][j] = $('#' + id).val();
+			$('#' + id).parent().html(inputVals[i][j]);
+		}
+	}
+	console.log(inputTags);
+	inputTagValSw = 1;
+});
+// 테이블 엑셀 다운로드를 위한 배열
+// yearForExcelExport[i] = thCellValue; 
+// 연도를 추가하는 식
 
-		//createTableLeftDimension(data, tableCreateParam);
-		initTableLeftDimension(data, "연도", "도서관구분", ["방문자수", "개관일수",
-			"자료수", "입력YN"], tblParamByLib.main);
-	});
-}
-
-/*
-function jsonStart2() {
-	$.getJSON("/data/디지털도서관이용현황.json", function(data) {
-		var data = data.data;
-
-		// 0. 저장 버튼 활성 비활성 여부 판단
-		//var insertYn = checkTableEditedYn(data, "입력YN", "N");
-
-		//createTableLeftDimension(data, tableCreateParam);
-		tblMaking(tblParamByLib.digital, data);
-	});
-};
-*/
+$("#inversion").click(function(e) {
+	console.log("inversion");
+	var str1 = "table_first_";
+	var str3 = "_방문자수";
+	for (var i in yearForExcelExport) {
+		// console.log(yearForExcelExport[i]);
+		for (var j = 0; j < libraries.length; j++) {
+			console.log(inputTags[i][j]);
+			var str2 = yearForExcelExport[i] + "_" + libraries[j];
+			var id = str1 + str2 + str3;
+			$('#' + id).parent().html(inputTags[i][j]);
+		}
+	}
+	inputTagValSw = 0;
+});
