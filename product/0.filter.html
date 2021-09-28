@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <link rel="stylesheet" href="/plugin/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/plugin/datepicker/datepicker3.min.css" />
+    <link rel="stylesheet" href="/plugin/iCheck/square/blue.css" />
+    <link rel="stylesheet" href="/custom_resource/lib/zPivottable/pivot.min.css" /> <!-- customize lib : zPivottable -->
+    <link rel="stylesheet" href="/custom_resource/css/z-top.css" />
+
+    <script src="/plugin/jQuery/jQuery-2.1.4.min.js"></script>
+    <script src="/plugin/jQueryUI/jquery-ui.min.js"></script>
+    <script src="/plugin/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/plugin/datepicker/bootstrap-datepicker.min.js"></script>
+    <script src="/plugin/datepicker/locales/bootstrap-datepicker.kr.js" charset="UTF-8"></script>
+    <script src="/plugin/iCheck/icheck.min.js"></script>
+    <script src="/custom_resource/lib/zPivottable/pivot.min.js"></script> <!-- customize lib : zPivottable -->
+
+</head>
+
+<body class="main">
+    <div class="container-fluid">
+        <!-- 필터 영역 Start -->
+        <div class="z-top">
+            <div>
+                <div class="z-title-wrapper">
+                    <label class="z-title">국립중앙박물관 통계 시스템 </label>
+                </div>
+            </div>
+            <div class="z-filter-wrapper">
+                <form class="form-inline">
+                    <div class="form-group z-filter-group">
+                        <input type="radio" name="check" id="check1" checked />
+                        <label for="check1" class="z-filter-check-label">연별</label>
+                        <input type="radio" name="check" id="check2" />
+                        <label for="check2" class="z-filter-check-label">월별</label>
+                        <input type="radio" name="check" id="check3" />
+                        <label for="check3" class="z-filter-check-label">일별</label>
+                    </div>
+                    <div class="form-group z-filter-group">
+                        <label>SELECT</label>
+                        <span class="z-filter-separator">|</span>
+                        <select class="form-control">
+                            <option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                        </select>
+                    </div>
+                    <div class="form-group z-filter-group">
+                        <label>기간조회</label>
+                        <span class="z-filter-separator">|</span>
+                        <input type="text" class="form-control z-filter-textbox" id="startDt" placeholder="2021-08-13">
+                        <span class="z-filter-separator">~</span>
+                        <input type="text" class="form-control z-filter-textbox" id="endDt" placeholder="2021-09-13">
+                    </div>
+                    <button type="button" class="btn btn-default z-filter-btn">조회</button>
+                </form>
+            </div>
+        </div>
+        <!-- 필터 영역 End -->
+
+        <!-- Pivot Table 영역 Start -->
+        <div class="minwon">
+        </div>
+        <!-- Pivot Table 영역 End -->
+
+
+    </div>
+</body>
+<script>
+    // Datapicker setting start
+    var datapickerFormat = "yyyy-mm-dd";
+    $("#startDt").datepicker({
+        format: datapickerFormat,
+        language: 'kr'
+    });
+    $("#endDt").datepicker({
+        format: datapickerFormat,
+        language: 'kr'
+    });
+    // Datapicker setting End
+
+    // iCheck setting Start 
+    $("input[name=check]").iCheck({
+        radioClass: 'iradio_square-blue',
+
+    });
+    // iCheck setting End
+</script>
+
+</html>

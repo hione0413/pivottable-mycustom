@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <link rel="stylesheet" href="/plugin/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/plugin/datepicker/datepicker3.min.css" />
+    <link rel="stylesheet" href="/plugin/iCheck/square/blue.css" />
+    <link rel="stylesheet" href="/custom_resource/css/z-top.css" />
+    <link rel="stylesheet" href="/custom_resource/lib/zPivottable/pivot.css" /> <!-- customize lib : zPivottable -->
+    <link rel="stylesheet" href="/custom_resource/lib/zCardUIDesign/zCardUIDesign.css">
+
+
+    <script src="/plugin/jQuery/jQuery-2.1.4.min.js"></script>
+    <script src="/plugin/jQueryUI/jquery-ui.min.js"></script>
+    <script src="/plugin/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/plugin/datepicker/bootstrap-datepicker.min.js"></script>
+    <script src="/plugin/datepicker/locales/bootstrap-datepicker.kr.js" charset="UTF-8"></script>
+    <script src="/plugin/iCheck/icheck.min.js"></script>
+    <script src="/custom_resource/lib/zPivottable/pivot.min.js"></script> <!-- customize lib : zPivottable -->
+
+    <script src="/plugin/table-to-excel/tableToExcel.js"></script>
+    <script src="/test_data.js"></script>
+</head>
+
+<body class="main">
+    <div class="container-fluid">
+        <!-- 필터 영역 Start -->
+        <div class="z-top">
+            <div>
+                <div class="z-title-wrapper">
+                    <label class="z-title">국립중앙박물관 통계 시스템 </label>
+                </div>
+            </div>
+            <div class="z-filter-wrapper">
+                <form class="form-inline">
+                    <div class="form-group z-filter-group">
+                        <input type="radio" name="check" id="check1" checked />
+                        <label for="check1" class="z-filter-check-label">연별</label>
+                        <input type="radio" name="check" id="check2" />
+                        <label for="check2" class="z-filter-check-label">월별</label>
+                        <input type="radio" name="check" id="check3" />
+                        <label for="check3" class="z-filter-check-label">일별</label>
+                    </div>
+                    <div class="form-group z-filter-group">
+                        <label>SELECT</label>
+                        <span class="z-filter-separator">|</span>
+                        <select class="form-control">
+                            <option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                        </select>
+                    </div>
+                    <div class="form-group z-filter-group">
+                        <label>기간조회</label>
+                        <span class="z-filter-separator">|</span>
+                        <input type="text" class="form-control z-filter-textbox" id="startDt" placeholder="2021-08-13">
+                        <span class="z-filter-separator">~</span>
+                        <input type="text" class="form-control z-filter-textbox" id="endDt" placeholder="2021-09-13">
+                    </div>
+                    <button type="button" class="btn btn-default z-filter-btn">조회</button>
+                </form>
+            </div>
+        </div>
+        <!-- 필터 영역 End -->
+
+        <!-- Pivot Table 영역 Start -->
+        <div class="minwon row">
+            <div class="col-md-12">
+                <div class="z-card-wrapper">
+                    <div class="z-card">
+                        <div class="z-card-preview">
+                            <span class="z-card-title">피벗테이블</span>
+                        </div>
+                        <div class="z-card-info">
+                            <label class="z-card-table-unit">('21.6.30.기준/단위 : 명)</label>
+                            <div id="pivotTable"></div>
+                        </div>
+                        <div class="z-card-footer">
+                            <button type="button" class="btn btn-default" id="btnExcelDownload">엑셀 다운로드</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Pivot Table 영역 End -->
+
+        <a type="hidden" id="downloadLink"></a>
+
+    </div>
+</body>
+<script>
+
+    // Datapicker setting start
+    var datapickerFormat = "yyyy-mm-dd";
+    $("#startDt").datepicker({
+        format: datapickerFormat,
+        language: 'kr'
+    });
+    $("#endDt").datepicker({
+        format: datapickerFormat,
+        language: 'kr'
+    });
+    // Datapicker setting End
+
+    // iCheck setting Start 
+    $("input[name=check]").iCheck({
+        radioClass: 'iradio_square-blue',
+
+    });
+    // iCheck setting End
+
+    // Create Pivot Table Start
+    $.getJSON("/data/sample2.json", function (data) {
+        $("#pivotTable").pivotUI(
+            data.data,
+            {
+                rows: ["기준일자", "가입위치별"],
+                cols: ["도서관별", "성별", "연령별"],
+                vals: ["가입자수"],
+                hiddenFromDragDrop: ["가입자수"],
+                aggregatorName: "Integer Sum",
+                rendererName: "Heatmap",
+                onRefresh: function () {
+                    // 차트 생성될 때 호출되는 익명함수
+                    // $(".pvtTableWrapper").css("width", $(".pvtHorizList").css("width"));
+                },
+                sorters: {  // 정렬
+                    "성별": $.pivotUtilities.sortAs(["남성", "여성"]),
+                    "연령별": $.pivotUtilities.sortAs(["10대이하"]),
+                }
+
+            }
+        );
+    });
+    // Create Pivot Table End
+
+    // Excel Download Start
+    $("#btnExcelDownload").click(function (e) {
+        tableToExcel();
+    });
+
+    // Excel 다운로드 : 이런 식으로 저장된다는 걸 보여주기 위한 용도
+    function tableToExcel() {
+        document.getElementsByClassName("pvtTable")[0].setAttribute("id", "pvtTable");
+
+        TableToExcel.convert(document.getElementById("pvtTable"), {
+            name: "국립중앙박물관 통계 시스템 Excel.xlsx",
+            sheet: {
+                name: "Sheet 1"
+            }
+        });
+    }
+    // Excel Download End
+
+</script>
+
+</html>

@@ -1,0 +1,43 @@
+.z-top {
+    margin-top:40px; 
+    margin-bottom: 40px; 
+    padding-bottom:20px; 
+    border-bottom: 1px solid #ccc;
+}
+
+.z-title-wrapper {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.z-title {
+    font-size: 28px;
+}
+
+.z-filter-wrapper {
+    margin: auto;
+    text-align: center;
+}
+
+.z-filter-group {
+    padding-right: 20px;
+}
+
+.z-filter-separator {
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.z-filter-check-label {
+    margin-right: 8px;
+}
+
+.z-filter-textbox {
+    width: 100px !important;
+    display: inline !important;
+}
+
+.z-filter-btn {
+    margin-left: 20px;
+}
+
