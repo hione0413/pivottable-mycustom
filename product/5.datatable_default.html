@@ -90,7 +90,7 @@
         </div>
         <!-- 필터 영역 End -->
 
-        <!-- Pivot Table 영역 Start -->
+        <!-- Data Table 영역 Start -->
         <div class="minwon row">
             <div class="col-md-12">
                 <div class="z-card-wrapper">
@@ -124,7 +124,7 @@
                 </div>
             </div>
         </div>
-        <!-- Pivot Table 영역 End -->
+        <!-- Data Table 영역 End -->
 
         <a type="hidden" id="downloadLink"></a>
 
@@ -172,7 +172,8 @@
         }
     };
 
-    // Create Pivot Table Start
+
+    // Create Data Table(default) Start
     function createDataTableDefault(tableId, dataSet, columnInfo, columnDefs, tableParamObj) {
         // 0. 파라메터 준비
         var rowNumFlag = tableParamObj.rowNumFlag; // No 칼럼 default : false
@@ -227,10 +228,8 @@
             dataTableParam.paging = true;
         }
 
-
-        var $targetTable = $("#" + tableId);
-
         // 2. Table theader 생성
+        var $targetTable = $("#" + tableId);
         $targetTable.empty();
         $targetTable.append(theaderStrArr.join(""));
 
@@ -245,7 +244,10 @@
                 });
             }).draw();
         }
-    }
+    } // function createDataTableDefault End
+
+    // Create Data Table(default) End
+
 
     $.getJSON("/data/sample2.json", function (data) {
         var dataSet = data.data;
@@ -266,8 +268,6 @@
         );
     });
 
-
-    // Create Pivot Table End
 
 </script>
 
