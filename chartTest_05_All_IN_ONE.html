@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<!-- Styles -->
+<link rel="stylesheet" href="./plugin/zCardUIDesign/zCardUIDesign.css">
+<style>
+.chartdiv {
+	width: 100%;
+	min-height: 300px;
+}
+
+#linechartdiv {
+	max-width: 100%;
+}
+.z-cards-container {
+	width: 50%;
+	float: left;
+	padding: 10px;
+}
+</style>
+<!-- Resources -->
+<script src="./plugin/jQuery/jQuery-2.1.4.min.js"></script>
+<script src="https://cdn.amcharts.com/lib/4/core.js"></script>
+<script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
+<script src="https://cdn.amcharts.com/lib/4/themes/animated.js"></script>
+<script src="./chartTest_05_ALL_IN_ONE.js"></script>
+<title>Insert title here</title>
+</head>
+<body>
+	<!-- HTML -->
+	<div class="row">
+		<div class="col-md-12" style="padding: 10px;">
+			<div class="z-card">
+				<div class="z-card-preview">
+					<span class="z-card-title">Bar-Chart</span>
+				</div>
+				<div class="z-card-info">
+					<div class="chartdiv" id="barchartdiv"></div>
+				</div>
+				<div class="z-card-footer">
+					<button type="button" class="btn btn-default btn-z-card" onclick="biggerChart(this)">+</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-sm 6 z-cards-container">
+			<div class="z-card">
+				<div class="z-card-preview">
+					<span class="z-card-title">Line-Chart</span>
+				</div>
+				<div class="z-card-info">
+					<div class="chartdiv" id="linechartdiv"></div>
+				</div>
+				<div class="z-card-footer">
+					<button type="button" class="btn btn-default btn-z-card" onclick="biggerChart(this)">+</button>
+				</div>
+			</div>
+		</div>
+		<div class="col-sm 6 z-cards-container">
+			<div class="z-card">
+				<div class="z-card-preview">
+					<span class="z-card-title">Pie-Chart</span>
+				</div>
+				<div class="z-card-info">
+					<div class="chartdiv" id="piechartdiv"></div>
+				</div>
+				<div class="z-card-footer">
+					<button type="button" class="btn btn-default btn-z-card" onclick="biggerChart(this)">+</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+</body>
+<script type="text/javascript">
+  var libraries = [ "어린이청소년도서관", "디지털도서관", "국립중앙도서관", "국립세종도서관" ];
+
+  $.getJSON("./data/fileForLineChart.json", function(data) {
+    var jsonData = data.data;
+    buildLineChart(jsonData, libraries);
+  });
+
+  $.getJSON("./data/fileForBarChart.json", function(data) {
+    var sending = data.data;
+    var category = "자료실";
+    var row = "방문자수";
+    buildBarChart(sending, category, row);
+  });
+
+  $.getJSON("./data/fileForPieChart.json", function(data) {
+    var jsonData = data.data;
+    var value = "방문자수";
+    var category = "방문목적";
+    buildPieChart(jsonData, value, category);
+  });
+</script>
+</html>

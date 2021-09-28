@@ -89,6 +89,7 @@ var _TABLE_PARAM = {
 			{
 				name: "연도",
 				dimension: "연도",
+				measure: "연도",
 				insertFlag: false,
 				calcFunc: false
 			},
@@ -108,6 +109,7 @@ var _TABLE_PARAM = {
 			},
 			{
 				name: "이용인원 일평균",
+				measure: "일평균",
 				insertFlag: false,
 				calcFunc: function(pData) {
 					return Math.round(pData["방문자수"]
@@ -123,6 +125,7 @@ var _TABLE_PARAM = {
 			},
 			{
 				name: "이용자료수 일평균",
+				measure: "일평균",
 				insertFlag: false,
 				calcFunc: function(pData) {
 					return Math.round(pData["자료수"]
@@ -153,6 +156,7 @@ function totalTblMaking() {
 	$("#totalThead").html(theadIp);
 	$("#totalTbody").html(tbodyIp);
 }
+
 /*
 function tblMaking(tableParam, jsonData) {
 	var tmpNm = 0;
@@ -165,30 +169,82 @@ function tblMaking(tableParam, jsonData) {
 	for (var i in tableParam.theadHtmlArr) {
 		tHeadHtml += tableParam.theadHtmlArr[i];
 	}
-	for (var i in colInfo) {
-		console.log(i);
-		console.log(colInfo[i]["name"]);
-	}
-	
+
 	jsonData.forEach((item) => {
 		for (var i in colInfo) {
-			console.log(colInfo[i]["name"]);
-			if (i == 0) {
-				tBodyHtml += "<tr><th>" + item.연도 + "</th>";
-			} else if (colInfo[i]["insertFlag"] == true) {
-				var txt = colInfo[i]["measure"];
-				tBodyHtml += '<td id=\'' + tableKey + '_' + tmpNm + '_' + i + '\'>'
-					+ '<input type=\'number\' class=\'form-control\' value=\'' + item.txt
-					+ '\' id=\'' + tableKey + '_' + item.연도 + '_' + colInfo[i]["dimension"] + '_' + colInfo[i]["measure"] + '\''
-					+ ' onkeyup="handleChangeTableCellValueTp2(event, \'' + tableKey + '\', \'연도\', \''
-					+ item.연도 + '\', \'' + colInfo[i]["dimension"] + '\', \'' + colInfo[i]["measure"] + '\')\">'
+			// console.log(i);
+			//console.log(colInfo[i]["name"]);
+			var txt = colInfo[i]["measure"]
+			var temp = [ "", "", "", "" ];
+			if (colInfo[i]["insertFlag"] == false) {
+				if (i == 0) {
+					tBodyHtml += "<tr><th>" + item.연도 + "</th>";
+					temp[i] = "<tr><th>" + item.연도 + "</th>";
+				} else if (colInfo[i]["calcFunc"] == true) {
+					tBodyHtml += "<td id='" + tableKey + "_" + tmpNm + "_" + [i] + "'>" + colInfo[i]["calcFunc"](item) + "</td>";
+					temp[i] = "<td id='" + tableKey + "_" + tmpNm + "_" + [i] + "'>" + colInfo[i]["calcFunc"](item) + "</td>";
+				}
+				console.log(i);
+			} else {
+				tBodyHtml += '<td id=\''
+					+ tableKey
+					+ '_'
+					+ tmpNm
+					+ '_'
+					+ i
+					+ '\'>'
+					+ '<input type=\'number\' class=\'form-control\' value=\''
+					+ item.txt
+					+ '\' id=\''
+					+ tableKey + '_'
+					+ item.연도 + '_'
+					+ colInfo[i]["dimension"]
+					+ '_'
+					+ txt
+					+ '\''
+					+ ' onkeyup="handleChangeTableCellValueTp2(event, \''
+					+ tableKey
+					+ '\', \'연도\', \''
+					+ item.연도
+					+ '\', \''
+					+ colInfo[i]["dimension"]
+					+ '\', \''
+					+ txt
+					+ '\')\">'
 					+ '</td>';
-				console.log(item.txt)
-			} else if (colInfo[i]["insertFlag"] == true && colInfo[i]["calcFunc"] == true) {
-				tBodyHtml += "<td id='" + tableKey + "_" + tmpNm + "_" + [i] + "'>" + colInfo[i]["calcFunc"](item) + "</td>";
+					
+				temp[i] = '<td id=\''
+					+ tableKey
+					+ '_'
+					+ tmpNm
+					+ '_'
+					+ i
+					+ '\'>'
+					+ '<input type=\'number\' class=\'form-control\' value=\''
+					+ item.txt
+					+ '\' id=\''
+					+ tableKey + '_'
+					+ item.연도 + '_'
+					+ colInfo[i]["dimension"]
+					+ '_'
+					+ txt
+					+ '\''
+					+ ' onkeyup="handleChangeTableCellValueTp2(event, \''
+					+ tableKey
+					+ '\', \'연도\', \''
+					+ item.연도
+					+ '\', \''
+					+ colInfo[i]["dimension"]
+					+ '\', \''
+					+ txt
+					+ '\')\">'
+					+ '</td>';
+				console.log(i);
 			}
 		}
+		console.log(tBodyHtml);
 		++tmpNm;
+		console.log(temp)
 	});
 	//console.log(tBodyHtml);
 	$("#" + tabletheadId).html(tHeadHtml);
@@ -552,9 +608,8 @@ function jsonStart() {
 		initTableLeftDimension(data, "연도", "도서관구분", ["방문자수", "개관일수",
 			"자료수", "입력YN"], tblParamByLib.main);
 	});
-	//}
 }
-/*
+
 function jsonStart2() {
 	$.getJSON("./data/디지털도서관이용현황.json", function(data) {
 		var data = data.data;
@@ -563,7 +618,6 @@ function jsonStart2() {
 		//var insertYn = checkTableEditedYn(data, "입력YN", "N");
 
 		//createTableLeftDimension(data, tableCreateParam);
-		tblMaking(tblParamByLib.digital, data)
-	});
-	//}
-}*/
+		tblMaking(tblParamByLib.digital, data);
+	})
+};

@@ -172,9 +172,9 @@
 
 
 <script>
-	/* $(document).ready(totalTblMaking(), jsonStart(), jsonStart2()); */
+	$(document).ready(totalTblMaking(), jsonStart(), jsonStart2());
 
-	$.getJSON("./data/본관이용현황.json", function (data) {
+	/* $.getJSON("./data/본관이용현황.json", function (data) {
 		var data = data.data;
 
 		// 0. 저장 버튼 활성 비활성 여부 판단
@@ -189,7 +189,7 @@
 			["방문자수", "개관일수", "자료수", "입력YN"],
 			tblParamByLib.main
 		);
-	});
+	}); */
 
 	// Excel 다운로드 : 이런 식으로 저장된다는 걸 보여주기 위한 용도
 	function tableToExcel() {
