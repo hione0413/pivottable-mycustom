@@ -84,7 +84,8 @@
 						</table>
 					</div>
 					<div class="panel-footer" style="text-align: right;">
-						<button type="button" class="btn btn-default" id="btnExcelDownload">엑셀 다운로드</button>
+						<button type="button" class="btn btn-default" id="btnCancleTestTable">취소</button>
+						<button type="button" class="btn btn-primary" id="btnSubmitTestTable">제출</button>
 					</div>
 				</div>
 			</div>
@@ -118,6 +119,8 @@
 			tableId: "testTable",
 			theadId: "testThead",
 			tbodyId: "testTbody",
+			btnCancleId: "btnCancleTestTable",
+			btnSubmitId: "btnSubmitTestTable",
 			theadHtmlArr: [['<th colspan="2">연도</th>']],
 			theadInfo: [
 				{ name: "기준년도", dimension: "연도", measure: "" }
@@ -195,12 +198,12 @@
 
 	// 화면에서 수정된 내용이 반영된 테이블의 Data 정보
 	var _tableData = {
-		table_first: []
+		// table_first: []
 	};
 
 	// 수정내용이 반영되지 않은 테이블의 기존 Data 정보
 	var _tableOriginData = {
-		table_first: []
+		// table_first: []
 	};
 
 	// 직접 DB에 입력될 수정된 내용 정보
@@ -460,10 +463,45 @@
 		return true;
 	}
 
+	function handleClickSubmitTableCancleBtn(tableKey) {
+		console.log("[handleClickSubmitTableCancleBtn] tableKey", tableKey);
+		console.log("click cancle btn");
+	}
+
+	function handleClickSubmitTableSubmitBtn(tableKey) {
+		console.log("[handleClickSubmitTableSubmitBtn] tableKey", tableKey);
+		console.log("click submit btn", _tableChangedData);
+
+		if (Object.keys(_tableChangedData).length === 0) {
+			alert("변경된 내용이 없습니다.");
+		}
+	}
+
 	/* 테이블 최초 생성 */
 	function initTableTopDimension(data, dimFirst, dimSecond, measureArr, tableParam) {
 		// 0. 저장 버튼 활성 비활성 여부 판단
 		var insertYn = checkTableEditedYn(data, "입력YN", "N");
+
+		// TODO : 0-1. 버튼 활성 비활성 처리 및 이벤트 부착
+		var tableKey = tableParam.tableKey;
+		var btnCancleId = tableParam.btnCancleId;
+		var btnSubmitId = tableParam.btnSubmitId;
+		var $btnSubmitId = $("#" + btnSubmitId);
+
+		if (typeof (insertYn) === Boolean && insertYn) {
+			$btnSubmitId.attr("disabled", false);
+		} else {
+			// $btnSubmitId.attr("disabled", true);
+		}
+
+		$("#" + btnCancleId).click(function () {
+			handleClickSubmitTableCancleBtn(tableKey);
+		});
+
+		$btnSubmitId.click(function () {
+			handleClickSubmitTableSubmitBtn(tableKey);
+		});
+
 
 		// 1. 데이터를 테이블로 만들기 좋게 변환
 		var alignedData = realignDataByDoubleDimension(data, dimFirst, dimSecond, measureArr);
