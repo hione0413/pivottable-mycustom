@@ -240,6 +240,8 @@ function buildPieChart(jsonData, dimension, measure) {
 
 	// Add data
 	chart.data = jsonData
+	
+	chart.legend = new am4charts.Legend();
 
 	// Add and configure Series
 	var pieSeries = chart.series.push(new am4charts.PieSeries());
