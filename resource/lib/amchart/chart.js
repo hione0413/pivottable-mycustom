@@ -274,7 +274,8 @@ function biggerChart(btn) {
 		btn.innerText = "+";
 	}
 }
-/*
+
+
 function switchingCharts(btn) {
 	
 	var str = "";
@@ -300,33 +301,6 @@ function switchingCharts(btn) {
 	
 	document.documentElement.scrollTop = 0;
 }
-*/
-function switchingCharts(btn) {
-	
-	var str = "";
-	var absolute1stId = document.getElementsByClassName("z-card-info")[0].children[0].id;
-	var absolute1stTitle = document.getElementsByClassName("z-card-title")[0].innerHTML;
-	var targetTitle = btn.parentNode.parentNode.children[0].children[0].innerHTML;
-	var target = btn.parentNode.parentNode.children[1];
-	var targetId = target.children[0].id;
-	
-	str +=  "<div class='chartdiv' id='" + targetId + "'></div>"
-	document.getElementsByClassName("z-card-info")[0].innerHTML = str;
-	str = "";
-	btn.parentNode.parentNode.children[0].children[0].innerHTML = absolute1stTitle;
-	document.getElementsByClassName("z-card-title")[0].innerHTML = targetTitle;
-	
-	str +=  "<div class='chartdiv' id='" + absolute1stId + "'></div>"
-	btn.parentNode.parentNode.children[1].innerHTML = str;
-	
-	
-	document.getElementById(targetId).setAttribute("style", "height : 770px;")
-	document.getElementsByClassName("z-card-footer")[0].children[0].innerText = "-";
-	biggerChartSw[targetId] = 1;
-	
-	document.documentElement.scrollTop = 0;
-}
-  
-  
+
  
 
