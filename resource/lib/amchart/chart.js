@@ -121,7 +121,7 @@ function buildLineChart(jsonData, libraries) {
 	var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
 
 	// series를 구성하는 함수, 함수 인자로 도서관명을 담은 배열을 가져옴
-	for (var i = 0; i < 3; i++) { // i 범위를 구성함에 따라 노출되는 값이 달라짐
+	for (var i = 0; i < libraries.length; i++) {
 		createSeries("value" + i, libraries[i]);
 	}
 
@@ -241,8 +241,9 @@ function buildPieChart(jsonData, dimension, measure) {
 	// Add data
 	chart.data = jsonData
 	
+	// Add legend
 	chart.legend = new am4charts.Legend();
-
+	
 	// Add and configure Series
 	var pieSeries = chart.series.push(new am4charts.PieSeries());
 	pieSeries.dataFields.value = measure;

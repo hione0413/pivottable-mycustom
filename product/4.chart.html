@@ -80,7 +80,8 @@
 <script type="text/javascript">
 	
 	var dataPath = ["/data/fileForBarChart.json", "/data/fileForLineChart.json", "/data/fileForPieChart.json"]
-	var libraries = [ "어린이청소년도서관", "디지털도서관", "국립중앙도서관", "국립세종도서관" ];
+	/* var libraries = [ "어린이청소년도서관", "디지털도서관", "국립중앙도서관", "국립세종도서관" ]; */
+	var libraries = [ "어린이청소년도서관", "디지털도서관", "국립중앙도서관" ];
 	var jsonData = null;
 	var dimension = "";
 	var measure = "";
@@ -91,16 +92,14 @@
             dataType: "json",
             async:false,
             success:function(data){
-	            if (i == 0){   
 				  	jsonData = data.data;
+	            if (i == 0){   
 			    	dimension = "자료실";
 			    	measure = "방문자수";
 		      		buildBarChart(jsonData, dimension, measure);
 		     	} else if (i == 1){
-				  	jsonData = data.data;
 				  	buildLineChart(jsonData, libraries);
 		      	} else {
-				  	jsonData = data.data;
 	 	      		dimension = "방문목적";
 	     			measure = "방문자수";
 	     			buildPieChart(jsonData, dimension, measure);
