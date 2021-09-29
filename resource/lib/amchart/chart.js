@@ -244,6 +244,7 @@ function buildPieChart(jsonData, dimension, measure) {
 	// Add legend
 	chart.legend = new am4charts.Legend();
 	
+	
 	// Add and configure Series
 	var pieSeries = chart.series.push(new am4charts.PieSeries());
 	pieSeries.dataFields.value = measure;

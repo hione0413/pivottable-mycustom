@@ -40,7 +40,6 @@
 				</div>
 				<div class="z-card-footer">
 					<button type="button" class="btn btn-default btn-z-card" onclick="biggerChart(this)">+</button>
-					<button type="button" class="btn btn-default btn-z-card" onclick="switchingCharts(this)">크게 보기</button>
 				</div>
 			</div>
 		</div>
@@ -56,7 +55,6 @@
 				</div>
 				<div class="z-card-footer">
 					<button type="button" class="btn btn-default btn-z-card" onclick="biggerChart(this)">+</button>
-					<button type="button" class="btn btn-default btn-z-card" onclick="switchingCharts(this)">크게 보기</button>
 				</div>
 			</div>
 		</div>
@@ -70,7 +68,6 @@
 				</div>
 				<div class="z-card-footer">
 					<button type="button" class="btn btn-default btn-z-card" onclick="biggerChart(this)">+</button>
-					<button type="button" class="btn btn-default btn-z-card" onclick="switchingCharts(this)">크게 보기</button>
 				</div>
 			</div>
 		</div>
@@ -87,29 +84,33 @@
 	var measure = "";
 	for (var i = 0; i < dataPath.length; i++){
 	  	(function(i) {
-        $.ajax({
-            url: dataPath[i],
-            dataType: "json",
-            async:false,
-            success:function(data){
-				  	jsonData = data.data;
-	            if (i == 0){   
-			    	dimension = "자료실";
-			    	measure = "방문자수";
-		      		buildBarChart(jsonData, dimension, measure);
-		     	} else if (i == 1){
-				  	buildLineChart(jsonData, libraries);
-		      	} else {
-	 	      		dimension = "방문목적";
-	     			measure = "방문자수";
-	     			buildPieChart(jsonData, dimension, measure);
-	    		}
-            },
-             error: function(xhr,status,error){
-                console.log(xhr+status+error);
-             } 
-        });
-})(i);
+	        $.ajax({
+	            url: dataPath[i],
+	            dataType: "json",
+	            async:false,
+	            success:function(data){
+					jsonData = data.data;
+		            switch(i){
+		            	case 0:
+		            		dimension = "자료실";
+		  			    	measure = "방문자수";
+		  		      		buildBarChart(jsonData, dimension, measure);
+		  		      		break;
+		            	case 1:
+		            		buildLineChart(jsonData, libraries);
+		            		break;
+		            	case 2:
+		            		dimension = "방문목적";
+		    	     		measure = "방문자수";
+		    	     		buildPieChart(jsonData, dimension, measure);
+		    	     		break;
+		            }
+	            },
+	            error: function(xhr,status,error){
+	                console.log(xhr+status+error);
+	            } 
+	        });
+		})(i);
 	}
 </script>
 </html>

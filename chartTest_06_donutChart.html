@@ -29,8 +29,8 @@
 
     // Add and configure Series
     var pieSeries = chart.series.push(new am4charts.PieSeries());
-    pieSeries.dataFields.value = "litres";
-    pieSeries.dataFields.category = "country";
+    pieSeries.dataFields.value = "이용횟수";
+    pieSeries.dataFields.category = "디지털매체";
 
     // Let's cut a hole in our Pie chart the size of 30% the radius
     chart.innerRadius = am4core.percent(30);
@@ -45,13 +45,20 @@
       "property" : "cursor",
       "value" : "pointer"
     } ];
-
-    pieSeries.alignLabels = false;
+	/* 	
+    pieSeries.alignLabels = true;
     pieSeries.labels.template.bent = true;
     pieSeries.labels.template.radius = 3;
     pieSeries.labels.template.padding(0, 0, 0, 0);
 
-    pieSeries.ticks.template.disabled = true;
+    pieSeries.ticks.template.disabled = true;				
+     */
+ // This creates initial animation
+  	pieSeries.hiddenState.properties.opacity = 1;
+  	pieSeries.hiddenState.properties.endAngle = -90;
+  	pieSeries.hiddenState.properties.startAngle = -90;
+
+  	chart.hiddenState.properties.radius = am4core.percent(0);
 
     // Create a base filter effect (as if it's not there) for the hover to return to
     var shadow = pieSeries.slices.template.filters
@@ -70,23 +77,29 @@
     chart.legend = new am4charts.Legend();
 
     chart.data = [ {
-      "country" : "Lithuania",
-      "litres" : 501.9
+      "디지털매체" : "DVD",
+      "이용횟수" : 1142
     }, {
-      "country" : "Germany",
-      "litres" : 165.8
+      "디지털매체" : "디지털디스크",
+      "이용횟수" : 50
     }, {
-      "country" : "Australia",
-      "litres" : 139.9
+      "디지털매체" : "비디오CD",
+      "이용횟수" : 4
     }, {
-      "country" : "Austria",
-      "litres" : 128.3
+      "디지털매체" : "비디오테이프",
+      "이용횟수" : 84
     }, {
-      "country" : "UK",
-      "litres" : 99
+      "디지털매체" : "카세트테이프",
+      "이용횟수" : 0
     }, {
-      "country" : "Belgium",
-      "litres" : 60
+      "디지털매체" : "컴팩트디스크",
+      "이용횟수" : 56
+    }, {
+      "디지털매체" : "블루레이",
+      "이용횟수" : 225
+    }, {
+      "디지털매체" : "기타",
+      "이용횟수" : 2
     } ];
 
   }); // end am4core.ready()
