@@ -24,7 +24,7 @@
 <script src="https://cdn.amcharts.com/lib/4/core.js"></script>
 <script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
 <script src="https://cdn.amcharts.com/lib/4/themes/animated.js"></script>
-<script src="/plugin/amchart/chart.js"></script>
+<script src="/resource/lib/amchart/chart.js"></script>
 <title>Insert title here</title>
 </head>
 <body>
@@ -78,27 +78,39 @@
 
 </body>
 <script type="text/javascript">
-
-$(document).ready(barChartAjax(), lineChartAjax(), pieChartAjax());
-  /*
-  	$.getJSON("/data/fileForLineChart.json", function(data) {
-	    var jsonData = data.data;
-	    buildLineChart(jsonData, libraries);
-	}); 
- 
-	$.getJSON("/data/fileForBarChart.json", function(data) {
-	    var sending = data.data;
-	    var category = "자료실";
-	    var row = "방문자수";
-	    buildBarChart(sending, category, row);
-	});
- 
-	$.getJSON("/data/fileForPieChart.json", function(data) {
-	    var jsonData = data.data;
-	    var value = "방문자수";
-	    var category = "방문목적";
-	    buildPieChart(jsonData, value, category);
-  	}); 
-	*/
+	
+	var dataPath = ["/data/fileForBarChart.json", "/data/fileForLineChart.json", "/data/fileForPieChart.json"]
+	var libraries = [ "어린이청소년도서관", "디지털도서관", "국립중앙도서관", "국립세종도서관" ];
+	var jsonData = null;
+	var dimension = "";
+	var measure = "";
+	for (var i = 0; i < dataPath.length; i++){
+	  	(function(i) {
+        $.ajax({
+            url: dataPath[i],
+            dataType: "json",
+            async:false,
+            success:function(data){
+	            if (i == 0){   
+				  	jsonData = data.data;
+			    	dimension = "자료실";
+			    	measure = "방문자수";
+		      		buildBarChart(jsonData, dimension, measure);
+		     	} else if (i == 1){
+				  	jsonData = data.data;
+				  	buildLineChart(jsonData, libraries);
+		      	} else {
+				  	jsonData = data.data;
+	 	      		dimension = "방문목적";
+	     			measure = "방문자수";
+	     			buildPieChart(jsonData, dimension, measure);
+	    		}
+            },
+             error: function(xhr,status,error){
+                console.log(xhr+status+error);
+             } 
+        });
+})(i);
+	}
 </script>
 </html>

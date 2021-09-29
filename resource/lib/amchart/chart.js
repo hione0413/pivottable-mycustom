@@ -1,37 +1,36 @@
 /*Chart code*/
 
-function buildBarChart(jsonData, category, row) {
+function buildBarChart(jsonData, dimension, measure) {
 	// Themes begin
 	am4core.useTheme(am4themes_animated);
 	// Themes end
 
-	var chart = am4core.create('barchartdiv', am4charts.XYChart)
+	var chart = am4core.create('barchartdiv', am4charts.XYChart);
 
 	// chartExporting
 	chart.exporting.menu = new am4core.ExportMenu();
 
 	chart.colors.step = 2;
 
-	chart.legend = new am4charts.Legend()
-	chart.legend.position = 'right'
-	chart.legend.paddingBottom = 20
-	chart.legend.labels.template.maxWidth = 95
+	chart.legend = new am4charts.Legend();
+	chart.legend.position = 'bottom';
+	chart.legend.paddingBottom = 20;
+	chart.legend.labels.template.maxWidth = 95;
 
-	var xAxis = chart.xAxes.push(new am4charts.CategoryAxis())
-	xAxis.dataFields.category = category;
-	xAxis.renderer.cellStartLocation = 0.1
-	xAxis.renderer.cellEndLocation = 0.9
+	var xAxis = chart.xAxes.push(new am4charts.CategoryAxis());
+	xAxis.dataFields.category = dimension;
+	xAxis.renderer.cellStartLocation = 0.1;
+	xAxis.renderer.cellEndLocation = 0.9;
 	xAxis.renderer.grid.template.location = 0;
 
 	var yAxis = chart.yAxes.push(new am4charts.ValueAxis());
 	yAxis.min = 0;
 
 	function createSeries(value, name) {
-		var series = chart.series
-			.push(new am4charts.ColumnSeries())
-		series.dataFields.valueY = value
-		series.dataFields.categoryX = category;
-		series.name = name
+		var series = chart.series.push(new am4charts.ColumnSeries());
+		series.dataFields.valueY = value;
+		series.dataFields.categoryX = dimension;
+		series.name = name;
 
 		// 막대별로 다른 색상을 가지게 하고 싶을 경우
 		//  MEMO : 동일한 측정값을 가지는 막대의 경우 기본적으로는 같은 색상을 가지게됨
@@ -42,68 +41,62 @@ function buildBarChart(jsonData, category, row) {
 		series.events.on("hidden", arrangeColumns);
 		series.events.on("shown", arrangeColumns);
 
-		var bullet = series.bullets
-			.push(new am4charts.LabelBullet())
-		bullet.interactionsEnabled = false
+		var bullet = series.bullets.push(new am4charts.LabelBullet());
+		bullet.interactionsEnabled = false;
 		bullet.dy = 30;
-		bullet.label.text = '{valueY}'
-		bullet.label.fill = am4core.color('#ffffff')
+		bullet.label.text = '{valueY}';
+		bullet.label.fill = am4core.color('#ffffff');
 
 		return series;
 	}
 
 	chart.data = jsonData;
 
-	createSeries(row, row); // 두번째 인자 name으로 외부로 노출되는 텍스트를 변경할 수 있음
+	//createSeries(measure, name); // 두번째 인자 name으로 외부로 노출되는 텍스트를 변경할 수 있음
+	createSeries(measure, measure); // 두번째 인자 name으로 외부로 노출되는 텍스트를 변경할 수 있음
 
 	function arrangeColumns() {
 
 		var series = chart.series.getIndex(0);
 
-		var w = 1 - xAxis.renderer.cellStartLocation
-			- (1 - xAxis.renderer.cellEndLocation);
+		var w = 1 - xAxis.renderer.cellStartLocation - (1 - xAxis.renderer.cellEndLocation);
 		if (series.dataItems.length > 1) {
-			var x0 = xAxis.getX(series.dataItems.getIndex(0),
-				"categoryX");
-			var x1 = xAxis.getX(series.dataItems.getIndex(1),
-				"categoryX");
+			var x0 = xAxis.getX(series.dataItems.getIndex(0), "categoryX");
+			var x1 = xAxis.getX(series.dataItems.getIndex(1), "categoryX");
 			var delta = ((x1 - x0) / chart.series.length) * w;
 			if (am4core.isNumber(delta)) {
 				var middle = chart.series.length / 2;
-
 				var newIndex = 0;
 				chart.series.each(function(series) {
 					if (!series.isHidden && !series.isHiding) {
 						series.dummyData = newIndex;
 						newIndex++;
 					} else {
-						series.dummyData = chart.series
-							.indexOf(series);
+						series.dummyData = chart.series.indexOf(series);
 					}
 				})
 				var visibleCount = newIndex;
 				var newMiddle = visibleCount / 2;
 
-				chart.series
-					.each(function(series) {
-						var trueIndex = chart.series
-							.indexOf(series);
+				chart.series.each(function(series) {
+						var trueIndex = chart.series.indexOf(series);
 						var newIndex = series.dummyData;
 
-						var dx = (newIndex - trueIndex
-							+ middle - newMiddle)
-							* delta
+						var dx = (newIndex - trueIndex + middle - newMiddle) * delta;
 
 						series.animate({
 							property: "dx",
 							to: dx
-						}, series.interpolationDuration,
-							series.interpolationEasing);
+						}, 
+						series.interpolationDuration,
+						series.interpolationEasing);
+						
 						series.bulletsContainer.animate({
 							property: "dx",
 							to: dx
-						}, series.interpolationDuration,
-							series.interpolationEasing);
+						}, 
+						series.interpolationDuration,
+						series.interpolationEasing);
 					})
 			}
 		}
@@ -176,7 +169,7 @@ function buildLineChart(jsonData, libraries) {
 	}
 
 	chart.legend = new am4charts.Legend();
-	chart.legend.position = "right";
+	chart.legend.position = "bottom";
 	chart.legend.scrollable = true;
 
 	// setTimeout(function() {
@@ -233,8 +226,7 @@ function buildLineChart(jsonData, libraries) {
 	*/
 };
 
-
-function buildPieChart(jsonData, value, category) {
+function buildPieChart(jsonData, dimension, measure) {
 
 	// Themes begin
 	am4core.useTheme(am4themes_animated);
@@ -251,8 +243,8 @@ function buildPieChart(jsonData, value, category) {
 
 	// Add and configure Series
 	var pieSeries = chart.series.push(new am4charts.PieSeries());
-	pieSeries.dataFields.value = value;
-	pieSeries.dataFields.category = category;
+	pieSeries.dataFields.value = measure;
+	pieSeries.dataFields.category = dimension;
 	pieSeries.slices.template.stroke = am4core.color("#fff");
 	pieSeries.slices.template.strokeOpacity = 1;
 
@@ -264,30 +256,77 @@ function buildPieChart(jsonData, value, category) {
 	chart.hiddenState.properties.radius = am4core.percent(0);
 };
 
-var biggerChartList = [["barchartdiv", "linechartdiv", "piechartdiv"], ["", "", ""]];
+var biggerChartSw = {barchartdiv : 0, linechartdiv : 0, piechartdiv : 0};
 
-function biggerChart(elem) {
-	console.log("this : ");
-	console.log(elem);
-	console.log("gran parent's second child's child : ");
-	console.log(elem.parentNode.parentNode.children[1].children[0]);
-	console.log(elem.innerText);
-	var sw = elem.innerText;
-	var target = elem.parentNode.parentNode.children[1].children[0];
-	var targetId = target.getAttributeNode("id");
-	var targetStyle = target.getAttributeNode("style");
-	console.log(sw);
-	console.log(targetId);
+function biggerChart(btn) {
+	
+	var sw = btn.innerText;
+	var target = btn.parentNode.parentNode.children[1].children[0];
+	var targetId = target.id;
+	
 	if (sw == "+") {
-		for (var i = 0; biggerChartList[0].length > i; i++){
-			if (targetId == "barchartdiv"){
-				biggerChartList[0][i] = targetStyle;
-			} else if (targetId == "linechartdiv"){
-				biggerChartList[0][i] = targetStyle;
-			} else {
-				biggerChartList[0][i] = targetStyle;
-			}
-		}
-		targetStyle = "";
+		biggerChartSw[targetId] = 1;
+		document.getElementById(targetId).setAttribute("style", "height : 770px;")
+		btn.innerText = "-";
+	} else {
+		biggerChartSw[targetId] = 0;
+		document.getElementById(targetId).setAttribute("style", "")
+		btn.innerText = "+";
 	}
 }
+/*
+function switchingCharts(btn) {
+	
+	var str = "";
+	var absolute1stId = document.getElementsByClassName("z-card-info")[0].children[0].id;
+	var absolute1stTitle = document.getElementsByClassName("z-card-title")[0].innerHTML;
+	var targetTitle = btn.parentNode.parentNode.children[0].children[0].innerHTML;
+	var target = btn.parentNode.parentNode.children[1];
+	var targetId = target.children[0].id;
+	
+	str +=  "<div class='chartdiv' id='" + targetId + "'></div>"
+	document.getElementsByClassName("z-card-info")[0].innerHTML = str;
+	str = "";
+	btn.parentNode.parentNode.children[0].children[0].innerHTML = absolute1stTitle;
+	document.getElementsByClassName("z-card-title")[0].innerHTML = targetTitle;
+	
+	str +=  "<div class='chartdiv' id='" + absolute1stId + "'></div>"
+	btn.parentNode.parentNode.children[1].innerHTML = str;
+	
+	
+	document.getElementById(targetId).setAttribute("style", "height : 770px;")
+	document.getElementsByClassName("z-card-footer")[0].children[0].innerText = "-";
+	biggerChartSw[targetId] = 1;
+	
+	document.documentElement.scrollTop = 0;
+}
+*/
+function switchingCharts(btn) {
+	
+	var str = "";
+	var absolute1stId = document.getElementsByClassName("z-card-info")[0].children[0].id;
+	var absolute1stTitle = document.getElementsByClassName("z-card-title")[0].innerHTML;
+	var targetTitle = btn.parentNode.parentNode.children[0].children[0].innerHTML;
+	var target = btn.parentNode.parentNode.children[1];
+	var targetId = target.children[0].id;
+	
+	str +=  "<div class='chartdiv' id='" + targetId + "'></div>"
+	document.getElementsByClassName("z-card-info")[0].innerHTML = str;
+	str = "";
+	btn.parentNode.parentNode.children[0].children[0].innerHTML = absolute1stTitle;
+	document.getElementsByClassName("z-card-title")[0].innerHTML = targetTitle;
+	
+	str +=  "<div class='chartdiv' id='" + absolute1stId + "'></div>"
+	btn.parentNode.parentNode.children[1].innerHTML = str;
+	
+	
+	document.getElementById(targetId).setAttribute("style", "height : 770px;")
+	document.getElementsByClassName("z-card-footer")[0].children[0].innerText = "-";
+	biggerChartSw[targetId] = 1;
+	
+	document.documentElement.scrollTop = 0;
+}
+  
+  
+ 
+
