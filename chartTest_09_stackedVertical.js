@@ -97,7 +97,7 @@ function buildStackedVert(jsonData, measure, dimension, month) {
 
 $(document).ready(function() {
 	$("#monthSel").on("change", function() {
-	  	month = document.getElementsByTagName("select")[0].options[document.getElementsByTagName("select")[0].options.selectedIndex].value;
+	  	month = $("#monthSel").val();
 		buildStackedVert(jsonData, measure, dimension, month);
 	});
 });
