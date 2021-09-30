@@ -151,26 +151,7 @@
     // iCheck setting End
 
 
-    var _TABLE_COLUMN_PARAM = {
-        dataTable_1: {
-            columnInfo: [
-                { target: 0, tHeaderName: "No", dataColumnName: null },
-                { target: 1, tHeaderName: "기준일자", dataColumnName: "기준일자" },
-                { target: 2, tHeaderName: "가입위치별", dataColumnName: "가입위치별" },
-                { target: 3, tHeaderName: "가입자수", dataColumnName: "가입자수" },
-                { target: 4, tHeaderName: "관심분야별", dataColumnName: "관심분야별" },
-                { target: 5, tHeaderName: "도서관별", dataColumnName: "도서관별" },
-                { target: 6, tHeaderName: "성별", dataColumnName: "성별" },
-                { target: 7, tHeaderName: "연령별", dataColumnName: "연령별" },
-                { target: 8, tHeaderName: "이용목적별", dataColumnName: "이용목적별" },
-                { target: 9, tHeaderName: "지역별", dataColumnName: "지역별" }
-            ],
-            columnDefs: [
-                { targets: 0, orderable: false, searchable: false },
-                { targets: 2, orderable: false, searchable: false }
-            ]
-        }
-    };
+
 
 
     // Create Data Table(default) Start
@@ -248,6 +229,27 @@
 
     // Create Data Table(default) End
 
+
+    var _TABLE_COLUMN_PARAM = {
+        dataTable_1: {
+            columnInfo: [
+                { target: 0, tHeaderName: "No", dataColumnName: null },
+                { target: 1, tHeaderName: "기준일자", dataColumnName: "기준일자" },
+                { target: 2, tHeaderName: "가입위치별", dataColumnName: "가입위치별" },
+                { target: 3, tHeaderName: "가입자수", dataColumnName: "가입자수" },
+                { target: 4, tHeaderName: "관심분야별", dataColumnName: "관심분야별" },
+                { target: 5, tHeaderName: "도서관별", dataColumnName: "도서관별" },
+                { target: 6, tHeaderName: "성별", dataColumnName: "성별" },
+                { target: 7, tHeaderName: "연령별", dataColumnName: "연령별" },
+                { target: 8, tHeaderName: "이용목적별", dataColumnName: "이용목적별" },
+                { target: 9, tHeaderName: "지역별", dataColumnName: "지역별" }
+            ],
+            columnDefs: [
+                { targets: 0, orderable: false, searchable: false },
+                { targets: 2, orderable: false, searchable: false }
+            ]
+        }
+    };
 
     $.getJSON("/data/sample2.json", function (data) {
         var dataSet = data.data;

@@ -1,7 +1,12 @@
 /*************************************************************/
 /***       0. Filter Setting Start           ***/
 /*************************************************************/
+
+var _CONTEXT_PATH = "";
+
 $( document ).ready(function() {
+    // MEMO : 필터 id는 가능한 통일
+
     // Datapicker setting start
     var datapickerFormat = "yyyy-mm-dd";
     var $startDt = $("#startDt");
@@ -36,19 +41,93 @@ function getSelFilterValObj() {
     var startDtVal = $("#startDt").length > 0? $("#startDt").val() : "";
     var endDtVal = $("#endDt").length > 0? $("#endDt").val() : "";
 
+    // TODO : 필터 종류 추가되면 여기에도 추가
+
     return {
         startDtVal: startDtVal,
         endDtVal: endDtVal
     };
 }
 
+// TODO : 코드 정보 가져오기
+function getCodeList(codeTp) {
+    switch (codeTp) {
+        case 1: break;
+        default: return ["국내서", "서양서", "일본서", "중국서", "기타"];
+    }
+}
+
+
+// TODO : progressFlag : true - 시작, false - 종료
+function toggleLoadingProgress(progressFlag) {
+
+}
+
 /*************************************************************/
 /***       0. Filter Setting End           ***/
 /*************************************************************/
 
+/*************************************************************/
+/***       1. Pivot Table Start      ***/
+/*************************************************************/
+
+/**
+ * @searchCond : 검색조건
+ * @tableId : 피벗테이블을 생성할 target <table> id
+ * @rows : 좌측에 위치할 차원
+ * @cols : 상단에 위치할 차원
+ * @vals : 측정값
+*/
+function createPivotTableByGetAjax(searchCond, tableId, rows, cols, vals) {
+    $.ajax({ 
+        url: _CONTEXT_PATH + "/{root}/module/{menuCode}_pivottable_list.do",
+        data: searchCond,
+        method: "GET",
+        dataType: "json", // 서버에서 보내줄 데이터의 타입 
+        beforeSend : function() {
+			// Loading 에 의한 프로시저 시작
+            toggleLoadingProgress(true);
+		},
+        success : function(data, textStatus, jqXHR) {
+            var dataSet = data;
+            
+            $("#" + tableId).pivotUI(
+                dataSet,
+                {
+                    rows: rows,
+                    cols: cols,
+                    vals: vals,
+                    hiddenFromDragDrop: vals,
+                    aggregatorName: "Integer Sum",
+                    rendererName: "Heatmap",
+                    onRefresh: function () {
+                        // 차트 생성될 때 호출되는 익명함수
+                    },
+                    sorters: {  // 정렬
+                        "성별": $.pivotUtilities.sortAs(["남성", "여성"]),
+                        "연령별": $.pivotUtilities.sortAs(["10대이하"]),
+                    }
+                }
+            );
+            
+        },
+        error : function(jqXHR, textStatus, errorThrown) {
+            // TODO : Error 처리
+		},
+        complete: function(data) { 
+            // Loading End
+            toggleLoadingProgress(false);
+        }
+    });
+};
 
 /*************************************************************/
-/***       1. Dimension Submit Table 공통코드 Start           ***/
+/***       1. Pivot Table End      ***/
+/*************************************************************/
+
+
+/*************************************************************/
+/***       2-3. Dimension Submit Table 공통코드 Start      ***/
 /*************************************************************/
 
 // 화면에서 수정된 내용이 반영된 테이블의 Data 정보
@@ -71,9 +150,34 @@ function checkTableEditedYn(data, keyName, flag) {
 }
 
 
+// MEMO : 보안 이슈로 제출, 취소 버튼은 각 페이지에서 독립적으로 작성할 것인지 고민 중
 function handleClickSubmitTableCancleBtn(tableKey) {
     console.log("[handleClickSubmitTableCancleBtn] tableKey", tableKey);
     console.log("click cancle btn");
+
+    $.ajax({ 
+        url: _CONTEXT_PATH + "/{root}/module/{menuCode}_submittable_delete.do",
+        data: {
+            changedValue : _tableChangedData[tableKey]
+        },
+        method: "POST",
+        dataType: "json", // 서버에서 보내줄 데이터의 타입 
+        beforeSend : function() {
+			// Loading 에 의한 프로시저 시작
+            toggleLoadingProgress(true);
+		},
+        success : function(data, textStatus, jqXHR) {
+            
+        
+        },
+        error : function(jqXHR, textStatus, errorThrown) {
+            // TODO : Error 처리
+		},
+        complete: function(data) { 
+            // Loading End
+            toggleLoadingProgress(false);
+        }
+    });
 }
 
 
@@ -83,7 +187,32 @@ function handleClickSubmitTableSubmitBtn(tableKey) {
 
     if (Object.keys(_tableChangedData).length === 0) {
         alert("변경된 내용이 없습니다.");
+        return;
     }
+
+    $.ajax({ 
+        url: _CONTEXT_PATH + "/{root}/module/{menuCode}_submittable_save.do",
+        data: {
+            changedValue : _tableChangedData[tableKey]
+        },
+        method: "POST",
+        dataType: "json", // 서버에서 보내줄 데이터의 타입 
+        beforeSend : function() {
+			// Loading 에 의한 프로시저 시작
+            toggleLoadingProgress(true);
+		},
+        success : function(data, textStatus, jqXHR) {
+            
+        
+        },
+        error : function(jqXHR, textStatus, errorThrown) {
+            // TODO : Error 처리
+		},
+        complete: function(data) { 
+            // Loading End
+            toggleLoadingProgress(false);
+        }
+    });
 }
 
 
@@ -122,6 +251,7 @@ function realignDataByDoubleDimension(data, dimFirst, dimSecond, measureArr) {
             tempObj[rowData[dimSecond]][measureArr[j]] = rowData[measureArr[j]];
         }
 
+        // Ex : 데이터 정리 결과
         // result = [
         //     {
         //         "연도": 2018,
@@ -141,13 +271,52 @@ function realignDataByDoubleDimension(data, dimFirst, dimSecond, measureArr) {
     return result;
 }
 
+/**
+ * @dimDirection : Boolean 디멘전 방향 true-top, false-left
+ * @dimFirst : 메인 차원 ex) 연도, 개월 etc...
+ * @dimSecond : 서브 차원 ex) 도서관 종류 등
+ * @measureArr : Arr 측정값 목록
+ * @tableParam : 각 Table 이 가지는 고유 정보
+*/
+function createSubmitTableByGetAjax(searchCond, dimDirection, dimFirst, dimSecond, measureArr, tableParam) {
+    $.ajax({ 
+        url: _CONTEXT_PATH + "/{root}/module/{menuCode}_submittable_list.do",
+        data: searchCond,
+        method: "GET",
+        dataType: "json", // 서버에서 보내줄 데이터의 타입 
+        beforeSend : function() {
+			// Loading 에 의한 프로시저 시작
+            toggleLoadingProgress(true);
+		},
+        success : function(data, textStatus, jqXHR) {
+            var dataSet = data;
+            
+            if(dimDirection) {
+                // 메인 차원이 상단에 위치한 테이블
+                initTableTopDimension(dataSet, dimFirst, dimSecond, measureArr, tableParam);
+            } else {
+                // 메인 차원이 좌측에 위치한 테이블
+                initTableLeftDimension(dataSet, dimFirst, dimSecond, measureArr, tableParam)
+            }
+            
+        },
+        error : function(jqXHR, textStatus, errorThrown) {
+            // TODO : Error 처리
+		},
+        complete: function(data) { 
+            // Loading End
+            toggleLoadingProgress(false);
+        }
+    });
+};
+
 /*************************************************************/
-/***         1. Dimension Submit Table 공통코드 End           ***/
+/***         2-3. Dimension Submit Table 공통코드 End      ***/
 /*************************************************************/
 
 
 /*************************************************************/
-/***           2. Top Dimension Submit Table Start           ***/
+/***        2. Top Dimension Submit Table Start           ***/
 /*************************************************************/
 
 /*** 첫번째 차원(ex 연도, 월, 방문횟수 등)이  상단에 위치한 입력 테이블   ****/
@@ -280,8 +449,6 @@ function createTableTopDimension(data, tableParam) {
     var tbodyHtmlArr = JSON.parse(JSON.stringify(tableParam.tbodyHtmlArr)); // 깊은 복사
     var tbodyInfo = tableParam.tbodyInfo;
 
-    var changedValueCss = 'style="color: red;"';
-
     for (var i = 0; i < data.length; i++) {
         var dataObj = data[i];
         var headerKey = "";
@@ -390,6 +557,11 @@ function initTableTopDimension(data, dimFirst, dimSecond, measureArr, tableParam
 
 /*************************************************************/
 /***         2. Top Dimension Submit Table End           ***/
+/*************************************************************/
+
+
+/*************************************************************/
+/***         3. Left Dimension Submit Table Start           ***/
 /*************************************************************/
 /*** 첫번째 차원(ex 연도, 월, 방문횟수 등)이  좌측에 위치한 입력 테이블   ****/
 
@@ -528,7 +700,7 @@ function handleChangeTableCellValueTp2(event, tableKey, dimFirstKey, dimFirstVal
 
     for (var i = 0; i < tableData.length; i++) {
         if (tableData[i][dimFirstKey] == dimFirstVal) {
-            tableData[i][dimSecond][measure] = parseInt(target.value);
+            tableData[i][dimSecond][measure] = parseInt(targetValue);
             break;
         }
     }
@@ -663,91 +835,73 @@ function initTableLeftDimension(data, dimFirst, dimSecond, measureArr, tablePara
 
 
 /*************************************************************/
+/***         4-5. DataTable Common Start           ***/
+/*************************************************************/
+/**
+ * @searchCond : 검색 조건 정보를 담은 JSON 
+ * @tableId : 테이블을 그릴 Target <table> id
+ * @columnInfo : DataTable 칼럼 기본 정보
+ * @columnDefs : DataTable 칼럼 커스텀 정보
+ * @tableParamObj : DataTable 생성 파라메터
+ * @pivotFlag : Boolean - 테이블 dimension 데이터 Pivot true, false
+ * @pivotParamObj : Pivot 테이블일 경우 데이터 정립에 필요한 파라메터 정보를 담은 JSON
+*/
+function createDataTableByGetAjax(searchCond, tableId, columnInfo, columnDefs, tableParamObj, pivotFlag, pivotParamObj) {
+    $.ajax({ 
+        url: _CONTEXT_PATH + "/{root}/module/{menuCode}_datatable_list.do",
+        data: searchCond,
+        method: "GET",
+        dataType: "json", // 서버에서 보내줄 데이터의 타입 
+        beforeSend : function() {
+			// Loading 에 의한 프로시저 시작
+            toggleLoadingProgress(true);
+		},
+        success : function(data, textStatus, jqXHR) {
+            // DataTable 그리기
+            var dataSet = data;
+
+            if(pivotFlag) {
+                // 피벗 테이블의 경우 데이터 재정립
+                dataSet = realignDataToPivot(
+                    dataSet, 
+                    pivotParamObj.leftDimension, 
+                    pivotParamObj.topDimension, 
+                    pivotParamObj.measure
+                );
+
+                // 1. table 상단 Column 으로 입력될 code 목록
+                var codeArr = getCodeList(pivotParamObj.codeType);
+
+                // (2) 코드
+                for (var i = 0; i < codeArr.length; i++) {
+                    columnInfo.push({
+                        target: i + 2,
+                        tHeaderName: codeArr[i],
+                        dataColumnName: codeArr[i]
+                    });
+                }
+            }
+
+            // 테이블 생성
+            createDataTableDefault(tableId, dataSet, columnInfo, columnDefs, tableParamObj);
+        },
+        error : function(jqXHR, textStatus, errorThrown) {
+            // TODO : Error 처리
+		},
+        complete: function(data) { 
+            // Loading End
+            toggleLoadingProgress(false);
+        }
+    });
+}
+
+/*************************************************************/
+/***         4-5. DataTable Common End           ***/
+/*************************************************************/
+
+
+/*************************************************************/
 /***         4. DataTable Type Default Start           ***/
-/*************************************************************/
-
-// Create Data Table(default) Start
-function createDataTableDefault(tableId, dataSet, columnInfo, columnDefs, tableParamObj) {
-    // 0. 파라메터 준비
-    var rowNumFlag = tableParamObj.rowNumFlag; // No 칼럼 default : false
-    var pagingFlag = tableParamObj.pagingFlag ? tableParamObj.pagingFlag : false; // 페이징 default : false
-    // 데이터가 각 페이지에서 설정한 특정값 이상일 경우 강제로 페이징처리
-    var pagingTurningPoint = tableParamObj.pagingTurningPoint ? tableParamObj.pagingTurningPoint : false;
-
-    // 1. column info 정보를 토대로 아래와 같은 작업 진행
-    var theaderStrArr = ["<thead><tr>"];
-    var columnsArr = [];
-
-    for (var i = 0; i < columnInfo.length; i++) {
-        var tHeaderName = columnInfo[i].tHeaderName;
-        var dataColumnName = columnInfo[i].dataColumnName;
-
-        // (1) Table theader html 준비
-        theaderStrArr.push("<th>" + tHeaderName + "</th>");
-
-        // (2) columns Arr 준비
-        columnsArr.push({
-            data: dataColumnName,
-            defaultContent: "null"
-        });
-    }
-
-    theaderStrArr.push("</tr></thead>");
-
-    // (3) DataTable Param Object 작성
-    var dataTableParam = {
-        // ajax: function (dataSent, callback, settings) {
-        //     var resultData = this.api().ajax.json();
-        //     if (resultData == undefined) {
-        //         resultData = dataSet;
-        //     } else {
-        //         resultData = data.data;
-        //         for (i = 0; i < resultData.length; i++) {
-        //             resultData[i].last.push(resultData[i].last.shift())
-        //         }
-        //     }
-
-        //     callback({ data: resultData });
-        // },
-        data: dataSet,
-        scrollY: "350px",   // y scroll
-        scrollCollapse: true, // y scroll
-        paging: pagingFlag, // y scroll
-        columns: columnsArr,
-        columnDefs: columnDefs
-    }
-
-    if (pagingTurningPoint && dataSet.length > pagingTurningPoint) {
-        dataTableParam.paging = true;
-    }
-
-    // 2. Table theader 생성
-    var $targetTable = $("#" + tableId);
-    $targetTable.empty();
-    $targetTable.append(theaderStrArr.join(""));
-
-    // 3. DataTable 생성
-    var t = $targetTable.DataTable(dataTableParam);
-
-    // No 값 자동생성
-    if (rowNumFlag) {
-        t.on('order.dt search.dt', function () {
-            t.column(0, { search: 'applied', order: 'applied' }).nodes().each(function (cell, i) {
-                cell.innerHTML = i + 1;
-            });
-        }).draw();
-    }
-} // function createDataTableDefault End
-
-// Create Data Table(default) End
-
-/*************************************************************/
-/***         4. DataTable Type Default End           ***/
-/*************************************************************/
-
-
-/*************************************************************/
-/***         5. DataTable Type Pivot Start           ***/
 /*************************************************************/
 
 // Create Data Table(default) Start
@@ -815,12 +969,14 @@ function createDataTableDefault(tableId, dataSet, columnInfo, columnDefs, tableP
 
 // Create Data Table(default) End
 
-function getCodeList(codeTp) {
-    switch (codeTp) {
-        case 1: break;
-        default: return ["국내서", "서양서", "일본서", "중국서", "기타"];
-    }
-}
+/*************************************************************/
+/***         4. DataTable Type Default End           ***/
+/*************************************************************/
+
+
+/*************************************************************/
+/***         5. DataTable Type Pivot Start           ***/
+/*************************************************************/
 
 /**
  * 데이터 Pivot으로 재정렬
@@ -867,57 +1023,88 @@ function realignDataToPivot(pData, leftDimension, topDimension, measure) {
 
 
 /*************************************************************/
-/***         4-5. DataTable Common Start           ***/
+/***         6. Chart Start           ***/
 /*************************************************************/
 
-function createDataTableBySendAjax(tableId, columnInfo, columnDefs, tableParamObj, pivotFlag) {
+/**
+ * @chartType : Chart 타입 ex) bar, line, pie, donut etc...
+ * @searchCond : 검색조건
+ * @targetDivId : 차트를 생성할 div
+ * @chartParam : 차트 파라메터
+ * @dataAlignCallback : 데이터의 변형이 필요할 경우 callback 함수로 정리해준다
+*/
+function createChartByGetAjax(chartType, searchCond, targetDivId, chartParam, dataAlignCallback) {
     $.ajax({ 
-        url: "/rest/1/pages/245",
-        data: {},
+        url: _CONTEXT_PATH + "/{root}/module/{menuCode}_chartdata_list.do",
+        data: searchCond,
         method: "GET",
         dataType: "json", // 서버에서 보내줄 데이터의 타입 
         beforeSend : function() {
-			// TODO : Loading 에 의한 프로시저 시작
+			// Loading 에 의한 프로시저 시작
+            toggleLoadingProgress(true);
 		},
         success : function(data, textStatus, jqXHR) {
-            // TODO : DataTable 그림
+            var dataSet = data;
+            
+            if(dataAlignCallback) {
+                dataSet = dataAlignCallback(dataSet);
+            }
+
+            switch (chartType) {
+                case "bar":
+                    buildBarChart(targetDivId, dataSet, chartParam);
+                    break;
+                case "line":
+                    buildBarChart(targetDivId, dataSet, chartParam);
+                    break;
+                case "pie":
+                    buildPieChart(targetDivId, dataSet, chartParam);
+                    break;
+                default:
+                    break;
+            };
+            
         },
         error : function(jqXHR, textStatus, errorThrown) {
             // TODO : Error 처리
 		},
         complete: function(data) { 
-            // TODO : Loading End
+            // Loading End
+            toggleLoadingProgress(false);
         }
     });
-}
-
-/*************************************************************/
-/***         4-5. DataTable Common End           ***/
-/*************************************************************/
+};
 
 
-/*************************************************************/
-/***         6. Chart Start           ***/
-/*************************************************************/
 
 /*Chart code*/
 
-function buildBarChart(jsonData, dimension, measure) {
+function buildBarChart(targetDivId, jsonData, chartParam) {
+    var dimension = chartParam.dimension;
+    var measure = chartParam.measure;
+    var measureName = chartParam.measureName? chartParam.measureName : chartParam.measure;
+    var legendFlag = chartParam.legendFlag;
+    var legendPosition = chartParam.legendPosition? chartParam.legendPosition : "bottom";
+
 	// Themes begin
 	am4core.useTheme(am4themes_animated);
 	// Themes end
 
-	var chart = am4core.create('barchartdiv', am4charts.XYChart);
+	var chart = am4core.create(targetDivId, am4charts.XYChart);
 
 	// chartExporting
 	chart.exporting.menu = new am4core.ExportMenu();
+    chart.exporting.menu.items = [initExportMenuParam()];
 
 	chart.colors.step = 2;
 
-	chart.legend = new am4charts.Legend();
-	chart.legend.position = 'bottom';
-	chart.legend.paddingBottom = 20;
-	chart.legend.labels.template.maxWidth = 95;
+    if(legendFlag) {
+        chart.legend = new am4charts.Legend();
+        chart.legend.position = legendPosition;
+        chart.legend.paddingBottom = 20;
+        chart.legend.labels.template.maxWidth = 95;
+    }
+	
 
 	var xAxis = chart.xAxes.push(new am4charts.CategoryAxis());
 	xAxis.dataFields.category = dimension;
@@ -928,6 +1115,7 @@ function buildBarChart(jsonData, dimension, measure) {
 	var yAxis = chart.yAxes.push(new am4charts.ValueAxis());
 	yAxis.min = 0;
 
+    // series 생성
 	function createSeries(value, name) {
 		var series = chart.series.push(new am4charts.ColumnSeries());
 		series.dataFields.valueY = value;
@@ -936,9 +1124,9 @@ function buildBarChart(jsonData, dimension, measure) {
 
 		// 막대별로 다른 색상을 가지게 하고 싶을 경우
 		//  MEMO : 동일한 측정값을 가지는 막대의 경우 기본적으로는 같은 색상을 가지게됨
-		series.columns.template.adapter.add("fill", function(fill, target) {
-			return chart.colors.getIndex(target.dataItem.index);
-		});
+		// series.columns.template.adapter.add("fill", function(fill, target) {
+		// 	return chart.colors.getIndex(target.dataItem.index);
+		// });
 
 		series.events.on("hidden", arrangeColumns);
 		series.events.on("shown", arrangeColumns);
@@ -950,12 +1138,11 @@ function buildBarChart(jsonData, dimension, measure) {
 		bullet.label.fill = am4core.color('#ffffff');
 
 		return series;
-	}
+	} // function createSeries end
 
 	chart.data = jsonData;
 
-	//createSeries(measure, name); // 두번째 인자 name으로 외부로 노출되는 텍스트를 변경할 수 있음
-	createSeries(measure, measure); // 두번째 인자 name으로 외부로 노출되는 텍스트를 변경할 수 있음
+	createSeries(measure, measureName); // 두번째 인자 name으로 외부로 노출되는 텍스트를 변경할 수 있음
 
 	function arrangeColumns() {
 
@@ -981,49 +1168,52 @@ function buildBarChart(jsonData, dimension, measure) {
 				var newMiddle = visibleCount / 2;
 
 				chart.series.each(function(series) {
-						var trueIndex = chart.series.indexOf(series);
-						var newIndex = series.dummyData;
+                    var trueIndex = chart.series.indexOf(series);
+                    var newIndex = series.dummyData;
 
-						var dx = (newIndex - trueIndex + middle - newMiddle) * delta;
+                    var dx = (newIndex - trueIndex + middle - newMiddle) * delta;
 
-						series.animate({
-							property: "dx",
-							to: dx
-						}, 
-						series.interpolationDuration,
-						series.interpolationEasing);
-						
-						series.bulletsContainer.animate({
-							property: "dx",
-							to: dx
-						}, 
-						series.interpolationDuration,
-						series.interpolationEasing);
-					})
+                    series.animate({
+                        property: "dx",
+                        to: dx
+                    }, 
+                    series.interpolationDuration,
+                    series.interpolationEasing);
+                    
+                    series.bulletsContainer.animate({
+                        property: "dx",
+                        to: dx
+                    }, 
+                    series.interpolationDuration,
+                    series.interpolationEasing);
+                });
 			}
-		}
-	}
+		} // if end
+	} // function arrangeColumns end
 };
 
 
-function buildLineChart(jsonData, libraries) {
+function buildLineChart(targetDivId, jsonData, chartParam) {
+    var libraries = chartParam.libraries;
 
 	// Themes begin
 	am4core.useTheme(am4themes_animated);
 	// Themes end
 
 	// Create chart instance
-	var chart = am4core.create("linechartdiv", am4charts.XYChart);
+	var chart = am4core.create(targetDivId, am4charts.XYChart);
 
 	// chartExporting
 	chart.exporting.menu = new am4core.ExportMenu();
+    chart.exporting.menu.items = [initExportMenuParam()];
 
 	// Create axes
 	var dateAxis = chart.xAxes.push(new am4charts.DateAxis());
 	var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
 
 	// series를 구성하는 함수, 함수 인자로 도서관명을 담은 배열을 가져옴
-	for (var i = 0; i < libraries.length; i++) { // i 범위를 구성함에 따라 노출되는 값이 달라짐
+    // i 범위를 구성함에 따라 노출되는 값이 달라짐
+	for (var i = 0; i < libraries.length; i++) { 
 		createSeries("value" + i, libraries[i]);
 	}
 
@@ -1052,21 +1242,24 @@ function buildLineChart(jsonData, libraries) {
 		});
 
 		// json의 담긴 정보를 각 도서관명에 따라서 반복하여 배열에 넣어줌
-		var data = [];
-		var value = null;
-		jsonData.forEach((item) => {
-			if (name == item.도서관명) {
-				value = item.방문자수;
-				var year = item.방문일자.substring(0, 4);
-				var month = item.방문일자.substring(4, 6);
-				var day = item.방문일자.substring(6, 8);
-				var dataItem = { date: new Date(Number(year), Number(month) - 1, Number(day)) };
-				dataItem["value" + s] = value;
-				data.push(dataItem);
-			}
-		});
+        //  <- 정리해서 가져오는 형식으로 변경
 
-		series.data = data;
+		// var data = [];
+		// var value = null;
+		// jsonData.forEach((item) => {
+		// 	if (name == item.도서관명) {
+		// 		value = item.방문자수;
+		// 		var year = item.방문일자.substring(0, 4);
+		// 		var month = item.방문일자.substring(4, 6);
+		// 		var day = item.방문일자.substring(6, 8);
+		// 		var dataItem = { date: new Date(Number(year), Number(month) - 1, Number(day)) };
+		// 		dataItem["value" + s] = value;
+		// 		data.push(dataItem);
+		// 	}
+		// });
+
+		// series.data = data;
+		series.data = jsonData;
 		return series;
 	}
 
@@ -1128,17 +1321,20 @@ function buildLineChart(jsonData, libraries) {
 	*/
 };
 
-function buildPieChart(jsonData, dimension, measure) {
+function buildPieChart(targetDivId, jsonData, chartParam) {
+    var dimension = chartParam.dimension;
+    var measure = chartParam.measure;
 
 	// Themes begin
 	am4core.useTheme(am4themes_animated);
 	// Themes end
 
 	// Create chart instance
-	var chart = am4core.create("piechartdiv", am4charts.PieChart);
+	var chart = am4core.create(targetDivId, am4charts.PieChart);
 
 	// chartExporting
 	chart.exporting.menu = new am4core.ExportMenu();
+    chart.exporting.menu.items = [initExportMenuParam()];
 
 	// Add data
 	chart.data = jsonData
@@ -1161,24 +1357,53 @@ function buildPieChart(jsonData, dimension, measure) {
 	chart.hiddenState.properties.radius = am4core.percent(0);
 };
 
-var biggerChartSw = {barchartdiv : 0, linechartdiv : 0, piechartdiv : 0};
 
-function biggerChart(btn) {
-	
-	var sw = btn.innerText;
-	var target = btn.parentNode.parentNode.children[1].children[0];
-	var targetId = target.id;
-	
-	if (sw == "+") {
-		biggerChartSw[targetId] = 1;
-		document.getElementById(targetId).setAttribute("style", "height : 770px;")
-		btn.innerText = "-";
-	} else {
-		biggerChartSw[targetId] = 0;
-		document.getElementById(targetId).setAttribute("style", "")
-		btn.innerText = "+";
-	}
+function initExportMenuParam() {
+    return {
+        "label": "...",
+        "menu": [
+            {
+                "label": "이미지 다운로드",
+                "menu": [
+                    { "type": "png", "label": "PNG" },
+                    { "type": "jpg", "label": "JPG" },
+                    { "type": "svg", "label": "SVG" },
+                    { "type": "pdf", "label": "PDF" }
+                ]
+            }, {
+                "label": "데이터 추출",
+                "menu": [
+                    { "type": "json", "label": "JSON" },
+                    // { "type": "csv", "label": "CSV" },
+                    { "type": "xlsx", "label": "XLSX" },
+                    // { "type": "html", "label": "HTML" },
+                    { "type": "pdfdata", "label": "PDF" }
+                ]
+            }
+            // , {
+            //     "label": "Print", "type": "print"
+            // }
+        ]
+    };
 }
+
+// var biggerChartSw = {barchartdiv : 0, linechartdiv : 0, piechartdiv : 0};
+// function biggerChart(btn) {
+	
+// 	var sw = btn.innerText;
+// 	var target = btn.parentNode.parentNode.children[1].children[0];
+// 	var targetId = target.id;
+	
+// 	if (sw == "+") {
+// 		biggerChartSw[targetId] = 1;
+// 		document.getElementById(targetId).setAttribute("style", "height : 770px;")
+// 		btn.innerText = "-";
+// 	} else {
+// 		biggerChartSw[targetId] = 0;
+// 		document.getElementById(targetId).setAttribute("style", "")
+// 		btn.innerText = "+";
+// 	}
+// }
 
 /*************************************************************/
 /***         6. Chart End           ***/
