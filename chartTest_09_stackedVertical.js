@@ -86,9 +86,9 @@ function buildStackedVert(jsonData, measure, dimension, month) {
 		series.columns.template.width = am4core.percent(95);
 	}
 
-	createSeries("본관", "본관", false);
-	createSeries("디지털도서관", "디지털도서관", false);
-	createSeries("국립어린이청소년도서관", "국립어린이청소년도서관", false);
+	createSeries("본관", "본관", true);
+	createSeries("디지털도서관", "디지털도서관", true);
+	createSeries("국립어린이청소년도서관", "국립어린이청소년도서관", true);
 
 	//Add legend
 	chart.legend = new am4charts.Legend();
