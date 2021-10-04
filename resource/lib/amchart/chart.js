@@ -1,6 +1,10 @@
 /*Chart code*/
+var jsonDataAll = new Object;
+var biggerChartSw = {"barchartdiv" : 0, "linechartdiv" : 0, "piechartdiv" : 0};
 
 function buildBarChart(jsonData, dimension, measure) {
+	
+	jsonDataAll.barchartdiv = [jsonData, dimension, measure];
 	// Themes begin
 	am4core.useTheme(am4themes_animated);
 	// Themes end
@@ -106,6 +110,7 @@ function buildBarChart(jsonData, dimension, measure) {
 
 function buildLineChart(jsonData, libraries) {
 
+	jsonDataAll.linechartdiv = [jsonData, libraries];
 	// Themes begin
 	am4core.useTheme(am4themes_animated);
 	// Themes end
@@ -150,8 +155,9 @@ function buildLineChart(jsonData, libraries) {
 		});
 
 		// json의 담긴 정보를 각 도서관명에 따라서 반복하여 배열에 넣어줌
-		var data = [];
+		var jsonDataFmt = [];
 		var value = null;
+		/*
 		jsonData.forEach((item) => {
 			if (name == item.도서관명) {
 				value = item.방문자수;
@@ -160,11 +166,24 @@ function buildLineChart(jsonData, libraries) {
 				var day = item.방문일자.substring(6, 8);
 				var dataItem = { date: new Date(Number(year), Number(month) - 1, Number(day)) };
 				dataItem["value" + s] = value;
-				data.push(dataItem);
+				jsonDataFmt.push(dataItem);
 			}
 		});
+		*/
+		for (var i = 0; i < Object.keys(jsonData).length; i++){
+			if (name == jsonData[i].도서관명) {
+				value = jsonData[i].방문자수;
+				var year = jsonData[i].방문일자.substring(0, 4);
+				var month = jsonData[i].방문일자.substring(4, 6);
+				var day = jsonData[i].방문일자.substring(6, 8);
+				var dateFmt = { date: new Date(Number(year), Number(month) - 1, Number(day)) };
+				dateFmt["value" + s] = value;
+				jsonDataFmt.push(dateFmt);
+			}
+		}
 
-		series.data = data;
+		jsonDataAll["line"] = jsonDataFmt;
+		series.data = jsonDataFmt;
 		return series;
 	}
 
@@ -227,6 +246,8 @@ function buildLineChart(jsonData, libraries) {
 };
 
 function buildPieChart(jsonData, dimension, measure) {
+	
+	jsonDataAll.piechartdiv = [jsonData, dimension, measure];
 
 	// Themes begin
 	am4core.useTheme(am4themes_animated);
@@ -239,6 +260,7 @@ function buildPieChart(jsonData, dimension, measure) {
 	chart.exporting.menu = new am4core.ExportMenu();
 
 	// Add data
+	jsonDataAll["pie"] = jsonData;
 	chart.data = jsonData
 	
 	// Add legend
@@ -260,7 +282,6 @@ function buildPieChart(jsonData, dimension, measure) {
 	chart.hiddenState.properties.radius = am4core.percent(0);
 };
 
-var biggerChartSw = {barchartdiv : 0, linechartdiv : 0, piechartdiv : 0};
 
 function biggerChart(btn) {
 	
@@ -268,43 +289,60 @@ function biggerChart(btn) {
 	var target = btn.parentNode.parentNode.children[1].children[0];
 	var targetId = target.id;
 	
-	if (sw == "+") {
-		biggerChartSw[targetId] = 1;
+	if (biggerChartSw[targetId] == 0) {
 		document.getElementById(targetId).setAttribute("style", "height : 770px;")
+		biggerChartSw[targetId] = 1;
 		btn.innerText = "-";
 	} else {
-		biggerChartSw[targetId] = 0;
 		document.getElementById(targetId).setAttribute("style", "")
+		biggerChartSw[targetId] = 0;
 		btn.innerText = "+";
 	}
 }
 
 
-function switchingCharts(btn) {
+function switchingChart(btn) {
 	
 	var str = "";
-	var absolute1stId = document.getElementsByClassName("z-card-info")[0].children[0].id;
 	var absolute1stTitle = document.getElementsByClassName("z-card-title")[0].innerHTML;
 	var targetTitle = btn.parentNode.parentNode.children[0].children[0].innerHTML;
 	var target = btn.parentNode.parentNode.children[1];
-	var targetId = target.children[0].id;
+	var twoIds = [target.children[0].id, document.getElementsByClassName("z-card-info")[0].children[0].id]
 	
-	str +=  "<div class='chartdiv' id='" + targetId + "'></div>"
+	str +=  "<div class='chartdiv' id='" + twoIds[0] + "'></div>"
 	document.getElementsByClassName("z-card-info")[0].innerHTML = str;
 	str = "";
 	btn.parentNode.parentNode.children[0].children[0].innerHTML = absolute1stTitle;
 	document.getElementsByClassName("z-card-title")[0].innerHTML = targetTitle;
 	
-	str +=  "<div class='chartdiv' id='" + absolute1stId + "'></div>"
+	str +=  "<div class='chartdiv' id='" + twoIds[1] + "'></div>"
 	btn.parentNode.parentNode.children[1].innerHTML = str;
 	
-	
-	document.getElementById(targetId).setAttribute("style", "height : 770px;")
+	document.getElementById(twoIds[0]).setAttribute("style", "height : 770px;")
+	for (var j = 0; j < 2; j++){
+		switch (twoIds[j]){
+			case "barchartdiv":
+				buildBarChart(jsonDataAll["barchartdiv"][0], jsonDataAll["barchartdiv"][1], jsonDataAll["barchartdiv"][2]);
+			case "linechartdiv":
+				buildLineChart(jsonDataAll["linechartdiv"][0], jsonDataAll["linechartdiv"][1]);
+			case "piechartdiv":
+				buildPieChart(jsonDataAll["piechartdiv"][0], jsonDataAll["piechartdiv"][1], jsonDataAll["piechartdiv"][2]);
+		}
+	}
+	btn.previousSibling.previousSibling.innerText = "+";
 	document.getElementsByClassName("z-card-footer")[0].children[0].innerText = "-";
-	biggerChartSw[targetId] = 1;
+	biggerChartSw[twoIds[0]] = 1;
 	
 	document.documentElement.scrollTop = 0;
+	
 }
 
- 
-
+$(document).ready(function(){
+	var biggerBtn = $(".z-card-footer button:nth-child(odd)");
+	var switchingChartBtn = $(".z-card-footer button:nth-child(even)");
+	
+	for(var i = 0; i < biggerBtn.size(); i++){
+		biggerBtn.eq(i).attr('onclick', 'biggerChart(this)');
+		switchingChartBtn.eq(i).attr('onclick', 'switchingChart(this)');
+	}
+});
