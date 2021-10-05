@@ -78,10 +78,10 @@
                 <div class="z-card-wrapper">
                     <div class="z-card">
                         <div class="z-card-preview">
-                            <span class="z-card-title">캘린더</span>
+                            <span class="z-card-title">히트맵테이블</span>
                         </div>
                         <div class="z-card-info">
-                            <div id="calendar"></div>
+                            <div id="targetDiv"></div>
                         </div>
                         <div class="z-card-footer">
                             <button type="button" class="btn btn-default" id="btnExcelDownload">엑셀 다운로드</button>
@@ -117,40 +117,97 @@
     // iCheck setting End
 
 
-    // Calendar Start : https://fullcalendar.io/ document 참조
-    $(document).ready(function () {
-        var calendarEl = document.getElementById('calendar');
-        var dataSet = createTestData();
+    function createHeatMapTable(targetDivId, dimensionName, pData) {
 
-        var calendar = new FullCalendar.Calendar(calendarEl, {
-            initialView: 'dayGridMonth',
-            locale: "ko",   // 언어
-            dayMaxEventRows: true, // 날짜별 표시되는 내용 Max값 - 클릭으로 전체보기 가능
-            events: dataSet, // 캘린더에 입력할 데이터
-            headerToolbar: {
-                start: 'today prevYear,prev,next,nextYear',
-                center: 'title',
-                end: 'today prevYear,prev,next,nextYear'
-            }
-        });
+        for (var i = 0; i < pData.length; i++) {
 
-        calendar.render();
-        calendar.updateSize()
-    });
-
-    // Calendar End
-
-    function createTestData() {
-        var result = [];
-
-        for (var i = 0; i < 10; i++) {
-            result.push({
-                title: "test " + i,
-                start: "2021-10-06"
-            });
         }
+
+    }
+
+
+    function realignDataForHeatMapTable(pData, dimFirst, dimSecond, measure) {
+        var result = [];
+        var tempObj = {};
+        var tempTotal = 0;
+        var tempMin = 0;
+        var tempMax = 0;
+
+        for (var i = 0; i < pData.length; i++) {
+            var rowData = pData[i];
+
+            var dimFVal = rowData[dimFirst];
+            var dimSVal = rowData[dimSecond];
+            var meaVal = rowData[measure];
+
+            // 0. min max total 세팅
+            tempMax = tempMax === 0 ? meaVal : Math.max(tempMax, meaVal);
+            tempMin = tempMin === 0 ? meaVal : Math.min(tempMin, meaVal);
+            tempTotal += meaVal;
+
+            // end. dimension First 값이 기존과 다를 경우 obj -> arr에 저장 후 초기화
+            if (tempObj[dimFirst] && tempObj[dimFirst] !== rowData[dimFirst]) {
+                tempObj.max = tempMax;
+                tempObj.min = tempMin;
+                tempObj.totle = tempTotal;
+                tempMax = 0;
+                tempMin = 0;
+                tempTotal = 0;
+                result.push(tempObj);
+                tempObj = {};
+            }
+
+            // 1. dimension First 값 세팅
+            if (!tempObj[dimFirst]) {
+                tempObj[dimFirst] = dimFVal;
+            }
+
+            // 2. 
+            if (!tempObj["value"]) {
+                tempObj["value"] = [];
+            }
+
+            tempObj["value"].push([dimSVal, meaVal]);
+
+            // end. 마지막 obj -> arr 저장
+            if (i === pData.length - 1) {
+                tempObj.max = tempMax;
+                tempObj.min = tempMin;
+                tempObj.totle = tempTotal;
+                result.push(tempObj);
+            }
+        }
+
+        // [
+        //     {
+        //         "연령대": "10대",
+        //         "min": 5,
+        //         "max": 100,
+        //         "total": 200,
+        //         "value": [
+        //             ["본관출입", 10],
+        //             ["검색PC이동", 20]
+        //         ]
+        //     },
+        // ]
+
+        console.log("result", result);
         return result;
     }
+
+    // HeatMap Table Start
+    $.getJSON("/data/heat_map_data.json", function (data) {
+        // TODO : 데이터 가져오는 부분은 Ajax(동기화)로 수정 예정
+        var dataSet = data.data;
+
+        // console.log("dataSet", dataSet);
+
+        dataSet = realignDataForHeatMapTable(dataSet, "연령대", "이용구분", "이용시간");
+
+        createHeatMapTable("targetDiv", "연령대", dataSet);
+
+    });
+    // HeatMap Table End
 
 </script>
 
