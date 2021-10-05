@@ -78,7 +78,7 @@ function toggleLoadingProgress(progressFlag) {
  * @cols : 상단에 위치할 차원
  * @vals : 측정값
 */
-function createPivotTableByGetAjax(searchCond, tableId, rows, cols, vals) {
+function createPivotTableByGetAjax(searchCond, tableId, rows, cols, vals, callbackAfterRefresh) {
     $.ajax({ 
         url: _CONTEXT_PATH + "/{root}/module/{menuCode}_pivottable_list.do",
         data: searchCond,
@@ -100,8 +100,11 @@ function createPivotTableByGetAjax(searchCond, tableId, rows, cols, vals) {
                     hiddenFromDragDrop: vals,
                     aggregatorName: "Integer Sum",
                     rendererName: "Heatmap",
-                    onRefresh: function () {
+                    onRefresh: function (config) {
                         // 차트 생성될 때 호출되는 익명함수
+                        if(callbackAfterRefresh) {
+                            callbackAfterRefresh(config);
+                        }
                     },
                     sorters: {  // 정렬
                         "성별": $.pivotUtilities.sortAs(["남성", "여성"]),
@@ -152,9 +155,6 @@ function checkTableEditedYn(data, keyName, flag) {
 
 // MEMO : 보안 이슈로 제출, 취소 버튼은 각 페이지에서 독립적으로 작성할 것인지 고민 중
 function handleClickSubmitTableCancleBtn(tableKey) {
-    console.log("[handleClickSubmitTableCancleBtn] tableKey", tableKey);
-    console.log("click cancle btn");
-
     $.ajax({ 
         url: _CONTEXT_PATH + "/{root}/module/{menuCode}_submittable_delete.do",
         data: {
@@ -182,9 +182,6 @@ function handleClickSubmitTableCancleBtn(tableKey) {
 
 
 function handleClickSubmitTableSubmitBtn(tableKey) {
-    console.log("[handleClickSubmitTableSubmitBtn] tableKey", tableKey);
-    console.log("click submit btn", _tableChangedData);
-
     if (Object.keys(_tableChangedData).length === 0) {
         alert("변경된 내용이 없습니다.");
         return;
