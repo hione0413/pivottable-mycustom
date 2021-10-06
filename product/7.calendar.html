@@ -118,6 +118,7 @@
 
 
     // Calendar Start : https://fullcalendar.io/ document 참조
+    // UI 내 용어 변경하고 싶으면 fullcalendar/locates/ko.js 참조
     $(document).ready(function () {
         var calendarEl = document.getElementById('calendar');
         var dataSet = createTestData();
@@ -128,9 +129,9 @@
             dayMaxEventRows: true, // 날짜별 표시되는 내용 Max값 - 클릭으로 전체보기 가능
             events: dataSet, // 캘린더에 입력할 데이터
             headerToolbar: {
-                start: 'today prevYear,prev,next,nextYear',
+                start: 'prevYear,prev,next,nextYear today',
                 center: 'title',
-                end: 'today prevYear,prev,next,nextYear'
+                end: 'dayGridMonth,list'
             }
         });
 

@@ -117,15 +117,107 @@
     // iCheck setting End
 
 
-    function createHeatMapTable(targetDivId, dimensionName, pData) {
 
-        for (var i = 0; i < pData.length; i++) {
 
+    /**
+     * HeatMap Table 화면에 그리기
+     * @targetId: 테이블을 그릴 target div
+     * @heatMapTableTpOne: table cell html 배열 - 연령별: 이용구분별 이용시간
+     * @heatMapTableTpTwo: table cell html 배열 - 연령별: 시간대별 이용자수
+    */
+    function createHeatMapTable(targetId, heatMapTableTpOne, heatMapTableTpTwo) {
+        var tempArr = [];
+
+        for (var i = 0; i < heatMapTableTpOne.length; i++) {
+            var title = heatMapTableTpOne[i][0];
+            var tableOneThead = heatMapTableTpOne[i][1];
+            var tableOneTBody = heatMapTableTpOne[i][2];
+
+            var tableTwoThead = heatMapTableTpTwo[i][1];
+            var tableTwoTBody = heatMapTableTpTwo[i][2];
+
+            tempArr.push('<h3>' + title + '</h3>');
+            tempArr.push("<h5>이용구분별 이용시간</h5>");
+            tempArr.push('<table class="z-submit-table">' + tableOneThead.join("") + tableOneTBody.join("") + '</table>');
+            tempArr.push("<h5>시간대별 이용자수</h5>");
+            tempArr.push('<table class="z-submit-table">' + tableTwoThead.join("") + tableTwoTBody.join("") + '</table>');
+            tempArr.push('<hr>');
         }
 
+        $("#" + targetId).append(tempArr);
+    }
+
+    /**
+     * 
+     * @pData: 정렬된 데이터
+     * @dimensionName: 측정 기준 column name
+     * @cellWidthFluidFlag: true - cell 가로 사이즈가 수치에 따라 %로 변동 || false - 변동 없음 
+    */
+    function createHeatMapTableHtml(pData, dimensionName, cellWidthFluidFlag) {
+        var result = [];
+        var textDefaultColor = "black";
+        var textValHighColor = "white";
+        // var cellColor = "53,75,132";
+        var cellColor = "47,85,132";
+        var peakColor = "255,0,0";
+
+        for (var i = 0; i < pData.length; i++) {
+            var rowData = pData[i];
+            var max = rowData.max;
+            var min = rowData.min;
+            var total = rowData.total;
+            var valArr = rowData.value;
+
+            var tempThead = ["<thead><tr>"];
+            var tempTbody = ["<tbody><tr>"];
+
+            for (var j = 0; j < valArr.length; j++) {
+                var thTxt = valArr[j][0];
+                var tdTxt = valArr[j][1];
+
+                // per : cell width size 조정
+                var per = (tdTxt / total) * 100;
+                per = Math.ceil(per);
+                per = per / 100;
+
+                // colorPer : 색상 조정
+                var colorPer = tdTxt / max;
+                // max 값과 비교하여 특정 수치 이상이면 valhigh
+                var textColor = tdTxt > (max / 2) ? textValHighColor : textDefaultColor;
+
+                if (cellWidthFluidFlag) {
+                    tempThead.push('<th style="width: ' + per * 100 + '%; background-color: rgba(' + cellColor + ',' + colorPer + '); color: ' + textColor + ';">' + thTxt + '</th>');
+                    tempTbody.push('<td style="width: ' + per * 100 + '%; background-color: rgba(' + cellColor + ',' + colorPer + '); color: ' + textColor + ';">' + tdTxt + '</td>');
+                } else {
+                    var peak = rowData.peak;
+                    var thisCellColor = peak.indexOf(tdTxt) > -1 ? peakColor : cellColor;
+
+                    tempThead.push('<th style="background-color: rgba(' + thisCellColor + ',' + colorPer + '); color: ' + textColor + ';">' + thTxt + '</th>');
+                    tempTbody.push('<td style="background-color: rgba(' + thisCellColor + ',' + colorPer + '); color: ' + textColor + ';">' + tdTxt + '</td>');
+                }
+            }
+
+            tempThead.push("</tr></thead>");
+            tempTbody.push("</tr></tbody>");
+
+            result.push([rowData[dimensionName], tempThead, tempTbody]);
+
+            // console.log("tempThead", tempThead);
+            // console.log("tempTbody", tempTbody);
+            // $("#" + "targetDiv").append('<table class="z-submit-table">' + tempThead.join("") + tempTbody.join("") + '</table>');
+        }
+
+        return result;
     }
 
 
+    /**
+     * HeatMap Table 생성을 위해 데이터 정리
+     * @pData: 원본 데이터
+     * @dimFirst: 차원 main
+     * @dimSecond: 차원 2
+     * @measure: 측정값
+    */
     function realignDataForHeatMapTable(pData, dimFirst, dimSecond, measure) {
         var result = [];
         var tempObj = {};
@@ -140,22 +232,30 @@
             var dimSVal = rowData[dimSecond];
             var meaVal = rowData[measure];
 
-            // 0. min max total 세팅
-            tempMax = tempMax === 0 ? meaVal : Math.max(tempMax, meaVal);
-            tempMin = tempMin === 0 ? meaVal : Math.min(tempMin, meaVal);
-            tempTotal += meaVal;
-
             // end. dimension First 값이 기존과 다를 경우 obj -> arr에 저장 후 초기화
             if (tempObj[dimFirst] && tempObj[dimFirst] !== rowData[dimFirst]) {
                 tempObj.max = tempMax;
                 tempObj.min = tempMin;
-                tempObj.totle = tempTotal;
+                tempObj.total = tempTotal;
+
+                var peakTemp = JSON.parse(JSON.stringify(tempObj.value));
+                peakTemp.sort(function (a, b) {
+                    return b[1] - a[1];
+                });
+                tempObj.peak = [peakTemp[0][1], peakTemp[1][1]];
+
+                result.push(tempObj);
+
                 tempMax = 0;
                 tempMin = 0;
                 tempTotal = 0;
-                result.push(tempObj);
                 tempObj = {};
             }
+
+            // 0. min max total 세팅
+            tempMax = tempMax === 0 ? meaVal : Math.max(tempMax, meaVal);
+            tempMin = tempMin === 0 ? meaVal : Math.min(tempMin, meaVal);
+            tempTotal += meaVal;
 
             // 1. dimension First 값 세팅
             if (!tempObj[dimFirst]) {
@@ -173,7 +273,14 @@
             if (i === pData.length - 1) {
                 tempObj.max = tempMax;
                 tempObj.min = tempMin;
-                tempObj.totle = tempTotal;
+                tempObj.total = tempTotal;
+
+                var peakTemp = JSON.parse(JSON.stringify(tempObj.value));
+                peakTemp.sort(function (a, b) {
+                    return b[1] - a[1];
+                });
+                tempObj.peak = [peakTemp[0][1], peakTemp[1][1]];
+
                 result.push(tempObj);
             }
         }
@@ -199,12 +306,24 @@
     $.getJSON("/data/heat_map_data.json", function (data) {
         // TODO : 데이터 가져오는 부분은 Ajax(동기화)로 수정 예정
         var dataSet = data.data;
+        var dataSet2 = data.data2;
 
-        // console.log("dataSet", dataSet);
-
+        // 1. 연령별: 이용구분별 이용시간
         dataSet = realignDataForHeatMapTable(dataSet, "연령대", "이용구분", "이용시간");
+        var heatMapTableTpOne = createHeatMapTableHtml(dataSet, "연령대", true);
 
-        createHeatMapTable("targetDiv", "연령대", dataSet);
+        console.log("heatMapTableTpOne", heatMapTableTpOne);
+
+
+        // 2. 연령별: 시간대별 이용자수
+        dataSet2 = realignDataForHeatMapTable(dataSet2, "연령대", "시간대", "이용자수");
+        var heatMapTableTpTwo = createHeatMapTableHtml(dataSet2, "연령대", false);
+
+        console.log("heatMapTableTpTwo", heatMapTableTpOne);
+
+
+        // 3. heatMap Table 화면에 그리기
+        createHeatMapTable("targetDiv", heatMapTableTpOne, heatMapTableTpTwo);
 
     });
     // HeatMap Table End
