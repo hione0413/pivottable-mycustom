@@ -1,8 +1,13 @@
+var _GET_MIS_DATA_PATH = "/misdata_list.do/";
+var _CANCLE_SUBMIT_PATH = "/{root}/module/{menuCode}_submittable_delete.do";
+var _UPDATE_SUBMIT_PATH = "/{root}/module/{menuCode}_submittable_save.do";
+var _GET_CHART_DATA_PATH = "/{root}/module/{menuCode}_chartdata_list.do";
+
 /*************************************************************/
 /***       0. Filter Setting Start           ***/
 /*************************************************************/
 
-var _CONTEXT_PATH = "";
+//var _CONTEXT_PATH = "";
 
 $( document ).ready(function() {
     // MEMO : 필터 id는 가능한 통일
@@ -38,14 +43,62 @@ $( document ).ready(function() {
 
 // 현재 선택된 필터 데이터들을 정리해서 obj 로 반환
 function getSelFilterValObj() {
-    var startDtVal = $("#startDt").length > 0? $("#startDt").val() : "";
-    var endDtVal = $("#endDt").length > 0? $("#endDt").val() : "";
+	// 1. 기간 검색 : text ~ text
+    var startDt = $("#startDt").length > 0? $("#startDt").val() : "";
+    var endDt = $("#endDt").length > 0? $("#endDt").val() : "";
 
-    // TODO : 필터 종류 추가되면 여기에도 추가
+	// 2. 기간검색(시각) : select ~ select
+	var startTm = $("#startTm").length > 0? $("#startTm").val() : "";
+	var endTm = $("#endTm").length > 0? $("#endTm").val() : "";
+
+	// 3. 월/월/년별 : radio - YYYYMMDD, YYYYMM, YYYY을 전송
+	var dtUnit = $("input[name=dtUnit]:checked").length > 0? $("input[name=dtUnit]:checked").val() : "";
+	
+	// 4. 도서관 : select
+	var library = $("#library").length > 0? $("#library").val() : "";
+	
+	// 5. 자료실 : select
+	var referenceRoom = $("#referenceRoom").length > 0? $("#referenceRoom").val() : "";
+	
+	// 6. 도서사용 : select
+	var bookUse = $("#bookUse").length > 0? $("#bookUse").val() : "";
+	
+	// 7. 자료구분 : select
+	var docSelection = $("#docSelection").length > 0? $("#docSelection").val() : "";
+	
+	// 8. 도서분류 : select
+	var bookClassification = $("#bookClassification").length > 0? $("#bookClassification").val() : "";
+	
+	// 9. 연령대 : select
+	var age = $("#age").length > 0? $("#age").val() : "";
+	
+	// 10. 출판년월 : input, select
+	var publicationDt = $("#publicationDt").length > 0? $("#publicationDt").val() : "";
+	var publicationTm = $("#publicationTm").length > 0? $("#publicationTm").val() : "";
+	
+	
+	// 11. 이용상태 : select
+	var useState = $("#useState").length > 0? $("#useState").val() : "";
+
+    // MEMO : 필터 종류 추가되면 여기에도 추가
+
+	// TODO : $("#form ").serializeArray(); 형태로 수정할 것
 
     return {
-        startDtVal: startDtVal,
-        endDtVal: endDtVal
+        startDt: startDt, //1
+        endDt: endDt,
+		startTm: startTm, //2
+		endTm: endTm,
+		dtUnit: dtUnit, //3
+		library: library, //4
+		referenceRoom: referenceRoom, //5
+		bookUse: bookUse, //6
+		docSelection: docSelection, //7
+		bookClassification: bookClassification, //8
+		age: age, //9
+		publicationDt: publicationDt, //10
+		publicationTm: publicationTm,
+		useState: useState //11
     };
 }
 
@@ -59,9 +112,43 @@ function getCodeList(codeTp) {
 
 
 // TODO : progressFlag : true - 시작, false - 종료
+// CHECK
+//  ㄴ 1. 화면 전체에 Loading 거는 방법
+//  ㄴ 2. div 에만 Loading 거는 방법
 function toggleLoadingProgress(progressFlag) {
 
 }
+
+
+// queryId로 데이터 가져오기
+function getMisDataByGetAjax(queryId) {
+	var searchCond = getSelFilterValObj();
+	
+	$.ajax({ 
+        // url: _CONTEXT_PATH + "/{root}/module/{menuCode}_pivottable_list.do",
+		url: _CONTEXT_PATH + _GET_MIS_DATA_PATH + queryId,
+        data: searchCond,
+        method: "GET",
+        dataType: "json", // 서버에서 보내줄 데이터의 타입
+        beforeSend : function() {
+			// Loading 에 의한 프로시저 시작
+            toggleLoadingProgress(true);
+		},
+        success : function(data, textStatus, jqXHR) {
+            var dataSet = data;
+            
+            console.log("[getMisDataByGetAjax] result", dataSet);
+        },
+        error : function(jqXHR, textStatus, errorThrown) {
+            // TODO : Error 처리
+		},
+        complete: function(data) { 
+            // Loading End
+            toggleLoadingProgress(false);
+        }
+    });
+} 
+
 
 /*************************************************************/
 /***       0. Filter Setting End           ***/
@@ -78,9 +165,10 @@ function toggleLoadingProgress(progressFlag) {
  * @cols : 상단에 위치할 차원
  * @vals : 측정값
 */
-function createPivotTableByGetAjax(searchCond, tableId, rows, cols, vals, callbackAfterRefresh) {
+function createPivotTableByGetAjax(queryId, searchCond, tableId, rows, cols, vals, callbackAfterRefresh) {
     $.ajax({ 
-        url: _CONTEXT_PATH + "/{root}/module/{menuCode}_pivottable_list.do",
+        // url: _CONTEXT_PATH + "/{root}/module/{menuCode}_pivottable_list.do",
+		url: _CONTEXT_PATH + _GET_MIS_DATA_PATH + queryId,
         data: searchCond,
         method: "GET",
         dataType: "json", // 서버에서 보내줄 데이터의 타입 
@@ -112,7 +200,6 @@ function createPivotTableByGetAjax(searchCond, tableId, rows, cols, vals, callba
                     }
                 }
             );
-            
         },
         error : function(jqXHR, textStatus, errorThrown) {
             // TODO : Error 처리
@@ -155,29 +242,31 @@ function checkTableEditedYn(data, keyName, flag) {
 
 // MEMO : 보안 이슈로 제출, 취소 버튼은 각 페이지에서 독립적으로 작성할 것인지 고민 중
 function handleClickSubmitTableCancleBtn(tableKey) {
-    $.ajax({ 
-        url: _CONTEXT_PATH + "/{root}/module/{menuCode}_submittable_delete.do",
-        data: {
-            changedValue : _tableChangedData[tableKey]
-        },
-        method: "POST",
-        dataType: "json", // 서버에서 보내줄 데이터의 타입 
-        beforeSend : function() {
-			// Loading 에 의한 프로시저 시작
-            toggleLoadingProgress(true);
-		},
-        success : function(data, textStatus, jqXHR) {
-            
-        
-        },
-        error : function(jqXHR, textStatus, errorThrown) {
-            // TODO : Error 처리
-		},
-        complete: function(data) { 
-            // Loading End
-            toggleLoadingProgress(false);
-        }
-    });
+	if(confirm("제출을 취소하시겠습니까?")) {
+		$.ajax({ 
+	        url: _CONTEXT_PATH + _CANCLE_SUBMIT_PATH,
+	        data: {
+	            changedValue : _tableChangedData[tableKey]
+	        },
+	        method: "POST",
+	        dataType: "json", // 서버에서 보내줄 데이터의 타입 
+	        beforeSend : function() {
+				// Loading 에 의한 프로시저 시작
+	            toggleLoadingProgress(true);
+			},
+	        success : function(data, textStatus, jqXHR) {
+	            // TODO : 제출 취소되었음을 알리는 alert 출력
+	        	alert("제출이 취소되었습니다.");
+	        },
+	        error : function(jqXHR, textStatus, errorThrown) {
+	            // TODO : Error 처리
+			},
+	        complete: function(data) { 
+	            // Loading End
+	            toggleLoadingProgress(false);
+	        }
+	    });
+	}
 }
 
 
@@ -187,29 +276,31 @@ function handleClickSubmitTableSubmitBtn(tableKey) {
         return;
     }
 
-    $.ajax({ 
-        url: _CONTEXT_PATH + "/{root}/module/{menuCode}_submittable_save.do",
-        data: {
-            changedValue : _tableChangedData[tableKey]
-        },
-        method: "POST",
-        dataType: "json", // 서버에서 보내줄 데이터의 타입 
-        beforeSend : function() {
-			// Loading 에 의한 프로시저 시작
-            toggleLoadingProgress(true);
-		},
-        success : function(data, textStatus, jqXHR) {
-            
-        
-        },
-        error : function(jqXHR, textStatus, errorThrown) {
-            // TODO : Error 처리
-		},
-        complete: function(data) { 
-            // Loading End
-            toggleLoadingProgress(false);
-        }
-    });
+	if(confirm("제출하시겠습니까?")) {
+		$.ajax({ 
+	        url: _CONTEXT_PATH + _UPDATE_SUBMIT_PATH,
+	        data: {
+	            changedValue : _tableChangedData[tableKey]
+	        },
+	        method: "POST",
+	        dataType: "json", // 서버에서 보내줄 데이터의 타입 
+	        beforeSend : function() {
+				// Loading 에 의한 프로시저 시작
+	            toggleLoadingProgress(true);
+			},
+	        success : function(data, textStatus, jqXHR) {
+	        	// TODO : 제출 완료되었음을 알리는 alert 출력    
+	        	alert("제출이 완료되었습니다.");
+	        },
+	        error : function(jqXHR, textStatus, errorThrown) {
+	            // TODO : Error 처리
+			},
+	        complete: function(data) { 
+	            // Loading End
+	            toggleLoadingProgress(false);
+	        }
+	    });
+	}    
 }
 
 
@@ -269,15 +360,16 @@ function realignDataByDoubleDimension(data, dimFirst, dimSecond, measureArr) {
 }
 
 /**
- * @dimDirection : Boolean 디멘전 방향 true-top, false-left
+ * @dimDirection : Boolean 디멘전 방향 true-top, false-left : CHECK
  * @dimFirst : 메인 차원 ex) 연도, 개월 etc...
  * @dimSecond : 서브 차원 ex) 도서관 종류 등
  * @measureArr : Arr 측정값 목록
  * @tableParam : 각 Table 이 가지는 고유 정보
 */
-function createSubmitTableByGetAjax(searchCond, dimDirection, dimFirst, dimSecond, measureArr, tableParam) {
+function createSubmitTableByGetAjax(queryId, searchCond, dimDirection, dimFirst, dimSecond, measureArr, tableParam) {
     $.ajax({ 
-        url: _CONTEXT_PATH + "/{root}/module/{menuCode}_submittable_list.do",
+        // url: _CONTEXT_PATH + "/{root}/module/{menuCode}_submittable_list.do",
+		url: _CONTEXT_PATH + _GET_MIS_DATA_PATH + queryId,
         data: searchCond,
         method: "GET",
         dataType: "json", // 서버에서 보내줄 데이터의 타입 
@@ -418,6 +510,7 @@ function handleChangeTableCellValue(event, tableKey, dimFirstKey, dimFirstVal, d
 
     if (event.which && (event.which > 47 && event.which < 58 || event.which === 8)) {
         // console.log("숫자임");
+		// TODO : e 입력 막을 것
     } else {
         // console.log("숫자아님");
         return;
@@ -515,7 +608,7 @@ function initTableTopDimension(data, dimFirst, dimSecond, measureArr, tableParam
     // 0. 저장 버튼 활성 비활성 여부 판단
     var insertYn = checkTableEditedYn(data, "입력YN", "N");
 
-    // TODO : 0-1. 버튼 활성 비활성 처리 및 이벤트 부착
+    // 0-1. 버튼 활성 비활성 처리 및 이벤트 부착
     var tableKey = tableParam.tableKey;
     var btnCancleId = tableParam.btnCancleId;
     var btnSubmitId = tableParam.btnSubmitId;
@@ -527,6 +620,8 @@ function initTableTopDimension(data, dimFirst, dimSecond, measureArr, tableParam
         $btnSubmitId.attr("disabled", true);
     }
 
+
+	// CHECK : 취소, 제출 버튼 호출 기능을 각 페이지에 둘지, 공통으로 둘지 고민
     $("#" + btnCancleId).click(function () {
         // 취소 버튼 클릭
         handleClickSubmitTableCancleBtn(tableKey);
@@ -688,6 +783,7 @@ function handleChangeTableCellValueTp2(event, tableKey, dimFirstKey, dimFirstVal
 
     if (event.which && (event.which > 47 && event.which < 58 || event.which === 8)) {
         // console.log("숫자임");
+		// TODO : e 입력 막을 것
     } else {
         // console.log("숫자아님");
         return;
@@ -843,9 +939,10 @@ function initTableLeftDimension(data, dimFirst, dimSecond, measureArr, tablePara
  * @pivotFlag : Boolean - 테이블 dimension 데이터 Pivot true, false
  * @pivotParamObj : Pivot 테이블일 경우 데이터 정립에 필요한 파라메터 정보를 담은 JSON
 */
-function createDataTableByGetAjax(searchCond, tableId, columnInfo, columnDefs, tableParamObj, pivotFlag, pivotParamObj) {
+function createDataTableByGetAjax(queryId, searchCond, tableId, columnInfo, columnDefs, tableParamObj, pivotFlag, pivotParamObj) {
     $.ajax({ 
-        url: _CONTEXT_PATH + "/{root}/module/{menuCode}_datatable_list.do",
+        // url: _CONTEXT_PATH + "/{root}/module/{menuCode}_datatable_list.do",
+		url: _CONTEXT_PATH + _GET_MIS_DATA_PATH + queryId,
         data: searchCond,
         method: "GET",
         dataType: "json", // 서버에서 보내줄 데이터의 타입 
@@ -867,6 +964,7 @@ function createDataTableByGetAjax(searchCond, tableId, columnInfo, columnDefs, t
                 );
 
                 // 1. table 상단 Column 으로 입력될 code 목록
+				// CHECK : 칼럼에 입력할 코드 리스트 가져오기 
                 var codeArr = getCodeList(pivotParamObj.codeType);
 
                 // (2) 코드
@@ -1032,7 +1130,7 @@ function realignDataToPivot(pData, leftDimension, topDimension, measure) {
 */
 function createChartByGetAjax(chartType, searchCond, targetDivId, chartParam, dataAlignCallback) {
     $.ajax({ 
-        url: _CONTEXT_PATH + "/{root}/module/{menuCode}_chartdata_list.do",
+        url: _CONTEXT_PATH + _GET_CHART_DATA_PATH,
         data: searchCond,
         method: "GET",
         dataType: "json", // 서버에서 보내줄 데이터의 타입 
@@ -1052,7 +1150,7 @@ function createChartByGetAjax(chartType, searchCond, targetDivId, chartParam, da
                     buildBarChart(targetDivId, dataSet, chartParam);
                     break;
                 case "line":
-                    buildBarChart(targetDivId, dataSet, chartParam);
+                    buildLineChart(targetDivId, dataSet, chartParam);
                     break;
                 case "pie":
                     buildPieChart(targetDivId, dataSet, chartParam);
@@ -1411,6 +1509,9 @@ function initExportMenuParam() {
 /*************************************************************/
 /***         9. Excel Download Start           ***/
 /*************************************************************/
+
+// 0. TODO : 화면 데이터 그대로 생성하는 Excel
+
 
 // 1. TODO : 쿼리로 생성하는 Excel
 
