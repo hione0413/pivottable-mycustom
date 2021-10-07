@@ -260,7 +260,7 @@
         return result;
     }
 
-    $.getJSON("/data/pivot_sample.json", function (data) {
+    $.getJSON("/data/6.datatable_pivot.json", function (data) {
         var dataSet = data.data;
         var alignedData = realignDataToPivot(dataSet, "DATE", "GOUBOON", "CNT");
 

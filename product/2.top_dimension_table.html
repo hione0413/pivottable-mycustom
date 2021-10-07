@@ -2,55 +2,54 @@
 <html lang="en">
 
 <head>
-<meta charset="UTF-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Document</title>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
 
-<link rel="stylesheet" href="/plugin/bootstrap/css/bootstrap.min.css" />
-<link rel="stylesheet" href="/plugin/datepicker/datepicker3.min.css" />
-<link rel="stylesheet" href="/plugin/iCheck/square/blue.css" />
+	<link rel="stylesheet" href="/plugin/bootstrap/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="/plugin/datepicker/datepicker3.min.css" />
+	<link rel="stylesheet" href="/plugin/iCheck/square/blue.css" />
 
-<link rel="stylesheet"
-	href="/plugin/datatables/jquery.dataTables.min.css" />
-<link rel="stylesheet" href="/plugin/zCardUIDesign/zCardUIDesign.css">
+	<link rel="stylesheet" href="/plugin/datatables/jquery.dataTables.min.css" />
+	<link rel="stylesheet" href="/plugin/zCardUIDesign/zCardUIDesign.css">
 
-<style type="text/css">
-td {
-	border: 1px solid #FFFFFF;
-	border-radius: 6px;
-	color: #555;
-	background-color: #f0f0f0;
-	text-align: right;
-}
+	<style type="text/css">
+		td {
+			border: 1px solid #FFFFFF;
+			border-radius: 6px;
+			color: #555;
+			background-color: #f0f0f0;
+			text-align: right;
+		}
 
-th {
-	padding: 6px 6px;
-}
+		th {
+			padding: 6px 6px;
+		}
 
-.form-control {
-	font-size: 12pt;
-}
+		.form-control {
+			font-size: 12pt;
+		}
 
-input[type="number"] {
-	padding: 6px 0px;
-	position: relative;
-}
+		input[type="number"] {
+			padding: 6px 0px;
+			position: relative;
+		}
 
-input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-inner-spin-button
-	{
-	-webkit-appearance: none;
-}
-</style>
+		input[type="number"]::-webkit-outer-spin-button,
+		input[type="number"]::-webkit-inner-spin-button {
+			-webkit-appearance: none;
+		}
+	</style>
 
-<script src="/plugin/jQuery/jQuery-2.1.4.min.js"></script>
-<script src="/plugin/jQueryUI/jquery-ui.min.js"></script>
-<script src="/plugin/bootstrap/js/bootstrap.min.js"></script>
-<script src="/plugin/datepicker/bootstrap-datepicker.min.js"></script>
-<script src="/plugin/iCheck/icheck.min.js"></script>
-<script src="/plugin/tableCreater/topDimTableCreater.js"></script>
-<script src="/plugin/table-to-excel/tableToExcel.js"></script>
-<script src="/plugin/datatables/jquery.dataTables.js"></script>
+	<script src="/plugin/jQuery/jQuery-2.1.4.min.js"></script>
+	<script src="/plugin/jQueryUI/jquery-ui.min.js"></script>
+	<script src="/plugin/bootstrap/js/bootstrap.min.js"></script>
+	<script src="/plugin/datepicker/bootstrap-datepicker.min.js"></script>
+	<script src="/plugin/iCheck/icheck.min.js"></script>
+	<script src="/plugin/tableCreater/topDimTableCreater.js"></script>
+	<script src="/plugin/table-to-excel/tableToExcel.js"></script>
+	<script src="/plugin/datatables/jquery.dataTables.js"></script>
 </head>
 
 <body class="main">
@@ -115,8 +114,7 @@ input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-i
 							</table>
 						</div>
 						<div class="z-card-footer">
-							<button type="button" class="btn btn-default"
-								id="btnExcelDownload">엑셀로 받기</button>
+							<button type="button" class="btn btn-default" id="btnExcelDownload">엑셀로 받기</button>
 						</div>
 					</div>
 				</div>
@@ -127,29 +125,29 @@ input[type="number"]::-webkit-outer-spin-button, input[type="number"]::-webkit-i
 </body>
 
 <script>
-  $.getJSON("/data/이용현황.json", function(data) {
-    var data = data.data;
+	$.getJSON("/data/2.이용현황.json", function (data) {
+		var data = data.data;
 
-    // 0. 저장 버튼 활성 비활성 여부 판단
-    var insertYn = checkTableEditedYn(data, "입력YN", "N");
+		// 0. 저장 버튼 활성 비활성 여부 판단
+		var insertYn = checkTableEditedYn(data, "입력YN", "N");
 
-    //createTableLeftDimension(data, tableCreateParam);
-    initTableLeftDimension(data, "연도", "도서관구분",
-        [ "방문자수", "개관일수", "자료수", "입력YN" ], _TABLE_PARAM.table_first);
-  });
+		//createTableLeftDimension(data, tableCreateParam);
+		initTableLeftDimension(data, "연도", "도서관구분",
+			["방문자수", "개관일수", "자료수", "입력YN"], _TABLE_PARAM.table_first);
+	});
 
-  // Excel 다운로드 : 이런 식으로 저장된다는 걸 보여주기 위한 용도
-  function tableToExcel() {
-    document.getElementsByClassName("pvtTable")[0].setAttribute("id",
-        "pvtTable");
+	// Excel 다운로드 : 이런 식으로 저장된다는 걸 보여주기 위한 용도
+	function tableToExcel() {
+		document.getElementsByClassName("pvtTable")[0].setAttribute("id",
+			"pvtTable");
 
-    TableToExcel.convert(document.getElementById("pvtTable"), {
-      name : "국립중앙박물관 통계 시스템 Excel.xlsx",
-      sheet : {
-        name : "Sheet 1"
-      }
-    });
-  }
+		TableToExcel.convert(document.getElementById("pvtTable"), {
+			name: "국립중앙박물관 통계 시스템 Excel.xlsx",
+			sheet: {
+				name: "Sheet 1"
+			}
+		});
+	}
 </script>
 
 </html>
