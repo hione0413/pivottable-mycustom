@@ -17,6 +17,21 @@
     <!-- fullcalendar -->
     <link rel="stylesheet" href="/custom_resource/lib/fullcalendar/core/main.min.css" />
 
+    <style>
+        .z-heat-table * {
+            height: 50px;
+            padding: 3px;
+        }
+
+        .z-heat-table th,
+        .z-heat-table td {
+            border: 1px solid #717171;
+            padding: 3px;
+            border-radius: 0px;
+            text-align: center;
+        }
+    </style>
+
     <script src="/plugin/jQuery/jQuery-2.1.4.min.js"></script>
     <script src="/plugin/jQueryUI/jquery-ui.min.js"></script>
     <script src="/plugin/bootstrap/js/bootstrap.min.js"></script>
@@ -138,9 +153,9 @@
 
             tempArr.push('<h3>' + title + '</h3>');
             tempArr.push("<h5>이용구분별 이용시간</h5>");
-            tempArr.push('<table class="z-submit-table">' + tableOneThead.join("") + tableOneTBody.join("") + '</table>');
+            tempArr.push('<table class="z-submit-table z-heat-table">' + tableOneThead.join("") + tableOneTBody.join("") + '</table>');
             tempArr.push("<h5>시간대별 이용자수</h5>");
-            tempArr.push('<table class="z-submit-table">' + tableTwoThead.join("") + tableTwoTBody.join("") + '</table>');
+            tempArr.push('<table class="z-submit-table z-heat-table">' + tableTwoThead.join("") + tableTwoTBody.join("") + '</table>');
             tempArr.push('<hr>');
         }
 
@@ -303,7 +318,7 @@
     }
 
     // HeatMap Table Start
-    $.getJSON("/data/heat_map_data.json", function (data) {
+    $.getJSON("/data/8.heat_table.json", function (data) {
         // TODO : 데이터 가져오는 부분은 Ajax(동기화)로 수정 예정
         var dataSet = data.data;
         var dataSet2 = data.data2;
