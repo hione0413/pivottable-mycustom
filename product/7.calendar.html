@@ -260,27 +260,30 @@
         console.log("TODO : " + startDate + " ~ " + endDate + " 기간 검색해서 event 에 내용 추가");
 
         // event 추가 api
+        calendar.removeAllEvents();
+
         calendar.addEventSource([
             {
+                title: "견학 건수 : 2건",
+                start: "2021-10-06"
+            },
+            {
+                title: "인원 : 30명",
+                start: "2021-10-06"
+            }
+            {
                 title: "견학 건수 : 1건",
-                start: "2021-10-17"
+                start: startDate
             },
             {
                 title: "인원 : 30000명",
-                start: "2021-10-17"
+                start: startDate
             }
         ]);
     }
 
     function createTestData() {
         var result = [];
-
-        // for (var i = 0; i < 100; i++) {
-        //     result.push({
-        //         title: "작가와 함께하는 소소한 하루 : " + i,
-        //         start: "2021-10-06"
-        //     });
-        // }
 
         result = [
             {
