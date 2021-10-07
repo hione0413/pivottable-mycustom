@@ -17,6 +17,25 @@
     <!-- fullcalendar -->
     <link rel="stylesheet" href="/custom_resource/lib/fullcalendar/core/main.min.css" />
 
+    <style>
+        /* fullcalendar event wrapper */
+        /* .fc-daygrid-event-harness {
+            text-align: left;
+            margin-left: 20px;
+        } */
+
+        /* fullcalendar event border and background */
+        /* .fc-daygrid-event {
+            background-color: white;
+            border: none;
+        } */
+
+        /* fullcalendar title - 글자 폰트, 색상 etc... */
+        /* .fc-event-title {
+            color: black;
+        } */
+    </style>>
+
     <script src="/plugin/jQuery/jQuery-2.1.4.min.js"></script>
     <script src="/plugin/jQueryUI/jquery-ui.min.js"></script>
     <script src="/plugin/bootstrap/js/bootstrap.min.js"></script>
@@ -62,9 +81,11 @@
                     <div class="form-group z-filter-group">
                         <label>기간조회</label>
                         <span class="z-filter-separator">|</span>
-                        <input type="text" class="form-control z-filter-textbox" id="startDt" placeholder="2021-08-13">
+                        <input type="text" class="form-control z-filter-textbox z-data-picker" id="startDt"
+                            placeholder="2021-08-13">
                         <span class="z-filter-separator">~</span>
-                        <input type="text" class="form-control z-filter-textbox" id="endDt" placeholder="2021-09-13">
+                        <input type="text" class="form-control z-filter-textbox z-data-picker" id="endDt"
+                            placeholder="2021-09-13">
                     </div>
                     <button type="button" class="btn btn-default z-filter-btn">조회</button>
                 </form>
@@ -74,7 +95,8 @@
 
         <!-- Calendar 영역 Start -->
         <div class="minwon row">
-            <div class="col-md-12">
+            <div class="col-md-1"></div>
+            <div class="col-md-10">
                 <div class="z-card-wrapper">
                     <div class="z-card">
                         <div class="z-card-preview">
@@ -84,7 +106,6 @@
                             <div id="calendar"></div>
                         </div>
                         <div class="z-card-footer">
-                            <button type="button" class="btn btn-default" id="btnExcelDownload">엑셀 다운로드</button>
                         </div>
                     </div>
                 </div>
@@ -94,16 +115,87 @@
 
 
     </div>
+
+
+    <!-- Modal Start -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title" id="myModalLabel">상세보기</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-9">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label>기간검색</label>
+                                    <span class="z-filter-separator">:</span>
+                                    <input type="text" class="form-control z-filter-textbox z-data-picker"
+                                        id="modalStartDt" placeholder="2021-08-13">
+                                    <span class="z-filter-separator">~</span>
+                                    <input type="text" class="form-control z-filter-textbox z-data-picker"
+                                        id="modalEndDt" placeholder="2021-09-13">
+                                    <button type="button" class="btn btn-default z-filter-btn">조회</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="row">
+                                <h5>총 건수: <span>2</span>건</h5>
+                            </div>
+                            <div class="row">
+                                <h5>총 인원수: <span>2</span>건</h5>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>날짜</th>
+                                        <th>견학명</th>
+                                        <th>견학구분</th>
+                                        <th>인원수</th>
+                                        <th>비고</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>2021-09-06</td>
+                                        <td>OO대 실무실습</td>
+                                        <td>대학생</td>
+                                        <td>10</td>
+                                        <td>10:00~</td>
+                                    </tr>
+                                    <tr>
+                                        <td>2021-09-06</td>
+                                        <td>XX초등학교 견학</td>
+                                        <td>초등학생</td>
+                                        <td>5</td>
+                                        <td>11:00~</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal End -->
 </body>
 <script>
 
     // Datapicker setting start
     var datapickerFormat = "yyyy-mm-dd";
-    $("#startDt").datepicker({
-        format: datapickerFormat,
-        language: 'kr'
-    });
-    $("#endDt").datepicker({
+    $(".z-data-picker").datepicker({
         format: datapickerFormat,
         language: 'kr'
     });
@@ -126,30 +218,80 @@
         var calendar = new FullCalendar.Calendar(calendarEl, {
             initialView: 'dayGridMonth',
             locale: "ko",   // 언어
-            dayMaxEventRows: true, // 날짜별 표시되는 내용 Max값 - 클릭으로 전체보기 가능
+            dayMaxEventRows: false, // 날짜별 표시되는 내용 Max값
+            height: '500px',
             events: dataSet, // 캘린더에 입력할 데이터
+            eventColor: "white",
+            eventTextColor: "black",
             headerToolbar: {
-                start: 'prevYear,prev,next,nextYear today',
+                start: 'prevYear,prev',
                 center: 'title',
-                end: 'dayGridMonth,list'
+                // end: 'dayGridMonth,list'
+                end: 'today next,nextYear'
+            },
+            dateClick: function (info) {
+                handleClickDateCell(calendar, info)
+            },
+            eventClick: function (info) {
+                handleClickDateCell(calendar, info)
+            },
+            datesSet: function (info) {
+                handleChangeMonth(calendar, info);
             }
         });
 
         calendar.render();
-        calendar.updateSize()
     });
 
     // Calendar End
 
+
+    function handleClickDateCell(calendar, info) {
+        // TODO : 모달 내 테이블 필터와 데이터 변경 -> Modal Open
+        $('#myModal').modal();
+    }
+
+    function handleChangeMonth(calendar, info) {
+        var startDate = info.startStr;
+        startDate = startDate.slice(0, 10);
+        var endDate = info.endStr;
+        endDate = endDate.slice(0, 10);
+
+        console.log("TODO : " + startDate + " ~ " + endDate + " 기간 검색해서 event 에 내용 추가");
+
+        // event 추가 api
+        calendar.addEventSource([
+            {
+                title: "견학 건수 : 1건",
+                start: "2021-10-17"
+            },
+            {
+                title: "인원 : 30000명",
+                start: "2021-10-17"
+            }
+        ]);
+    }
+
     function createTestData() {
         var result = [];
 
-        for (var i = 0; i < 10; i++) {
-            result.push({
-                title: "test " + i,
+        // for (var i = 0; i < 100; i++) {
+        //     result.push({
+        //         title: "작가와 함께하는 소소한 하루 : " + i,
+        //         start: "2021-10-06"
+        //     });
+        // }
+
+        result = [
+            {
+                title: "견학 건수 : 2건",
                 start: "2021-10-06"
-            });
-        }
+            },
+            {
+                title: "인원 : 30명",
+                start: "2021-10-06"
+            }
+        ];
         return result;
     }
 
