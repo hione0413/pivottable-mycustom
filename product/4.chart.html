@@ -1,32 +1,35 @@
 <!DOCTYPE html>
 <html>
-<head>
-<meta charset="UTF-8">
-<!-- Styles -->
-<link rel="stylesheet" href="/plugin/zCardUIDesign/zCardUIDesign.css">
-<style>
-.chartdiv {
-	width: 100%;
-	min-height: 300px;
-}
 
-#linechartdiv {
-	max-width: 100%;
-}
-.z-cards-container {
-	width: 50%;
-	float: left;
-	padding: 10px;
-}
-</style>
-<!-- Resources -->
-<script src="/plugin/jQuery/jQuery-2.1.4.min.js"></script>
-<script src="https://cdn.amcharts.com/lib/4/core.js"></script>
-<script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
-<script src="https://cdn.amcharts.com/lib/4/themes/animated.js"></script>
-<script src="/resource/lib/amchart/chart.js"></script>
-<title>Insert title here</title>
+<head>
+	<meta charset="UTF-8">
+	<!-- Styles -->
+	<link rel="stylesheet" href="/plugin/zCardUIDesign/zCardUIDesign.css">
+	<style>
+		.chartdiv {
+			width: 100%;
+			min-height: 300px;
+		}
+
+		#linechartdiv {
+			max-width: 100%;
+		}
+
+		.z-cards-container {
+			width: 50%;
+			float: left;
+			padding: 10px;
+		}
+	</style>
+	<!-- Resources -->
+	<script src="/plugin/jQuery/jQuery-2.1.4.min.js"></script>
+	<script src="https://cdn.amcharts.com/lib/4/core.js"></script>
+	<script src="https://cdn.amcharts.com/lib/4/charts.js"></script>
+	<script src="https://cdn.amcharts.com/lib/4/themes/animated.js"></script>
+	<script src="/resource/lib/amchart/chart.js"></script>
+	<title>Insert title here</title>
 </head>
+
 <body>
 	<!-- HTML -->
 	<div class="row">
@@ -39,8 +42,8 @@
 					<div class="chartdiv" id="barchartdiv"></div>
 				</div>
 				<div class="z-card-footer">
-					<button type="button" class="btn btn-default btn-z-card">+</button>
-					<button type="button" class="btn btn-default btn-z-card" id="zeo">크게보기</button>
+					<!-- <button type="button" class="btn btn-default btn-z-card">+</button>
+					<button type="button" class="btn btn-default btn-z-card" id="zeo">크게보기</button> -->
 				</div>
 			</div>
 		</div>
@@ -55,8 +58,8 @@
 					<div class="chartdiv" id="linechartdiv"></div>
 				</div>
 				<div class="z-card-footer">
-					<button type="button" class="btn btn-default btn-z-card"">+</button>
-					<button type="button" class="btn btn-default btn-z-card">크게보기</button>
+					<!-- <button type="button" class="btn btn-default btn-z-card">+</button>
+					<button type="button" class="btn btn-default btn-z-card">크게보기</button> -->
 				</div>
 			</div>
 		</div>
@@ -69,8 +72,8 @@
 					<div class="chartdiv" id="piechartdiv"></div>
 				</div>
 				<div class="z-card-footer">
-					<button type="button" class="btn btn-default btn-z-card">+</button>
-					<button type="button" class="btn btn-default btn-z-card">크게보기</button>
+					<!-- <button type="button" class="btn btn-default btn-z-card">+</button>
+					<button type="button" class="btn btn-default btn-z-card">크게보기</button> -->
 				</div>
 			</div>
 		</div>
@@ -78,42 +81,43 @@
 
 </body>
 <script type="text/javascript">
-	
+
 	var dataPath = ["/data/fileForBarChart.json", "/data/fileForLineChart.json", "/data/fileForPieChart.json"]
 	/* var libraries = [ "어린이청소년도서관", "디지털도서관", "국립중앙도서관", "국립세종도서관" ]; */
-	var libraries = [ "어린이청소년도서관", "디지털도서관", "국립중앙도서관" ];
+	var libraries = ["어린이청소년도서관", "디지털도서관", "국립중앙도서관"];
 	var jsonData = null;
 	var dimension = "";
 	var measure = "";
-	for (var i = 0; i < dataPath.length; i++){
-	  	(function(i) {
-	        $.ajax({
-	            url: dataPath[i],
-	            dataType: "json",
-	            async:false,
-	            success:function(data){
+	for (var i = 0; i < dataPath.length; i++) {
+		(function (i) {
+			$.ajax({
+				url: dataPath[i],
+				dataType: "json",
+				async: false,
+				success: function (data) {
 					jsonData = data.data;
-		            switch(i){
-		            	case 0:
-		            		dimension = "자료실";
-		  			    	measure = "방문자수";
-		  		      		buildBarChart(jsonData, dimension, measure);
-		  		      		break;
-		            	case 1:
-		            		buildLineChart(jsonData, libraries);
-		            		break;
-		            	case 2:
-		            		dimension = "방문목적";
-		    	     		measure = "방문자수";
-		    	     		buildPieChart(jsonData, dimension, measure);
-		    	     		break;
-		            }
-	            },
-	            error: function(xhr,status,error){
-	                console.log(xhr+status+error);
-	            } 
-	        });
+					switch (i) {
+						case 0:
+							dimension = "자료실";
+							measure = "방문자수";
+							buildBarChart(jsonData, dimension, measure);
+							break;
+						case 1:
+							buildLineChart(jsonData, libraries);
+							break;
+						case 2:
+							dimension = "방문목적";
+							measure = "방문자수";
+							buildPieChart(jsonData, dimension, measure);
+							break;
+					}
+				},
+				error: function (xhr, status, error) {
+					console.log(xhr + status + error);
+				}
+			});
 		})(i);
 	}
 </script>
+
 </html>
