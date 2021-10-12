@@ -177,9 +177,12 @@
 
     // Excel 다운로드 : 이런 식으로 저장된다는 걸 보여주기 위한 용도
     function tableToExcel() {
-        document.getElementsByClassName("pvtTable")[0].setAttribute("id", "pvtTable");
+        // Excel 테두리 추가
+        var $pvtTable = $(".pvtTable");
+        $pvtTable.find("th").attr("data-b-a-s", "thin");
+        $pvtTable.find("td").attr("data-b-a-s", "thin");
 
-        TableToExcel.convert(document.getElementById("pvtTable"), {
+        TableToExcel.convert(document.getElementsByClassName("pvtTable")[0], {
             name: "국립중앙박물관 통계 시스템 Excel.xlsx",
             sheet: {
                 name: "Sheet 1"
