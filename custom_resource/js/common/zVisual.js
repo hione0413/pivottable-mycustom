@@ -116,7 +116,17 @@ function getCodeList(codeTp) {
 //  ㄴ 1. 화면 전체에 Loading 거는 방법
 //  ㄴ 2. div 에만 Loading 거는 방법
 function toggleLoadingProgress(progressFlag) {
-
+    // <div id="mask" style="position:absolute; z-index:9000; background-color:#000000; display:none; left:0; top:0; width:100%; height:100%; opacity:0.3;">
+    //     <img src="" style="position: absolute; display: block; margin: 0px auto;"/>
+    // </div>
+    
+    if(progressFlag) {
+        $('#loadingMask').show();
+        $('#loadingImg').show();
+    } else {
+        $('#loadingMask').hide();
+        $('#loadingImg').hide();
+    }
 }
 
 
@@ -1511,15 +1521,45 @@ function initExportMenuParam() {
 /*************************************************************/
 
 // 0. TODO : 화면 데이터 그대로 생성하는 Excel
+function downloadPivotTableExcel(fileName, sheetName) {
+    // Excel 테두리 추가
+    var $pvtTable = $(".pvtTable");
+    $pvtTable.find("th").attr("data-b-a-s", "thin");
+    $pvtTable.find("td").attr("data-b-a-s", "thin");
 
+    TableToExcel.convert(document.getElementsByClassName("pvtTable")[0], {
+        name: fileName + ".xlsx",
+        sheet: {
+            name: sheetName
+        }
+    });
+}
 
 // 1. TODO : 쿼리로 생성하는 Excel
-
-
-// 2. TODO : 템플릿으로 생성하는 Excel
-
-
-// 3. TODO : 이미지가 포함된 Excel?
+// function downloadDataTableExcel(menuCode, dataCode, fileName) {
+// 	var searchCond = getSelFilterValObj();
+	
+// 	$.ajax({
+//         url: _CONTEXT_PATH + _DOWNLOAD_EXCEL_PATH + menuCode + "/" + dataCode,
+//         data: searchCond,
+//         method: "GET",
+//         dataType: "json", // 서버에서 보내줄 데이터의 타입 
+//         beforeSend : function() {
+// 			// Loading 에 의한 프로시저 시작
+//             toggleLoadingProgress(true);
+// 		},
+//         success : function(data, textStatus, jqXHR) {
+            
+//         },
+//         error : function(jqXHR, textStatus, errorThrown) {
+//             // TODO : Error 처리
+// 		},
+//         complete: function(data) { 
+//             // Loading End
+//             toggleLoadingProgress(false);
+//         }
+//     });
+// }
 
 
 /*************************************************************/
